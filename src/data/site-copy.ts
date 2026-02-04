@@ -1,7 +1,7 @@
 export const brand = {
   name: "FullStack Studio Design",
   tagline: "Build. Scale. Dominate.",
-  email: "hello@fullstackstudiodesign.com",
+  email: "info@fullstackstudiodesign.com",
   phone: "+1 (555) 123-4567",
   location: "Serving US, Canada & Beyond",
   hours: "Monday - Friday: 9:00 AM - 6:00 PM EST",

@@ -137,14 +137,6 @@ export function Footer() {
                   {brand.email}
                 </a>
               </li>
-              <li>
-                <a
-                  href={`tel:${brand.phone}`}
-                  className="text-sm text-white/40 transition-colors hover:text-theme"
-                >
-                  {brand.phone}
-                </a>
-              </li>
               <li className="text-sm text-white/40">{brand.location}</li>
             </ul>
           </div>

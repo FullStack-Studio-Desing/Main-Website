@@ -138,13 +138,13 @@ export function PackageDetails() {
             className={`absolute inset-0 bg-gradient-to-br ${pkg.bgGradient}`}
           />
 
-          {/* Decorative elements */}
+          {/* Decorative elements - contained to prevent mobile overflow */}
           <div
-            className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full blur-[120px] opacity-20"
+            className="absolute top-0 right-0 w-[300px] h-[300px] md:w-[600px] md:h-[600px] rounded-full blur-[120px] opacity-20 translate-x-1/2 -translate-y-1/4"
             style={{ backgroundColor: pkg.color }}
           />
           <div
-            className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full blur-[100px] opacity-10"
+            className="absolute bottom-0 left-0 w-[200px] h-[200px] md:w-[400px] md:h-[400px] rounded-full blur-[100px] opacity-10 -translate-x-1/2 translate-y-1/4"
             style={{ backgroundColor: pkg.color }}
           />
 
@@ -338,37 +338,6 @@ export function PackageDetails() {
               </span>
             </motion.div>
 
-            {/* Scroll indicator for next section */}
-            {index < packageDetails.length - 1 && (
-              <motion.div
-                className="absolute bottom-8 left-1/2 -translate-x-1/2"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.5 }}
-              >
-                <motion.div
-                  animate={{ y: [0, 8, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                  className="flex flex-col items-center gap-2 text-white/30"
-                >
-                  <span className="text-xs uppercase tracking-widest">Next Package</span>
-                  <svg
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M19 14l-7 7m0 0l-7-7m7 7V3"
-                    />
-                  </svg>
-                </motion.div>
-              </motion.div>
-            )}
           </div>
         </section>
       ))}

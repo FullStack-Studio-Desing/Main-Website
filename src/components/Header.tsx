@@ -282,7 +282,7 @@ export function Header() {
                 className="absolute left-0 right-0 top-full mt-2 hidden lg:block"
                 onMouseLeave={() => setServicesOpen(false)}
               >
-                <div className="rounded-2xl border border-brand-default bg-bg-section/90 p-6 backdrop-blur-sm">
+                <div className="rounded-2xl border border-white/5 bg-[#0a0a0a] p-6">
                   {/* Header */}
                   <div className="mb-6 flex items-center justify-between">
                     <div>
@@ -368,9 +368,9 @@ export function Header() {
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                className="overflow-hidden lg:hidden"
+                className="absolute left-0 right-0 top-full mt-2 overflow-hidden rounded-2xl border border-white/10 bg-[#0a0a0a] lg:hidden"
               >
-                <div className="border-t border-white/10 px-4 py-6">
+                <div className="px-4 py-6">
                   <nav className="space-y-1">
                     {navLinks.map((link, index) => (
                       <motion.div

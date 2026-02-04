@@ -65,7 +65,7 @@ export function AboutSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <div className="relative mx-auto h-[450px] w-[450px] sm:h-[550px] sm:w-[550px] lg:h-[650px] lg:w-[650px]">
+            <div className="relative mx-auto h-[300px] w-[300px] sm:h-[450px] sm:w-[450px] md:h-[550px] md:w-[550px] lg:h-[650px] lg:w-[650px]">
               <Globe />
             </div>
           </motion.div>

@@ -20,7 +20,6 @@ export function HeroSection() {
       {/* Background Effects */}
       <Spotlight className="-top-40 left-0 md:-top-20 md:left-60" fill="white" />
       <Spotlight className="top-40 -right-40 md:top-20 md:-right-20" fill="#bff747" />
-      <div className="absolute inset-0 bg-grid-white/[0.02] pointer-events-none" />
 
       {/* Shooting Stars */}
       <StarsBackground starDensity={0.0001} />
@@ -29,24 +28,22 @@ export function HeroSection() {
       <GlowEffect className="-bottom-40 -right-40 opacity-20" size="lg" />
       <Meteors number={15} />
 
-      {/* Interactive Ripple Grid */}
-      <BackgroundRippleEffect rows={12} cols={30} cellSize={48} className="opacity-50" />
 
       {/* Floating Graphics */}
       <FloatingShapes />
 
       {/* Decorative elements - left side */}
-      <div className="absolute left-8 top-1/3 hidden lg:block">
+      <div className="absolute left-8 top-1/3 hidden lg:block overflow-hidden">
         <OrbitingDots className="opacity-30" />
       </div>
 
       {/* Decorative elements - right side */}
-      <div className="absolute right-8 bottom-1/3 hidden lg:block">
+      <div className="absolute right-8 bottom-1/3 hidden lg:block overflow-hidden">
         <DataViz className="opacity-40" />
       </div>
 
       {/* Code lines decoration */}
-      <CodeLines className="left-12 bottom-1/4 hidden xl:block" />
+      <CodeLines className="left-12 bottom-1/4 hidden xl:block overflow-hidden" />
 
       {/* Floating badge */}
       <motion.div

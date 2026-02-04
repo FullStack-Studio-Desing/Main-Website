@@ -29,15 +29,14 @@ export const BackgroundRippleEffect = ({
       )}
     >
       <div className="relative h-full w-full overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 z-[2] h-full w-full overflow-hidden" />
         {/* Edge fade masks */}
         <div
-          className="pointer-events-none absolute inset-y-0 left-0 z-[3] w-80"
-          style={{ background: 'linear-gradient(to right, #050505 0%, #050505 20%, transparent 100%)' }}
+          className="pointer-events-none absolute inset-y-0 left-0 z-[3] w-[30%]"
+          style={{ background: 'linear-gradient(to right, #050505 0%, #050505 30%, transparent 100%)' }}
         />
         <div
-          className="pointer-events-none absolute inset-y-0 right-0 z-[3] w-80"
-          style={{ background: 'linear-gradient(to left, #050505 0%, #050505 20%, transparent 100%)' }}
+          className="pointer-events-none absolute inset-y-0 right-0 z-[3] w-[30%]"
+          style={{ background: 'linear-gradient(to left, #050505 0%, #050505 30%, transparent 100%)' }}
         />
         <div
           className="pointer-events-none absolute inset-x-0 top-0 z-[3] h-40"

@@ -7,14 +7,14 @@ import { cn } from "@/lib/utils";
 export function FloatingShapes({ className }: { className?: string }) {
   return (
     <div className={cn("absolute inset-0 overflow-hidden pointer-events-none", className)}>
-      {/* Large rotating ring */}
+      {/* Large rotating ring - hidden on mobile to prevent overflow */}
       <motion.div
-        className="absolute -right-20 top-1/4 h-80 w-80 rounded-full border border-theme/10"
+        className="absolute right-0 lg:-right-20 top-1/4 h-80 w-80 rounded-full border border-theme/10 hidden md:block"
         animate={{ rotate: 360 }}
         transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
       />
       <motion.div
-        className="absolute -right-16 top-1/4 mt-4 ml-4 h-72 w-72 rounded-full border border-theme/5"
+        className="absolute right-0 lg:-right-16 top-1/4 mt-4 ml-4 h-72 w-72 rounded-full border border-theme/5 hidden md:block"
         animate={{ rotate: -360 }}
         transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
       />

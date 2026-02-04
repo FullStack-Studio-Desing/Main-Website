@@ -93,8 +93,8 @@ export function FAQSection() {
               </Link>
               <span className="text-sm text-text-muted">
                 or email us at{" "}
-                <a href="mailto:hello@fullstackstudiodesign.com" className="text-theme hover:underline">
-                  hello@fullstackstudiodesign.com
+                <a href="mailto:info@fullstackstudiodesign.com" className="text-theme hover:underline">
+                  info@fullstackstudiodesign.com
                 </a>
               </span>
             </div>

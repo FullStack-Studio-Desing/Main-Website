@@ -36,7 +36,7 @@ const defaultConfig: Omit<GlobeConfig, "width" | "height" | "onRender"> = {
   mapBrightness: 1.2,
   baseColor: [0.3, 0.3, 0.3],
   markerColor: [0.75, 0.97, 0.28], // theme color (BFF747)
-  glowColor: [0.75, 0.97, 0.28],
+  glowColor: [0.3, 0.4, 0.1],
   markers: [
     { location: [14.5995, 120.9842], size: 0.03 }, // Manila
     { location: [19.076, 72.8777], size: 0.05 }, // Mumbai

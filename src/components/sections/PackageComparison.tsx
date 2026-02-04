@@ -108,12 +108,12 @@ export function PackageComparison() {
             {/* Header */}
             <thead>
               <tr>
-                <th className="text-left p-4 w-1/4" />
+                <th className="text-left p-4 pt-8 w-1/4" />
                 {comparisonData.packages.map((pkg) => (
-                  <th key={pkg.name} className="p-4 text-center w-1/4">
+                  <th key={pkg.name} className="p-4 pt-8 text-center w-1/4">
                     <div className="relative">
                       {pkg.popular && (
-                        <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-medium px-3 py-1 rounded-full bg-theme/20 text-theme">
+                        <span className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium px-3 py-1 rounded-full bg-theme/20 text-theme">
                           Most Popular
                         </span>
                       )}

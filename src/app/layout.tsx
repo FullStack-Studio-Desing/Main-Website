@@ -37,7 +37,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${bigShoulders.variable} ${bricolage.variable} ${manrope.variable}`}>
-      <body className="antialiased font-body">
+      <body className="antialiased font-body overflow-x-hidden">
         <Header />
         {children}
         <Footer />
