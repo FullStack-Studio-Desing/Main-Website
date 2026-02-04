@@ -4,7 +4,6 @@ import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
 import { packages } from "@/data/site-copy";
 import { useRef, useState } from "react";
 import { Spotlight } from "@/components/ui/spotlight";
-import { BackgroundRippleEffect } from "@/components/ui/background-ripple";
 
 interface Package {
   name: string;
@@ -188,8 +187,6 @@ export function PackagesSection() {
       {/* Subtle gradient background */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(191,247,71,0.03),transparent)]" />
 
-      {/* Interactive Ripple Grid */}
-      <BackgroundRippleEffect rows={12} cols={28} cellSize={56} className="opacity-70" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}

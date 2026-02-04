@@ -13,6 +13,7 @@
     "cobe": "^0.6.5",
     "framer-motion": "^11.11.17",
     "next": "^15.0.0",
+    "nodemailer": "^7.0.13",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^2.5.4",
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "@types/node": "^22",
+    "@types/nodemailer": "^7.0.9",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.20",

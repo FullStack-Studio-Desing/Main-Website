@@ -18,8 +18,8 @@ export function HeroSection() {
       className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-bg-body px-4 py-24 md:py-32"
     >
       {/* Background Effects */}
-      <Spotlight className="-top-40 left-0 md:-top-20 md:left-60" fill="white" />
-      <Spotlight className="top-40 -right-40 md:top-20 md:-right-20" fill="#bff747" />
+      <Spotlight className="-top-40 left-0 md:-top-20 md:left-60 opacity-40" fill="#888888" />
+      <Spotlight className="top-40 -right-40 md:top-20 md:-right-20 opacity-50" fill="#bff747" />
 
       {/* Shooting Stars */}
       <StarsBackground starDensity={0.0001} />

@@ -213,7 +213,7 @@ export const services: ServiceData[] = [
         features: ["24/7 monitoring", "Security patches", "Performance tuning", "Feature updates"]
       },
     ],
-    price: "$10,000",
+    price: "$5,000",
     faqs: [
       { q: "How do you handle intellectual property and code ownership?", a: "You own 100% of the code we write for you. Upon final payment, all source code, documentation, and assets transfer to you completely. We can sign NDAs and custom IP agreements as needed." },
       { q: "What technologies do you use?", a: "We select the best tech stack for each project. Our core expertise includes React, Next.js, Node.js, Python, PostgreSQL, MongoDB, and cloud platforms (AWS, GCP, Azure). We prioritize proven technologies over trendy ones." },
@@ -286,7 +286,7 @@ export const services: ServiceData[] = [
         features: ["Use case identification", "ROI modeling", "Build vs. buy analysis", "Phased rollout plans"]
       },
     ],
-    price: "$5,000",
+    price: "$1,500",
     faqs: [
       { q: "Is AI actually ready for business use, or is it still experimental?", a: "AI is production-ready today for many use cases. We focus on proven applications—chatbots, content generation, data analysis, workflow automation—where the technology is mature and ROI is predictable. We'll be honest about what's ready now vs. what's still emerging." },
       { q: "How do you handle data privacy and security with AI?", a: "Very seriously. We can deploy models on your own infrastructure, use enterprise-grade APIs with data processing agreements, or implement on-premise solutions for sensitive industries. We follow SOC 2 practices and can work within HIPAA, GDPR, and other compliance frameworks." },

@@ -111,7 +111,7 @@ export function ServicesSection() {
           {services.map((s, index) => (
             <motion.div key={s.title} variants={itemVariants}>
               <CardSpotlight className="h-full">
-                <div className="p-6 lg:p-8 relative">
+                <div className="p-6 lg:p-8 relative h-full flex flex-col">
                   <CornerAccents className="opacity-30" />
                   {/* Service Icon */}
                   <div className="mb-4 inline-flex items-center justify-center rounded-xl bg-theme/10 p-3 text-theme">
@@ -152,23 +152,25 @@ export function ServicesSection() {
                     ))}
                   </ul>
 
-                  {/* Footer */}
-                  <div className="mt-8 flex items-center justify-between border-t border-brand-default pt-6">
-                    <div>
-                      <span className="text-xs uppercase tracking-wider text-text-muted">Starting at</span>
-                      <div className="font-display text-xl font-bold text-text-header">
-                        {s.price}
+                  {/* Footer - pushed to bottom */}
+                  <div className="mt-auto pt-6">
+                    <div className="flex items-center justify-between border-t border-brand-default pt-6">
+                      <div>
+                        <span className="text-xs uppercase tracking-wider text-text-muted">Starting at</span>
+                        <div className="font-display text-xl font-bold text-text-header">
+                          {s.price}
+                        </div>
                       </div>
+                      <Link
+                        href={`/services/${s.slug}`}
+                        className="group flex items-center gap-2 rounded-full bg-theme/10 px-4 py-2 text-sm font-semibold text-theme transition-all duration-300 hover:bg-theme hover:text-bg-body"
+                      >
+                        Explore
+                        <svg className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                      </Link>
                     </div>
-                    <Link
-                      href={`/services/${s.slug}`}
-                      className="group flex items-center gap-2 rounded-full bg-theme/10 px-4 py-2 text-sm font-semibold text-theme transition-all duration-300 hover:bg-theme hover:text-bg-body"
-                    >
-                      Explore
-                      <svg className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </Link>
                   </div>
                 </div>
               </CardSpotlight>
