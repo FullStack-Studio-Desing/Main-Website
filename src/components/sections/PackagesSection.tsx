@@ -72,7 +72,7 @@ function PricingCard({
         `}
       >
         <div className={`
-          relative flex h-full flex-col rounded-[2.4rem] p-8 lg:p-10 overflow-hidden
+          relative flex h-full flex-col rounded-[2.4rem] p-6 sm:p-8 lg:p-10 overflow-hidden
           ${pkg.popular ? 'bg-[#0a0a0a]' : 'bg-[#0a0a0a]'}
         `}>
           {/* Ambient glow on hover */}
@@ -106,7 +106,7 @@ function PricingCard({
 
             <div className="mt-6 flex items-baseline gap-2">
               <span className={`
-                font-display text-5xl lg:text-6xl font-semibold tracking-tight
+                font-display text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight
                 ${pkg.popular ? 'text-theme' : 'text-white'}
               `}>
                 {pkg.price}

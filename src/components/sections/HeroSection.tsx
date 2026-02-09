@@ -68,7 +68,7 @@ export function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
-          <h1 className="font-display text-5xl font-bold leading-[1.05] text-text-header md:text-7xl lg:text-8xl">
+          <h1 className="font-display text-3xl font-bold leading-[1.05] text-text-header sm:text-5xl md:text-7xl lg:text-8xl">
             {hero.headline}
             <br />
             <FlipWords
@@ -118,7 +118,7 @@ export function HeroSection() {
 
         {/* Stats */}
         <motion.div
-          className="mt-20 grid grid-cols-3 gap-8"
+          className="mt-12 grid grid-cols-3 gap-4 sm:mt-20 sm:gap-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.5 }}
@@ -131,7 +131,7 @@ export function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
             >
-              <div className="font-display text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-theme to-theme-accent md:text-5xl lg:text-6xl">
+              <div className="font-display text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-theme to-theme-accent sm:text-4xl md:text-5xl lg:text-6xl">
                 {stat.value}
               </div>
               <div className="mt-2 text-sm font-medium uppercase tracking-wider text-text-muted">
@@ -143,7 +143,7 @@ export function HeroSection() {
 
         {/* Trusted by / Social Proof */}
         <motion.div
-          className="mt-20 border-t border-brand-default pt-10"
+          className="mt-12 border-t border-brand-default pt-8 sm:mt-20 sm:pt-10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.8 }}
@@ -151,9 +151,9 @@ export function HeroSection() {
           <p className="mb-6 text-sm uppercase tracking-wider text-text-muted">
             Trusted by innovative companies worldwide
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-8 opacity-50">
+          <div className="flex flex-wrap items-center justify-center gap-4 opacity-50 sm:gap-8">
             {["TechStart", "GrowthCo", "ScaleUp", "LaunchPad", "ServicePro"].map((company, i) => (
-              <div key={i} className="font-display text-xl font-bold text-text-muted">
+              <div key={i} className="font-display text-base font-bold text-text-muted sm:text-xl">
                 {company}
               </div>
             ))}

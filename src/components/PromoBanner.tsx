@@ -59,12 +59,12 @@ export function PromoBanner() {
                   </div>
 
                   <div>
-                    <p className="font-display text-lg font-bold text-text-header sm:text-xl">
+                    <p className="font-display text-base font-bold text-text-header sm:text-xl">
                       <span className="text-theme">20% OFF</span> Your First Project!
                     </p>
-                    <p className="mt-1 text-sm text-text-muted">
-                      Limited time offer for new clients. Use code{" "}
-                      <span className="font-semibold text-theme">WELCOME20</span> at checkout.
+                    <p className="mt-1 text-xs text-text-muted sm:text-sm">
+                      Limited time offer. Code{" "}
+                      <span className="font-semibold text-theme">WELCOME20</span>
                     </p>
                   </div>
                 </div>

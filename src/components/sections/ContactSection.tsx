@@ -155,11 +155,11 @@ export function ContactSection() {
             </span>
           </motion.div>
 
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-text-header mb-6">
+          <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-text-header mb-6">
             {contact.headline.split(" ").map((word, i) => (
               <motion.span
                 key={i}
-                className="inline-block mr-3"
+                className="inline-block mr-2 sm:mr-3"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}

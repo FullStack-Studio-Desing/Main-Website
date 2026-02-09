@@ -109,7 +109,7 @@ export function Footer() {
             <h4 className="text-xs font-semibold uppercase tracking-widest text-white/60">
               Services
             </h4>
-            <ul className="mt-6 grid grid-cols-2 gap-3">
+            <ul className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
               {services.map((service) => (
                 <li key={service.href}>
                   <Link

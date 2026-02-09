@@ -65,7 +65,7 @@ export function AboutSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <div className="relative mx-auto w-[95vw] h-[95vw] max-w-[400px] max-h-[400px] sm:max-w-[550px] sm:max-h-[550px] md:max-w-[650px] md:max-h-[650px] lg:max-w-[750px] lg:max-h-[750px]">
+            <div className="relative mx-auto w-[80vw] h-[80vw] max-w-[300px] max-h-[300px] sm:max-w-[400px] sm:max-h-[400px] md:max-w-[550px] md:max-h-[550px] lg:max-w-[750px] lg:max-h-[750px]">
               <Globe />
             </div>
           </motion.div>

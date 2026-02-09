@@ -80,7 +80,7 @@ const serviceItems = [
 
 export function GlobalDock() {
   return (
-    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50">
+    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 hidden md:block">
       <FloatingDock items={serviceItems} />
     </div>
   );
