@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/service-hero-widgets";
 import { Carousel } from "@/components/ui/apple-cards-carousel";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/lib/hooks";
 
 // Service icons mapping
 const serviceIcons: Record<string, React.ReactNode> = {
@@ -176,6 +177,7 @@ export default function ServicePage() {
     );
   }
 
+  const isMobile = useIsMobile();
   const benefits = serviceBenefits[slug] || serviceBenefits["web-development"];
   const visual = serviceVisuals[slug] || serviceVisuals["web-development"];
 
@@ -183,25 +185,29 @@ export default function ServicePage() {
     <main className="min-h-screen bg-bg-body">
       {/* Hero Section */}
       <section className="relative min-h-screen overflow-hidden">
-        {/* Background Effects */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden">
-          <Boxes className="pointer-events-auto" />
-          <div className="absolute inset-0 w-full h-full bg-bg-body [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black_70%)] pointer-events-none" />
-        </div>
-
-        {/* Shooting Stars */}
-        <div className="absolute inset-0 z-[1]">
-          <StarsBackground starDensity={0.00006} />
-          <ShootingStars minDelay={3000} maxDelay={6000} />
-        </div>
+        {/* Background Effects — simplified on mobile */}
+        {!isMobile && (
+          <>
+            <div className="absolute inset-0 w-full h-full overflow-hidden">
+              <Boxes className="pointer-events-auto" />
+              <div className="absolute inset-0 w-full h-full bg-bg-body [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black_70%)] pointer-events-none" />
+            </div>
+            <div className="absolute inset-0 z-[1]">
+              <StarsBackground starDensity={0.00006} />
+              <ShootingStars minDelay={3000} maxDelay={6000} />
+            </div>
+          </>
+        )}
 
         <div className="absolute inset-0 z-[2]">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(191,247,71,0.12),rgba(6,6,6,0))]" />
-          <motion.div
-            className="absolute top-1/4 left-1/4 w-96 h-96 bg-theme/5 rounded-full blur-[100px]"
-            animate={{ x: [0, 50, 0], y: [0, 30, 0] }}
-            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          />
+          {!isMobile && (
+            <motion.div
+              className="absolute top-1/4 left-1/4 w-96 h-96 bg-theme/5 rounded-full blur-[100px]"
+              animate={{ x: [0, 50, 0], y: [0, 30, 0] }}
+              transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+            />
+          )}
         </div>
 
         <Spotlight className="-top-40 left-0 md:left-60 z-[3]" fill="rgba(191, 247, 71, 0.15)" />
@@ -481,11 +487,13 @@ export default function ServicePage() {
 
       {/* Other Services - Apple Cards Carousel */}
       <section className="relative py-24 lg:py-32 overflow-hidden">
-        {/* Stars Background */}
-        <div className="absolute inset-0">
-          <StarsBackground starDensity={0.00015} />
-          <ShootingStars minDelay={4000} maxDelay={8000} />
-        </div>
+        {/* Stars Background — desktop only */}
+        {!isMobile && (
+          <div className="absolute inset-0">
+            <StarsBackground starDensity={0.00015} />
+            <ShootingStars minDelay={4000} maxDelay={8000} />
+          </div>
+        )}
 
         {/* Background gradient */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_50%_0%,rgba(191,247,71,0.04),transparent)]" />
