@@ -163,6 +163,7 @@ export default function ServicePage() {
   const params = useParams();
   const slug = params.slug as string;
   const service = getServiceBySlug(slug);
+  const isMobile = useIsMobile();
 
   if (!service) {
     return (
@@ -176,8 +177,6 @@ export default function ServicePage() {
       </main>
     );
   }
-
-  const isMobile = useIsMobile();
   const benefits = serviceBenefits[slug] || serviceBenefits["web-development"];
   const visual = serviceVisuals[slug] || serviceVisuals["web-development"];
 
