@@ -4,10 +4,15 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { getServiceBySlug, services } from "@/data/site-copy";
+import dynamic from "next/dynamic";
 import { Spotlight } from "@/components/ui/spotlight";
 import { Boxes } from "@/components/ui/background-boxes";
-import { Globe } from "@/components/ui/globe";
 import { ShootingStars, StarsBackground } from "@/components/ui/shooting-stars";
+
+const Globe = dynamic(
+  () => import("@/components/ui/globe").then((mod) => mod.Globe),
+  { ssr: false }
+);
 import { ServiceIncludesBento } from "@/components/ui/service-includes-widget";
 import { AnimatedCodeEditor } from "@/components/ui/animated-code-editor";
 import { TechStackMarquee, serviceTitles } from "@/components/ui/tech-stack-marquee";

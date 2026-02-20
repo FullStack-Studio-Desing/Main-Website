@@ -2,10 +2,13 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/lib/hooks";
 
 export const BoxesCore = ({ className, ...rest }: { className?: string }) => {
-  const rows = new Array(150).fill(1);
-  const cols = new Array(100).fill(1);
+  const isMobile = useIsMobile();
+  // Mobile: 20×15 = 300 elements. Desktop: 150×100 = 15,000
+  const rows = new Array(isMobile ? 20 : 150).fill(1);
+  const cols = new Array(isMobile ? 15 : 100).fill(1);
 
   // Using brand colors for the boxes
   const colors = [
