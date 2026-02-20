@@ -1,12 +1,15 @@
+import dynamic from "next/dynamic";
 import { HeroSection } from "@/components/sections/HeroSection";
-import { AboutSection } from "@/components/sections/AboutSection";
-import { ServicesSection } from "@/components/sections/ServicesSection";
-import { PackagesSection } from "@/components/sections/PackagesSection";
-import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
-import { FAQSection } from "@/components/sections/FAQSection";
-import { ContactSection } from "@/components/sections/ContactSection";
-import { Marquee } from "@/components/ui/marquee";
 import { ScrollingTagline } from "@/components/ui/scrolling-banner";
+
+// Below-fold sections: lazy loaded to reduce initial bundle
+const AboutSection = dynamic(() => import("@/components/sections/AboutSection").then(m => m.AboutSection));
+const ServicesSection = dynamic(() => import("@/components/sections/ServicesSection").then(m => m.ServicesSection));
+const PackagesSection = dynamic(() => import("@/components/sections/PackagesSection").then(m => m.PackagesSection));
+const TestimonialsSection = dynamic(() => import("@/components/sections/TestimonialsSection").then(m => m.TestimonialsSection));
+const FAQSection = dynamic(() => import("@/components/sections/FAQSection").then(m => m.FAQSection));
+const ContactSection = dynamic(() => import("@/components/sections/ContactSection").then(m => m.ContactSection));
+const Marquee = dynamic(() => import("@/components/ui/marquee").then(m => m.Marquee));
 
 export default function Home() {
   return (
