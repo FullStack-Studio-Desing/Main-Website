@@ -16,8 +16,7 @@
     "nodemailer": "^7.0.13",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "tailwind-merge": "^2.5.4",
-    "three": "^0.182.0"
+    "tailwind-merge": "^2.5.4"
   },
   "devDependencies": {
     "@types/node": "^22",
