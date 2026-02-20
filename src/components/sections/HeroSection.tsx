@@ -6,12 +6,13 @@ import { FlipWords } from "@/components/ui/flip-words";
 import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
 import { Meteors } from "@/components/ui/meteors";
 import { GlowEffect } from "@/components/ui/animated-beam";
-import { hero, brand } from "@/data/site-copy";
+import { hero } from "@/data/site-copy";
 import { FloatingShapes, OrbitingDots, DataViz, CodeLines } from "@/components/ui/floating-graphics";
-import { BackgroundRippleEffect } from "@/components/ui/background-ripple";
 import { ShootingStars, StarsBackground } from "@/components/ui/shooting-stars";
+import { useIsMobile } from "@/lib/hooks";
 
 export function HeroSection() {
+  const isMobile = useIsMobile();
   return (
     <section
       id="home"
@@ -21,16 +22,17 @@ export function HeroSection() {
       <Spotlight className="-top-40 left-0 md:-top-20 md:left-60 opacity-40" fill="#888888" />
       <Spotlight className="top-40 -right-40 md:top-20 md:-right-20 opacity-50" fill="#bff747" />
 
-      {/* Shooting Stars */}
-      <StarsBackground starDensity={0.0001} />
-      <ShootingStars minDelay={2000} maxDelay={5000} />
-      <GlowEffect className="-top-40 -left-40 opacity-30" size="xl" />
-      <GlowEffect className="-bottom-40 -right-40 opacity-20" size="lg" />
-      <Meteors number={15} />
-
-
-      {/* Floating Graphics */}
-      <FloatingShapes />
+      {/* Shooting Stars — skip on mobile to save GPU */}
+      {!isMobile && (
+        <>
+          <StarsBackground starDensity={0.0001} />
+          <ShootingStars minDelay={2000} maxDelay={5000} />
+          <GlowEffect className="-top-40 -left-40 opacity-30" size="xl" />
+          <GlowEffect className="-bottom-40 -right-40 opacity-20" size="lg" />
+          <Meteors number={15} />
+          <FloatingShapes />
+        </>
+      )}
 
       {/* Decorative elements - left side */}
       <div className="absolute left-8 top-1/3 hidden lg:block overflow-hidden">
