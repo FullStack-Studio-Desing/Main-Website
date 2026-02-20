@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import createGlobe from "cobe";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/lib/hooks";
 
 interface GlobeProps {
   className?: string;
@@ -61,6 +62,7 @@ export function Globe({ className, config = {} }: GlobeProps) {
   const pointerInteracting = useRef<number | null>(null);
   const pointerInteractionMovement = useRef(0);
   const [r, setR] = useState(0);
+  const isMobile = useIsMobile();
 
   const updatePointerInteraction = (value: number | null) => {
     pointerInteracting.current = value;
@@ -90,11 +92,14 @@ export function Globe({ className, config = {} }: GlobeProps) {
     window.addEventListener("resize", onResize);
     onResize();
 
+    const dpr = isMobile ? 1 : 2;
     const globe = createGlobe(canvasRef.current!, {
       ...defaultConfig,
       ...config,
-      width: width * 2,
-      height: width * 2,
+      devicePixelRatio: dpr,
+      mapSamples: isMobile ? 8000 : defaultConfig.mapSamples,
+      width: width * dpr,
+      height: width * dpr,
       onRender: (state) => {
         if (!pointerInteracting.current) {
           phi += 0.005;
@@ -113,7 +118,7 @@ export function Globe({ className, config = {} }: GlobeProps) {
       globe.destroy();
       window.removeEventListener("resize", onResize);
     };
-  }, [r, config]);
+  }, [r, config, isMobile]);
 
   return (
     <div
