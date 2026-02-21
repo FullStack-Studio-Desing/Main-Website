@@ -1,6 +1,9 @@
+"use client";
+
 import dynamic from "next/dynamic";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { ScrollingTagline } from "@/components/ui/scrolling-banner";
+import { useT } from "@/lib/i18n";
 
 // Below-fold sections: lazy loaded to reduce initial bundle
 const AboutSection = dynamic(() => import("@/components/sections/AboutSection").then(m => m.AboutSection));
@@ -12,17 +15,19 @@ const ContactSection = dynamic(() => import("@/components/sections/ContactSectio
 const Marquee = dynamic(() => import("@/components/ui/marquee").then(m => m.Marquee));
 
 export default function Home() {
+  const mq = useT("marquee");
+
   return (
     <main className="min-h-screen bg-bg-body">
       <HeroSection />
-      <ScrollingTagline words={["Create", "Code", "Connect"]} speed="slow" />
+      <ScrollingTagline words={[...mq.scrollingWords]} speed="slow" />
       <AboutSection />
       <ServicesSection />
       <PackagesSection />
       <TestimonialsSection />
       <FAQSection />
       <ContactSection />
-      <Marquee text="Have a project in mind? Let's work together." />
+      <Marquee text={mq.bottomText} />
     </main>
   );
 }

@@ -6,6 +6,8 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { brand } from "@/data/site-copy";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
+import { LanguageToggle } from "@/components/LanguageToggle";
 
 const serviceLinks = [
   {
@@ -82,6 +84,9 @@ export function Header() {
   const [servicesOpen, setServicesOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
+  const navT = useT("nav");
+  const slT = useT("serviceLabels");
+  const sdT = useT("serviceDescs");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -167,7 +172,7 @@ export function Header() {
                   className="relative px-4 py-2 text-sm font-medium text-text-body transition-colors hover:text-text-header"
                   onClick={closeAll}
                 >
-                  {link.label}
+                  {(navT as Record<string, string>)[link.label.toLowerCase()] || link.label}
                 </Link>
               ))}
 
@@ -183,7 +188,7 @@ export function Header() {
                   onMouseEnter={() => setServicesOpen(true)}
                   aria-expanded={servicesOpen}
                 >
-                  Services
+                  {navT.services}
                   <motion.svg
                     animate={{ rotate: servicesOpen ? 180 : 0 }}
                     transition={{ duration: 0.2 }}
@@ -204,7 +209,7 @@ export function Header() {
                   className="relative px-4 py-2 text-sm font-medium text-text-body transition-colors hover:text-text-header"
                   onClick={closeAll}
                 >
-                  {link.label}
+                  {(navT as Record<string, string>)[link.label.toLowerCase()] || link.label}
                 </Link>
               ))}
             </nav>
@@ -217,8 +222,11 @@ export function Header() {
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-theme opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-theme" />
                 </span>
-                <span className="text-xs font-medium text-text-muted">Available</span>
+                <span className="text-xs font-medium text-text-muted">{navT.available}</span>
               </div>
+
+              {/* Language Toggle */}
+              <LanguageToggle className="hidden lg:flex" />
 
               {/* CTA Button */}
               <Link
@@ -226,7 +234,7 @@ export function Header() {
                 className="group relative hidden overflow-hidden rounded-xl bg-theme px-5 py-2.5 text-sm font-semibold text-black transition-all hover:shadow-lg hover:shadow-theme/30 sm:block"
               >
                 <span className="relative z-10 flex items-center gap-2">
-                  Let&apos;s Talk
+                  {navT.letsTalk}
                   <svg className="h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
@@ -286,15 +294,15 @@ export function Header() {
                   {/* Header */}
                   <div className="mb-6 flex items-center justify-between">
                     <div>
-                      <h3 className="font-display text-lg font-bold text-text-header">Our Services</h3>
-                      <p className="text-sm text-text-muted">Full-stack digital solutions</p>
+                      <h3 className="font-display text-lg font-bold text-text-header">{navT.ourServices}</h3>
+                      <p className="text-sm text-text-muted">{navT.fullStackSolutions}</p>
                     </div>
                     <Link
                       href="/services"
                       className="group flex items-center gap-2 rounded-full border border-theme/30 bg-theme/10 px-4 py-2 text-sm font-semibold text-theme transition-all hover:bg-theme hover:text-black"
                       onClick={closeAll}
                     >
-                      View All
+                      {navT.viewAll}
                       <svg className="h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                       </svg>
@@ -320,10 +328,10 @@ export function Header() {
                           </div>
                           <div className="min-w-0">
                             <h4 className="text-sm font-semibold text-text-header transition-colors group-hover:text-theme">
-                              {service.label}
+                              {(slT as Record<string, string>)[service.href.split("/").pop() || ""] || service.label}
                             </h4>
                             <p className="mt-0.5 truncate text-xs text-text-muted">
-                              {service.desc}
+                              {(sdT as Record<string, string>)[service.href.split("/").pop() || ""] || service.desc}
                             </p>
                           </div>
                         </Link>
@@ -340,8 +348,8 @@ export function Header() {
                         </svg>
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-text-header">Not sure what you need?</p>
-                        <p className="text-xs text-text-muted">Free strategy call • No commitment</p>
+                        <p className="text-sm font-semibold text-text-header">{navT.notSure}</p>
+                        <p className="text-xs text-text-muted">{navT.freeStrategy}</p>
                       </div>
                     </div>
                     <Link
@@ -349,7 +357,7 @@ export function Header() {
                       className="group flex items-center gap-2 rounded-full bg-theme px-4 py-2 text-sm font-semibold text-black transition-all hover:shadow-lg hover:shadow-theme/30"
                       onClick={closeAll}
                     >
-                      Book a Call
+                      {navT.bookCall}
                       <svg className="h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                       </svg>
@@ -384,7 +392,7 @@ export function Header() {
                           className="flex items-center justify-between rounded-xl px-4 py-3 text-base font-medium text-text-body transition-colors hover:bg-white/5 hover:text-text-header"
                           onClick={closeAll}
                         >
-                          {link.label}
+                          {(navT as Record<string, string>)[link.label.toLowerCase()] || link.label}
                           <svg className="h-4 w-4 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
@@ -400,13 +408,13 @@ export function Header() {
                       className="pt-4"
                     >
                       <div className="mb-3 flex items-center justify-between px-4">
-                        <span className="text-xs font-semibold uppercase tracking-wider text-text-muted">Services</span>
+                        <span className="text-xs font-semibold uppercase tracking-wider text-text-muted">{navT.services}</span>
                         <Link
                           href="/services"
                           className="text-xs font-medium text-theme hover:underline"
                           onClick={closeAll}
                         >
-                          View All →
+                          {navT.viewAll} →
                         </Link>
                       </div>
                       <div className="space-y-1">
@@ -420,19 +428,24 @@ export function Header() {
                             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-text-muted">
                               {service.icon}
                             </div>
-                            {service.label}
+                            {(slT as Record<string, string>)[service.href.split("/").pop() || ""] || service.label}
                           </Link>
                         ))}
                       </div>
                     </motion.div>
                   </nav>
 
+                  {/* Language Toggle - Mobile */}
+                  <div className="mt-4 px-4">
+                    <LanguageToggle className="w-full justify-center" />
+                  </div>
+
                   {/* Mobile CTA */}
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="mt-6"
+                    className="mt-4"
                   >
                     <Link
                       href="/contact"
@@ -443,7 +456,7 @@ export function Header() {
                         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-black/30" />
                         <span className="relative inline-flex h-2 w-2 rounded-full bg-black/50" />
                       </span>
-                      Start Your Project
+                      {navT.startProject}
                       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                       </svg>

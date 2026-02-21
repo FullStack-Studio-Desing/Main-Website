@@ -1,11 +1,13 @@
 "use client";
 import { motion } from "framer-motion";
-import { testimonials } from "@/data/site-copy";
 import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
+import { useT } from "@/lib/i18n";
 import { Spotlight } from "@/components/ui/spotlight";
 import { Particles, AnimatedGrid } from "@/components/ui/floating-graphics";
 
 export function TestimonialsSection() {
+  const tt = useT("testimonials");
+  const testimonials = useT("testimonialItems") as unknown as { quote: string; author: string; role: string }[];
   return (
     <section className="relative overflow-hidden border-t border-brand-default bg-bg-body py-24 lg:py-32">
       {/* Background Effects */}
@@ -33,14 +35,14 @@ export function TestimonialsSection() {
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
             </svg>
             <span className="text-sm font-medium text-theme uppercase tracking-wider">
-              Client Stories
+              {tt.label}
             </span>
           </motion.div>
           <h2 className="font-display text-4xl font-bold tracking-tight text-text-header sm:text-5xl lg:text-6xl">
-            Don&apos;t Take Our Word for It
+            {tt.headline}
           </h2>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-text-body">
-            Here&apos;s what happens when strategy meets execution. Real results from real clients.
+            {tt.body}
           </p>
 
           {/* Stats Row */}
@@ -51,11 +53,7 @@ export function TestimonialsSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            {[
-              { value: "4.9", label: "Average Rating" },
-              { value: "98%", label: "Would Recommend" },
-              { value: "50+", label: "Happy Clients" },
-            ].map((stat, index) => (
+            {(tt.stats as unknown as { value: string; label: string }[]).map((stat, index) => (
               <div key={stat.label} className="text-center">
                 <div className="font-display text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-theme to-theme-accent lg:text-4xl">
                   {stat.value}
@@ -112,7 +110,7 @@ export function TestimonialsSection() {
                 ))}
               </div>
               <p className="text-sm text-text-muted">
-                Rated 4.9/5 from 50+ reviews
+                {tt.ratedText}
               </p>
             </div>
           </div>

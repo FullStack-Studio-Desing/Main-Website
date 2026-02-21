@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PromoBanner } from "@/components/PromoBanner";
+import { LocaleProvider } from "@/lib/locale-context";
 
 /* Big Shoulders: display-style font (same family as Big Shoulders Display per Minifolio branding) */
 const bigShoulders = Big_Shoulders({
@@ -38,10 +39,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${bigShoulders.variable} ${bricolage.variable} ${manrope.variable}`}>
       <body className="antialiased font-body overflow-x-hidden">
-        <Header />
-        {children}
-        <Footer />
-        <PromoBanner />
+        <LocaleProvider>
+          <Header />
+          {children}
+          <Footer />
+          <PromoBanner />
+        </LocaleProvider>
       </body>
     </html>
   );

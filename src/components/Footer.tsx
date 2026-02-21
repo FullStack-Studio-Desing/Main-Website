@@ -2,17 +2,21 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { brand, footer } from "@/data/site-copy";
+import { brand } from "@/data/site-copy";
 import { motion } from "framer-motion";
+import { useT } from "@/lib/i18n";
 
 export function Footer() {
+  const ft = useT("footer");
+  const sl = useT("serviceLabels");
+
   const services = [
-    { href: "/services/web-development", label: "Web Development" },
-    { href: "/services/software-development", label: "Custom Software" },
-    { href: "/services/ai-solutions", label: "AI & Automation" },
-    { href: "/services/digital-marketing", label: "Digital Marketing" },
-    { href: "/services/paid-advertising", label: "Paid Advertising" },
-    { href: "/services/seo", label: "SEO" },
+    { href: "/services/web-development", slug: "web-development" as const },
+    { href: "/services/software-development", slug: "software-development" as const },
+    { href: "/services/ai-solutions", slug: "ai-solutions" as const },
+    { href: "/services/digital-marketing", slug: "digital-marketing" as const },
+    { href: "/services/paid-advertising", slug: "paid-advertising" as const },
+    { href: "/services/seo", slug: "seo" as const },
   ];
 
   return (
@@ -23,17 +27,17 @@ export function Footer() {
           <div className="flex flex-col items-center justify-between gap-8 lg:flex-row">
             <div>
               <h2 className="font-display text-2xl font-bold text-white sm:text-3xl lg:text-4xl">
-                Let&apos;s work together
+                {ft.workTogether}
               </h2>
               <p className="mt-2 text-white/50">
-                Ready to start your next project?
+                {ft.readyStart}
               </p>
             </div>
             <Link
               href="/contact"
               className="group inline-flex items-center gap-3 rounded-full bg-theme px-8 py-4 font-semibold text-black transition-all hover:bg-white"
             >
-              Get in Touch
+              {ft.getInTouch}
               <svg
                 className="h-5 w-5 transition-transform group-hover:translate-x-1"
                 fill="none"
@@ -67,7 +71,7 @@ export function Footer() {
               />
             </Link>
             <p className="mt-6 text-sm leading-relaxed text-white/40">
-              Full-stack digital agency helping businesses build products that convert, scale, and dominate.
+              {ft.description}
             </p>
 
             {/* Social */}
@@ -107,7 +111,7 @@ export function Footer() {
           {/* Services */}
           <div className="lg:col-span-2">
             <h4 className="text-xs font-semibold uppercase tracking-widest text-white/60">
-              Services
+              {ft.servicesTitle}
             </h4>
             <ul className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
               {services.map((service) => (
@@ -116,7 +120,7 @@ export function Footer() {
                     href={service.href}
                     className="text-sm text-white/40 transition-colors hover:text-theme"
                   >
-                    {service.label}
+                    {sl[service.slug]}
                   </Link>
                 </li>
               ))}
@@ -126,7 +130,7 @@ export function Footer() {
           {/* Contact */}
           <div className="lg:col-span-2">
             <h4 className="text-xs font-semibold uppercase tracking-widest text-white/60">
-              Contact
+              {ft.contactTitle}
             </h4>
             <ul className="mt-6 space-y-4">
               <li>
@@ -147,13 +151,13 @@ export function Footer() {
       <div className="border-t border-white/5">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-4 text-xs text-white/30 sm:flex-row">
-            <p>{footer.copyright}</p>
+            <p>{ft.copyright}</p>
             <div className="flex gap-6">
               <Link href="/privacy" className="hover:text-theme transition-colors">
-                Privacy
+                {ft.privacy}
               </Link>
               <Link href="/terms" className="hover:text-theme transition-colors">
-                Terms
+                {ft.terms}
               </Link>
             </div>
           </div>

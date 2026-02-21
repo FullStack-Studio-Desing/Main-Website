@@ -6,6 +6,9 @@ import { CardSpotlight } from "@/components/ui/card-spotlight";
 import { Spotlight } from "@/components/ui/spotlight";
 import { CornerAccents } from "@/components/ui/floating-graphics";
 import { BackgroundRippleStatic } from "@/components/ui/background-ripple";
+import { useT } from "@/lib/i18n";
+import { useLocale } from "@/lib/locale-context";
+import { t } from "@/lib/translations";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -66,6 +69,10 @@ const serviceIcons: Record<string, React.ReactNode> = {
 };
 
 export function ServicesSection() {
+  const ss = useT("servicesSection");
+  const { locale } = useLocale();
+  const sd = t("serviceData", locale) as Record<string, { title: string; headline: string; price: string }>;
+  const sl = t("serviceLabels", locale) as Record<string, string>;
   return (
     <section id="services" className="relative overflow-hidden border-t border-brand-default bg-bg-body py-24 lg:py-32">
       {/* Background Effects */}
@@ -89,14 +96,14 @@ export function ServicesSection() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-theme/20 bg-theme/5 mb-6"
           >
             <span className="text-sm font-medium text-theme uppercase tracking-wider">
-              What We Do
+              {ss.label}
             </span>
           </motion.div>
           <h2 className="font-display text-4xl font-bold tracking-tight text-text-header sm:text-5xl lg:text-6xl">
-            Full-Stack Digital Services
+            {ss.headline}
           </h2>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-text-body">
-            Everything you need to build, launch, and grow—under one roof. No more juggling agencies.
+            {ss.body}
           </p>
         </motion.div>
 
@@ -129,10 +136,10 @@ export function ServicesSection() {
 
                   {/* Content */}
                   <h3 className="font-display text-xl font-bold text-text-header lg:text-2xl">
-                    {s.title}
+                    {sd[s.slug]?.title || s.title}
                   </h3>
                   <p className="mt-2 text-sm font-semibold text-theme">
-                    {s.headline}
+                    {sd[s.slug]?.headline || s.headline}
                   </p>
                   <p className="mt-3 text-sm leading-relaxed text-text-body">
                     {s.description}
@@ -156,16 +163,16 @@ export function ServicesSection() {
                   <div className="mt-auto pt-6">
                     <div className="flex items-center justify-between border-t border-brand-default pt-6">
                       <div>
-                        <span className="text-xs uppercase tracking-wider text-text-muted">Starting at</span>
+                        <span className="text-xs uppercase tracking-wider text-text-muted">{ss.startingAt}</span>
                         <div className="font-display text-xl font-bold text-text-header">
-                          {s.price}
+                          {sd[s.slug]?.price || s.price}
                         </div>
                       </div>
                       <Link
                         href={`/services/${s.slug}`}
                         className="group flex items-center gap-2 rounded-full bg-theme/10 px-4 py-2 text-sm font-semibold text-theme transition-all duration-300 hover:bg-theme hover:text-bg-body"
                       >
-                        Explore
+                        {ss.explore}
                         <svg className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                         </svg>
@@ -187,13 +194,13 @@ export function ServicesSection() {
           transition={{ duration: 0.6, delay: 0.4 }}
         >
           <p className="text-text-muted mb-4">
-            Need something custom? We love unique challenges.
+            {ss.customNote}
           </p>
           <Link
             href="/contact"
             className="inline-flex items-center gap-2 text-theme font-semibold hover:underline"
           >
-            Let&apos;s discuss your project
+            {ss.customCta}
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>

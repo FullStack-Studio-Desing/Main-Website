@@ -6,13 +6,14 @@ import { FlipWords } from "@/components/ui/flip-words";
 import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
 import { Meteors } from "@/components/ui/meteors";
 import { GlowEffect } from "@/components/ui/animated-beam";
-import { hero } from "@/data/site-copy";
 import { FloatingShapes, OrbitingDots, DataViz, CodeLines } from "@/components/ui/floating-graphics";
+import { useT } from "@/lib/i18n";
 import { ShootingStars, StarsBackground } from "@/components/ui/shooting-stars";
 import { useIsMobile } from "@/lib/hooks";
 
 export function HeroSection() {
   const isMobile = useIsMobile();
+  const hero = useT("hero");
   return (
     <section
       id="home"
@@ -59,7 +60,7 @@ export function HeroSection() {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-theme opacity-75"></span>
             <span className="relative inline-flex h-2 w-2 rounded-full bg-theme"></span>
           </span>
-          <span className="text-text-muted">Now accepting new projects for Q1 2025</span>
+          <span className="text-text-muted">{hero.accepting}</span>
         </div>
       </motion.div>
 
@@ -74,7 +75,7 @@ export function HeroSection() {
             {hero.headline}
             <br />
             <FlipWords
-              words={[...hero.flipWords]}
+              words={[...(hero.flipWords as unknown as string[])]}
               className="text-theme"
               duration={2500}
             />
@@ -113,7 +114,7 @@ export function HeroSection() {
             href="/services"
             className="group flex items-center gap-2 rounded-full border border-brand-default bg-transparent px-6 py-3 font-semibold text-text-header transition-all duration-300 hover:border-theme hover:text-theme"
           >
-            Explore Services
+            {hero.exploreServices}
             <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
           </Link>
         </motion.div>
@@ -125,7 +126,7 @@ export function HeroSection() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
-          {hero.stats.map((stat, index) => (
+          {(hero.stats as unknown as { value: string; label: string }[]).map((stat, index) => (
             <motion.div
               key={index}
               className="relative text-center"
@@ -151,7 +152,7 @@ export function HeroSection() {
           transition={{ duration: 0.6, delay: 0.8 }}
         >
           <p className="mb-6 text-sm uppercase tracking-wider text-text-muted">
-            Trusted by innovative companies worldwide
+            {hero.trustedBy}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 opacity-50 sm:gap-8">
             {["TechStart", "GrowthCo", "ScaleUp", "LaunchPad", "ServicePro"].map((company, i) => (
@@ -171,7 +172,7 @@ export function HeroSection() {
         transition={{ duration: 0.6, delay: 1, repeat: Infinity, repeatType: "reverse" }}
       >
         <div className="flex flex-col items-center gap-2 text-text-muted">
-          <span className="text-xs uppercase tracking-wider">Scroll</span>
+          <span className="text-xs uppercase tracking-wider">{hero.scroll}</span>
           <svg className="h-5 w-5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
           </svg>

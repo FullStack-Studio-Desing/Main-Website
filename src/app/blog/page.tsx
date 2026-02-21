@@ -1,26 +1,25 @@
+"use client";
+
 import Link from "next/link";
 import { Breadcrumb } from "@/components/Breadcrumb";
-import { blog } from "@/data/site-copy";
 import { CardSpotlight } from "@/components/ui/card-spotlight";
-
-export const metadata = {
-  title: "Blog — FullStack Studio Design",
-  description: "Latest posts on web development, design systems, and UI/UX.",
-};
+import { useT } from "@/lib/i18n";
 
 export default function BlogPage() {
+  const bl = useT("blog");
+
   return (
     <main className="min-h-screen bg-white dark:bg-neutral-900">
-      <Breadcrumb title="Blog" />
+      <Breadcrumb title={bl.headline} />
       <section className="border-t border-neutral-200 bg-neutral-50 py-20 dark:border-neutral-800 dark:bg-neutral-950">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <h2 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white sm:text-4xl">
-              {blog.headline}
+              {bl.headline}
             </h2>
           </div>
           <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {blog.posts.map((post) => (
+            {bl.posts.map((post) => (
               <CardSpotlight key={post.title}>
                 <article className="p-6">
                   <span className="text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
@@ -39,7 +38,7 @@ export default function BlogPage() {
                     href="#"
                     className="mt-4 inline-block text-sm font-medium text-neutral-900 underline dark:text-white"
                   >
-                    Read More
+                    {bl.readMore}
                   </Link>
                 </article>
               </CardSpotlight>

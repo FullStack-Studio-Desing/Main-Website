@@ -1,9 +1,9 @@
 "use client";
 import Link from "next/link";
 import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
-import { packages } from "@/data/site-copy";
 import { useRef, useState } from "react";
 import { Spotlight } from "@/components/ui/spotlight";
+import { useT } from "@/lib/i18n";
 
 interface Package {
   name: string;
@@ -16,10 +16,12 @@ interface Package {
 
 function PricingCard({
   pkg,
-  index
+  index,
+  popularLabel = "Popular",
 }: {
   pkg: Package;
   index: number;
+  popularLabel?: string;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -93,7 +95,7 @@ function PricingCard({
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-theme opacity-75" />
                   <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-theme" />
                 </span>
-                Popular
+                {popularLabel}
               </span>
             </div>
           )}
@@ -176,6 +178,8 @@ function PricingCard({
 }
 
 export function PackagesSection() {
+  const ps = useT("packagesSection");
+  const packages = useT("packages") as unknown as { name: string; price: string; bestFor: string; includes: string[]; cta: string; popular?: boolean }[];
   return (
     <section id="packages" className="relative overflow-hidden bg-[#050505] py-24 lg:py-32">
       {/* Spotlight effect */}
@@ -203,20 +207,20 @@ export function PackagesSection() {
             viewport={{ once: true }}
             className="inline-block text-theme text-sm font-medium uppercase tracking-widest mb-4"
           >
-            Pricing
+            {ps.label}
           </motion.span>
           <h2 className="font-display text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
-            Simple, transparent pricing
+            {ps.headline}
           </h2>
           <p className="mt-6 text-lg text-white/50 leading-relaxed">
-            No hidden fees. No scope creep. Pick the package that matches your ambition.
+            {ps.body}
           </p>
         </motion.div>
 
         {/* Pricing Grid - 3 columns */}
         <div className="mt-20 grid gap-8 lg:grid-cols-3 items-stretch">
           {packages.map((pkg, index) => (
-            <PricingCard key={pkg.name} pkg={pkg} index={index} />
+            <PricingCard key={pkg.name} pkg={pkg} index={index} popularLabel={ps.popular} />
           ))}
         </div>
 
@@ -229,9 +233,9 @@ export function PackagesSection() {
           transition={{ duration: 0.6, delay: 0.5 }}
         >
           <p className="text-sm text-white/40">
-            All packages include a detailed project proposal.{" "}
+            {ps.bottomNote}{" "}
             <Link href="/contact" className="text-theme hover:text-white transition-colors">
-              Need something custom?
+              {ps.customLink}
             </Link>
           </p>
         </motion.div>

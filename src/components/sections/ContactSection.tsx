@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { brand, contact } from "@/data/site-copy";
+import { brand } from "@/data/site-copy";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
+import { useLocale } from "@/lib/locale-context";
+import { t } from "@/lib/translations";
 import { Input, Textarea, Select } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Spotlight } from "@/components/ui/spotlight";
@@ -37,6 +40,9 @@ export function ContactSection() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const ct = useT("contactSection");
+  const { locale } = useLocale();
+  const brandT = t("brand", locale);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -151,12 +157,12 @@ export function ContactSection() {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-theme"></span>
             </span>
             <span className="text-sm font-medium text-theme uppercase tracking-wider">
-              Available for Projects
+              {ct.availableBadge}
             </span>
           </motion.div>
 
           <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-text-header mb-6">
-            {contact.headline.split(" ").map((word, i) => (
+            {ct.headline.split(" ").map((word, i) => (
               <motion.span
                 key={i}
                 className="inline-block mr-2 sm:mr-3"
@@ -175,7 +181,7 @@ export function ContactSection() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
-            {contact.subheadline}
+            {ct.subheadline}
           </motion.p>
         </motion.div>
 
@@ -206,7 +212,7 @@ export function ContactSection() {
                     />
                   </svg>
                 }
-                label="Email"
+                label={ct.email}
                 value={brand.email}
                 href={`mailto:${brand.email}`}
                 delay={0.4}
@@ -233,8 +239,8 @@ export function ContactSection() {
                     />
                   </svg>
                 }
-                label="Service Area"
-                value={brand.location}
+                label={ct.serviceArea}
+                value={brandT.location}
                 delay={0.6}
               />
               <ContactCard
@@ -253,8 +259,8 @@ export function ContactSection() {
                     />
                   </svg>
                 }
-                label="Business Hours"
-                value={brand.hours}
+                label={ct.businessHours}
+                value={brandT.hours}
                 delay={0.7}
               />
             </div>
@@ -267,10 +273,10 @@ export function ContactSection() {
               transition={{ duration: 0.6, delay: 0.9 }}
             >
               <p className="text-xs uppercase tracking-wider text-text-muted mb-4">
-                Trusted by industry leaders
+                {ct.trustedBy}
               </p>
               <div className="flex flex-wrap gap-4">
-                {["200+ Projects", "98% Satisfaction", "3x Avg ROI"].map(
+                {ct.badges.map(
                   (badge, i) => (
                     <motion.div
                       key={badge}
@@ -314,11 +320,10 @@ export function ContactSection() {
               <div className="relative rounded-2xl border border-brand-default bg-bg-body/80 backdrop-blur-xl p-8 lg:p-10">
                 <div className="mb-8">
                   <h2 className="font-display text-2xl lg:text-3xl font-bold text-text-header">
-                    Book Your Free Strategy Call
+                    {ct.formTitle}
                   </h2>
                   <p className="mt-2 text-text-muted">
-                    Fill out the form and we&apos;ll get back to you within 24
-                    hours.
+                    {ct.formSubtitle}
                   </p>
                 </div>
 
@@ -354,34 +359,34 @@ export function ContactSection() {
                       </svg>
                     </motion.div>
                     <h3 className="text-xl font-semibold text-text-header mb-2">
-                      Message Sent Successfully!
+                      {ct.successTitle}
                     </h3>
                     <p className="text-text-body">
-                      We&apos;ll get back to you within 24 hours. Talk soon!
+                      {ct.successBody}
                     </p>
                   </motion.div>
                 ) : (
                   <form onSubmit={onSubmit} className="space-y-6">
                     <div className="grid gap-6 sm:grid-cols-2">
                       <LabelInputContainer>
-                        <Label htmlFor="name">{contact.formFields.name}</Label>
+                        <Label htmlFor="name">{ct.fieldName}</Label>
                         <Input
                           id="name"
                           name="name"
                           type="text"
-                          placeholder="John Smith"
+                          placeholder={ct.placeholderName}
                           required
                         />
                       </LabelInputContainer>
                       <LabelInputContainer>
                         <Label htmlFor="email">
-                          {contact.formFields.email}
+                          {ct.fieldEmail}
                         </Label>
                         <Input
                           id="email"
                           name="email"
                           type="email"
-                          placeholder="john@company.com"
+                          placeholder={ct.placeholderEmail}
                           required
                         />
                       </LabelInputContainer>
@@ -390,24 +395,24 @@ export function ContactSection() {
                     <div className="grid gap-6 sm:grid-cols-2">
                       <LabelInputContainer>
                         <Label htmlFor="company">
-                          {contact.formFields.company}
+                          {ct.fieldCompany}
                         </Label>
                         <Input
                           id="company"
                           name="company"
                           type="text"
-                          placeholder="Your Company"
+                          placeholder={ct.placeholderCompany}
                         />
                       </LabelInputContainer>
                       <LabelInputContainer>
                         <Label htmlFor="phone">
-                          {contact.formFields.phone}
+                          {ct.fieldPhone}
                         </Label>
                         <Input
                           id="phone"
                           name="phone"
                           type="tel"
-                          placeholder="+1 (555) 000-0000"
+                          placeholder={ct.placeholderPhone}
                         />
                       </LabelInputContainer>
                     </div>
@@ -415,42 +420,36 @@ export function ContactSection() {
                     <div className="grid gap-6 sm:grid-cols-2">
                       <LabelInputContainer>
                         <Label htmlFor="service">
-                          {contact.formFields.service}
+                          {ct.fieldService}
                         </Label>
                         <Select id="service" name="service" required>
-                          <option value="">Select a service</option>
-                          <option>Web Development</option>
-                          <option>Custom Software</option>
-                          <option>AI & Automation</option>
-                          <option>Digital Marketing</option>
-                          <option>Paid Advertising</option>
-                          <option>SEO</option>
-                          <option>Full Package</option>
+                          <option value="">{ct.selectService}</option>
+                          {ct.serviceOptions.map((opt) => (
+                            <option key={opt}>{opt}</option>
+                          ))}
                         </Select>
                       </LabelInputContainer>
                       <LabelInputContainer>
                         <Label htmlFor="budget">
-                          {contact.formFields.budget}
+                          {ct.fieldBudget}
                         </Label>
                         <Select id="budget" name="budget">
-                          <option value="">Select budget range</option>
-                          <option>Under $5,000</option>
-                          <option>$5,000 - $15,000</option>
-                          <option>$15,000 - $35,000</option>
-                          <option>$35,000+</option>
-                          <option>Ongoing Retainer</option>
+                          <option value="">{ct.selectBudget}</option>
+                          {ct.budgetOptions.map((opt) => (
+                            <option key={opt}>{opt}</option>
+                          ))}
                         </Select>
                       </LabelInputContainer>
                     </div>
 
                     <LabelInputContainer>
                       <Label htmlFor="message">
-                        {contact.formFields.message}
+                        {ct.fieldMessage}
                       </Label>
                       <Textarea
                         id="message"
                         name="message"
-                        placeholder="Tell us about your project, goals, and timeline..."
+                        placeholder={ct.placeholderMessage}
                         rows={5}
                         required
                       />
@@ -474,11 +473,11 @@ export function ContactSection() {
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                             </svg>
-                            Sending...
+                            {ct.sending}
                           </>
                         ) : (
                           <>
-                            Send Message
+                            {ct.sendMessage}
                             <svg
                               className="h-5 w-5 transition-transform duration-300 group-hover/btn:translate-x-1"
                               fill="none"
@@ -499,12 +498,12 @@ export function ContactSection() {
                     </button>
 
                     <p className="text-center text-xs text-text-muted pt-2">
-                      By submitting, you agree to our{" "}
+                      {ct.privacyConsent}{" "}
                       <a
                         href="/privacy"
                         className="text-theme hover:underline"
                       >
-                        Privacy Policy
+                        {ct.privacyLink}
                       </a>
                     </p>
                   </form>

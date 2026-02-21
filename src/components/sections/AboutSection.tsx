@@ -6,36 +6,17 @@ import { Spotlight } from "@/components/ui/spotlight";
 import { BackgroundRippleStatic } from "@/components/ui/background-ripple";
 import { ShootingStars, StarsBackground } from "@/components/ui/shooting-stars";
 
+import { useT } from "@/lib/i18n";
+
 // Dynamically import Globe to avoid SSR issues with canvas
 const Globe = dynamic(
   () => import("@/components/ui/globe").then((mod) => mod.Globe),
   { ssr: false }
 );
 
-const values = [
-  {
-    number: "01",
-    title: "Ship Fast, Ship Right",
-    description: "Weeks, not months. Quality at speed.",
-  },
-  {
-    number: "02",
-    title: "Outcomes Over Output",
-    description: "Your growth is our KPI.",
-  },
-  {
-    number: "03",
-    title: "Radically Transparent",
-    description: "No surprises. You always know where you stand.",
-  },
-  {
-    number: "04",
-    title: "Built to Scale",
-    description: "We build for tomorrow, not just today.",
-  },
-];
-
 export function AboutSection() {
+  const aboutT = useT("about");
+  const values = aboutT.values as unknown as { number: string; title: string; description: string }[];
   return (
     <section id="about" className="relative overflow-hidden bg-bg-body py-24 lg:py-32">
       {/* Background gradient */}
@@ -80,13 +61,13 @@ export function AboutSection() {
           >
             {/* Header */}
             <span className="inline-block text-theme text-sm font-semibold uppercase tracking-wider mb-4">
-              About Us
+              {aboutT.label}
             </span>
             <h2 className="font-display text-4xl font-bold tracking-tight text-text-header sm:text-5xl lg:text-6xl">
-              More Than an Agency
+              {aboutT.headline}
             </h2>
             <p className="mt-6 text-xl text-text-body leading-relaxed max-w-lg">
-              Engineers, designers, and marketers building great products—fast.
+              {aboutT.body}
             </p>
 
             {/* Values - Vertical Stack */}
