@@ -19,10 +19,10 @@ export function Footer() {
     <footer className="relative bg-[#050505]">
       {/* Top CTA Strip */}
       <div className="border-b border-white/5">
-        <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-8 lg:flex-row">
             <div>
-              <h2 className="font-display text-3xl font-bold text-white lg:text-4xl">
+              <h2 className="font-display text-2xl font-bold text-white sm:text-3xl lg:text-4xl">
                 Let&apos;s work together
               </h2>
               <p className="mt-2 text-white/50">
@@ -53,7 +53,7 @@ export function Footer() {
       </div>
 
       {/* Main Footer */}
-      <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-6">
           {/* Brand */}
           <div className="lg:col-span-2">
@@ -145,7 +145,7 @@ export function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-t border-white/5">
-        <div className="mx-auto max-w-7xl px-6 py-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-4 text-xs text-white/30 sm:flex-row">
             <p>{footer.copyright}</p>
             <div className="flex gap-6">

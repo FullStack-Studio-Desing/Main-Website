@@ -140,11 +140,11 @@ export function PackageDetails() {
 
           {/* Decorative elements - contained to prevent mobile overflow */}
           <div
-            className="absolute top-0 right-0 w-[300px] h-[300px] md:w-[600px] md:h-[600px] rounded-full blur-[120px] opacity-20 translate-x-1/2 -translate-y-1/4"
+            className="hidden sm:block absolute top-0 right-0 w-[300px] h-[300px] md:w-[600px] md:h-[600px] rounded-full blur-[120px] opacity-20 translate-x-1/2 -translate-y-1/4"
             style={{ backgroundColor: pkg.color }}
           />
           <div
-            className="absolute bottom-0 left-0 w-[200px] h-[200px] md:w-[400px] md:h-[400px] rounded-full blur-[100px] opacity-10 -translate-x-1/2 translate-y-1/4"
+            className="hidden sm:block absolute bottom-0 left-0 w-[200px] h-[200px] md:w-[400px] md:h-[400px] rounded-full blur-[100px] opacity-10 -translate-x-1/2 translate-y-1/4"
             style={{ backgroundColor: pkg.color }}
           />
 
@@ -157,7 +157,7 @@ export function PackageDetails() {
               viewport={{ once: true }}
             >
               <span
-                className="text-8xl lg:text-9xl font-display font-bold opacity-10"
+                className="text-6xl sm:text-8xl lg:text-9xl font-display font-bold opacity-10"
                 style={{ color: pkg.color }}
               >
                 0{index + 1}
@@ -182,12 +182,12 @@ export function PackageDetails() {
                   </span>
                 )}
 
-                <h2 className="font-display text-5xl lg:text-7xl font-bold text-white mb-4">
+                <h2 className="font-display text-3xl sm:text-5xl lg:text-7xl font-bold text-white mb-4">
                   {pkg.name}
                 </h2>
 
                 <p
-                  className="text-xl lg:text-2xl font-medium mb-6"
+                  className="text-lg sm:text-xl lg:text-2xl font-medium mb-6"
                   style={{ color: pkg.color }}
                 >
                   {pkg.tagline}
@@ -211,7 +211,7 @@ export function PackageDetails() {
                     Starting at
                   </span>
                   <span
-                    className="font-display text-6xl lg:text-8xl font-bold"
+                    className="font-display text-4xl sm:text-6xl lg:text-8xl font-bold"
                     style={{ color: pkg.color }}
                   >
                     {pkg.price}
@@ -230,7 +230,7 @@ export function PackageDetails() {
                       transition={{ delay: 0.2 + i * 0.1 }}
                     >
                       <div
-                        className="text-2xl lg:text-3xl font-bold mb-1"
+                        className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1"
                         style={{ color: pkg.color }}
                       >
                         {stat.value}

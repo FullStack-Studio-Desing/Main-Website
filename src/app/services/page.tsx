@@ -61,7 +61,7 @@ export default function ServicesPage() {
         <div className="absolute inset-0 z-[2]">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(191,247,71,0.12),rgba(6,6,6,0))]" />
           <motion.div
-            className="absolute top-1/3 right-1/4 w-96 h-96 bg-theme/5 rounded-full blur-[100px]"
+            className="hidden sm:block absolute top-1/3 right-1/4 w-96 h-96 bg-theme/5 rounded-full blur-[100px]"
             animate={{ x: [0, -30, 0], y: [0, 20, 0] }}
             transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
           />

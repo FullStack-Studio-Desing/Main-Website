@@ -340,8 +340,8 @@ export default function ServicePage() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_50%,rgba(191,247,71,0.04),transparent)]" />
 
         {/* Decorative elements */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-theme/5 rounded-full blur-[100px]" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-theme-accent/5 rounded-full blur-[120px]" />
+        <div className="hidden sm:block absolute top-20 left-10 w-72 h-72 bg-theme/5 rounded-full blur-[100px]" />
+        <div className="hidden sm:block absolute bottom-20 right-10 w-96 h-96 bg-theme-accent/5 rounded-full blur-[120px]" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <motion.div

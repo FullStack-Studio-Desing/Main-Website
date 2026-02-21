@@ -17,7 +17,7 @@ export function Breadcrumb({
 }) {
   return (
     <nav
-      className="relative overflow-hidden border-b border-brand-default bg-bg-section py-16 lg:py-20"
+      className="relative overflow-hidden border-b border-brand-default bg-bg-section pt-24 pb-12 sm:pt-28 sm:pb-16 lg:pt-32 lg:pb-20"
       aria-label="Breadcrumb"
     >
       {/* Background Effects */}
@@ -86,7 +86,7 @@ export function Breadcrumb({
 
         {/* Page Title */}
         <motion.h1
-          className="mt-6 font-display text-4xl font-bold text-text-header sm:text-5xl lg:text-6xl"
+          className="mt-6 font-display text-3xl font-bold text-text-header sm:text-5xl lg:text-6xl"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}

@@ -101,7 +101,7 @@ export function ContactSection() {
 
         {/* Floating orbs */}
         <motion.div
-          className="absolute top-1/4 left-1/4 w-96 h-96 bg-theme/5 rounded-full blur-[100px]"
+          className="hidden sm:block absolute top-1/4 left-1/4 w-96 h-96 bg-theme/5 rounded-full blur-[100px]"
           animate={{
             x: [0, 50, 0],
             y: [0, 30, 0],
@@ -113,7 +113,7 @@ export function ContactSection() {
           }}
         />
         <motion.div
-          className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-theme-accent/5 rounded-full blur-[100px]"
+          className="hidden sm:block absolute bottom-1/4 right-1/4 w-80 h-80 bg-theme-accent/5 rounded-full blur-[100px]"
           animate={{
             x: [0, -40, 0],
             y: [0, -20, 0],
