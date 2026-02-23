@@ -47,6 +47,7 @@ export default function ServicesPage() {
   const sl = useT("serviceLabels");
   const sd = useT("serviceData");
   const sDescs = useT("serviceDescs");
+  const sc = useT("serviceContent");
 
   return (
     <main className="min-h-screen bg-bg-body">
@@ -147,7 +148,7 @@ export default function ServicesPage() {
                     </p>
 
                     <div className="mt-6 flex flex-wrap gap-2">
-                      {service.includes.slice(0, 3).map((item) => (
+                      {(sc[slug as keyof typeof sc]?.includes || service.includes).slice(0, 3).map((item) => (
                         <span
                           key={item.title}
                           className="inline-flex items-center rounded-full bg-white/5 px-3 py-1 text-xs text-text-muted"

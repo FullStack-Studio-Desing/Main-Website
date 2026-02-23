@@ -75,7 +75,7 @@ export function ContactSection() {
 
       setSubmitted(true);
     } catch {
-      setError("Something went wrong. Please try again or email us directly.");
+      setError(ct.errorMessage);
     } finally {
       setLoading(false);
     }

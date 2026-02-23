@@ -3,12 +3,16 @@
 import Link from "next/link";
 import Image from "next/image";
 import { brand } from "@/data/site-copy";
+import { useLocale } from "@/lib/locale-context";
+import { t } from "@/lib/translations";
 import { motion } from "framer-motion";
 import { useT } from "@/lib/i18n";
 
 export function Footer() {
   const ft = useT("footer");
   const sl = useT("serviceLabels");
+  const { locale } = useLocale();
+  const brandT = t("brand", locale);
 
   const services = [
     { href: "/services/web-development", slug: "web-development" as const },
@@ -141,7 +145,7 @@ export function Footer() {
                   {brand.email}
                 </a>
               </li>
-              <li className="text-sm text-white/40">{brand.location}</li>
+              <li className="text-sm text-white/40">{brandT.location}</li>
             </ul>
           </div>
         </div>

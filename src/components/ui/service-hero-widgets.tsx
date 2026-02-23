@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
 
 // ============================================
 // SOFTWARE DEVELOPMENT WIDGET
@@ -10,6 +11,7 @@ import { cn } from "@/lib/utils";
 // ============================================
 export function SoftwareDevWidget() {
   const [activeConnection, setActiveConnection] = useState(0);
+  const sw = useT("serviceWidgets");
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -19,12 +21,12 @@ export function SoftwareDevWidget() {
   }, []);
 
   const nodes = [
-    { id: "frontend", label: "Frontend", x: 50, y: 20, icon: "monitor" },
-    { id: "api", label: "API Gateway", x: 50, y: 50, icon: "server" },
-    { id: "auth", label: "Auth", x: 20, y: 50, icon: "lock" },
-    { id: "db", label: "Database", x: 80, y: 50, icon: "database" },
-    { id: "cache", label: "Cache", x: 20, y: 80, icon: "zap" },
-    { id: "storage", label: "Storage", x: 80, y: 80, icon: "cloud" },
+    { id: "frontend", label: sw.frontend, x: 50, y: 20, icon: "monitor" },
+    { id: "api", label: sw.apiGateway, x: 50, y: 50, icon: "server" },
+    { id: "auth", label: sw.auth, x: 20, y: 50, icon: "lock" },
+    { id: "db", label: sw.database, x: 80, y: 50, icon: "database" },
+    { id: "cache", label: sw.cache, x: 20, y: 80, icon: "zap" },
+    { id: "storage", label: sw.storage, x: 80, y: 80, icon: "cloud" },
   ];
 
   const connections = [
@@ -133,10 +135,10 @@ export function SoftwareDevWidget() {
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             />
-            <span className="text-[10px] text-green-400">All systems operational</span>
+            <span className="text-[10px] text-green-400">{sw.allSystemsOperational}</span>
           </div>
           <div className="text-[10px] text-text-muted">
-            <span className="text-theme">6</span> microservices
+            <span className="text-theme">6</span> {sw.microservices}
           </div>
         </div>
       </div>
@@ -150,6 +152,7 @@ export function SoftwareDevWidget() {
 // ============================================
 export function AISolutionsWidget() {
   const [processingStep, setProcessingStep] = useState(0);
+  const sw = useT("serviceWidgets");
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -158,12 +161,12 @@ export function AISolutionsWidget() {
     return () => clearInterval(interval);
   }, []);
 
-  const steps = ["Input", "Processing", "Analysis", "Output"];
+  const steps = [sw.input, sw.processing, sw.analysis, sw.output];
   const prompts = [
-    "Analyzing customer data...",
-    "Training neural network...",
-    "Generating insights...",
-    "Optimizing predictions...",
+    sw.promptAnalyzing,
+    sw.promptTraining,
+    sw.promptGenerating,
+    sw.promptOptimizing,
   ];
 
   return (
@@ -184,7 +187,7 @@ export function AISolutionsWidget() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
             </motion.div>
-            <span className="text-xs font-medium text-text-header">AI Engine</span>
+            <span className="text-xs font-medium text-text-header">{sw.aiEngine}</span>
           </div>
           <div className="flex items-center gap-1">
             <motion.div
@@ -192,7 +195,7 @@ export function AISolutionsWidget() {
               animate={{ opacity: [1, 0.3, 1] }}
               transition={{ duration: 1.5, repeat: Infinity }}
             />
-            <span className="text-[10px] text-theme">Active</span>
+            <span className="text-[10px] text-theme">{sw.active}</span>
           </div>
         </div>
 
@@ -264,15 +267,15 @@ export function AISolutionsWidget() {
           <div className="flex justify-between mt-4 pt-4 border-t border-white/10">
             <div className="text-center">
               <div className="text-lg font-bold text-theme">98.5%</div>
-              <div className="text-[9px] text-text-muted">Accuracy</div>
+              <div className="text-[9px] text-text-muted">{sw.accuracy}</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-bold text-text-header">2.4M</div>
-              <div className="text-[9px] text-text-muted">Data Points</div>
+              <div className="text-[9px] text-text-muted">{sw.dataPoints}</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-bold text-text-header">24ms</div>
-              <div className="text-[9px] text-text-muted">Response</div>
+              <div className="text-[9px] text-text-muted">{sw.response}</div>
             </div>
           </div>
         </div>
@@ -287,6 +290,7 @@ export function AISolutionsWidget() {
 // ============================================
 export function DigitalMarketingWidget() {
   const [selectedChannel, setSelectedChannel] = useState(0);
+  const sw = useT("serviceWidgets");
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -296,10 +300,10 @@ export function DigitalMarketingWidget() {
   }, []);
 
   const channels = [
-    { name: "Social", color: "#E91E63", value: 42, icon: "share" },
-    { name: "Email", color: "#2196F3", value: 28, icon: "mail" },
-    { name: "Organic", color: "#4CAF50", value: 18, icon: "search" },
-    { name: "Referral", color: "#FF9800", value: 12, icon: "link" },
+    { name: sw.social, color: "#E91E63", value: 42, icon: "share" },
+    { name: sw.email, color: "#2196F3", value: 28, icon: "mail" },
+    { name: sw.organic, color: "#4CAF50", value: 18, icon: "search" },
+    { name: sw.referral, color: "#FF9800", value: 12, icon: "link" },
   ];
 
   const chartData = useMemo(() =>
@@ -320,18 +324,18 @@ export function DigitalMarketingWidget() {
             <svg className="w-4 h-4 text-pink-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
-            <span className="text-xs font-medium text-text-header">Campaign Dashboard</span>
+            <span className="text-xs font-medium text-text-header">{sw.campaignDashboard}</span>
           </div>
-          <span className="text-[10px] text-text-muted">Last 30 days</span>
+          <span className="text-[10px] text-text-muted">{sw.last30Days}</span>
         </div>
 
         <div className="p-4 h-[calc(100%-40px)] flex flex-col gap-4">
           {/* Top metrics */}
           <div className="grid grid-cols-3 gap-2">
             {[
-              { label: "Reach", value: "847K", change: "+23%" },
-              { label: "Engagement", value: "12.4%", change: "+8%" },
-              { label: "Conversions", value: "2,847", change: "+31%" },
+              { label: sw.reach, value: "847K", change: "+23%" },
+              { label: sw.engagement, value: "12.4%", change: "+8%" },
+              { label: sw.conversions, value: "2,847", change: "+31%" },
             ].map((metric) => (
               <div key={metric.label} className="bg-white/5 rounded-lg p-2 text-center">
                 <div className="text-[10px] text-text-muted">{metric.label}</div>
@@ -379,7 +383,7 @@ export function DigitalMarketingWidget() {
 
           {/* Channel breakdown */}
           <div className="space-y-2">
-            <div className="text-[10px] text-text-muted mb-2">Traffic Sources</div>
+            <div className="text-[10px] text-text-muted mb-2">{sw.trafficSources}</div>
             <div className="flex gap-1 h-3 rounded-full overflow-hidden">
               {channels.map((channel, i) => (
                 <motion.div
@@ -416,6 +420,7 @@ export function DigitalMarketingWidget() {
 // Real-time ad performance metrics
 // ============================================
 export function PaidAdvertisingWidget() {
+  const sw = useT("serviceWidgets");
   const [metrics, setMetrics] = useState({
     spend: 12847,
     impressions: 2400000,
@@ -455,7 +460,7 @@ export function PaidAdvertisingWidget() {
             <svg className="w-4 h-4 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span className="text-xs font-medium text-text-header">Ad Performance</span>
+            <span className="text-xs font-medium text-text-header">{sw.adPerformance}</span>
           </div>
           <div className="flex items-center gap-1">
             <motion.div
@@ -463,14 +468,14 @@ export function PaidAdvertisingWidget() {
               animate={{ scale: [1, 1.3, 1] }}
               transition={{ duration: 1, repeat: Infinity }}
             />
-            <span className="text-[10px] text-green-400">Live</span>
+            <span className="text-[10px] text-green-400">{sw.live}</span>
           </div>
         </div>
 
         <div className="p-4 h-[calc(100%-40px)] flex flex-col gap-3">
           {/* ROAS highlight */}
           <div className="bg-gradient-to-r from-theme/20 to-theme/5 rounded-xl p-4 text-center border border-theme/20">
-            <div className="text-[10px] text-text-muted mb-1">Return on Ad Spend</div>
+            <div className="text-[10px] text-text-muted mb-1">{sw.returnOnAdSpend}</div>
             <motion.div
               className="text-4xl font-bold text-theme"
               key={metrics.roas.toFixed(1)}
@@ -479,16 +484,16 @@ export function PaidAdvertisingWidget() {
             >
               {metrics.roas.toFixed(1)}x
             </motion.div>
-            <div className="text-[10px] text-green-400 mt-1">+18% vs last month</div>
+            <div className="text-[10px] text-green-400 mt-1">{sw.vsLastMonth}</div>
           </div>
 
           {/* Metrics grid */}
           <div className="grid grid-cols-2 gap-2">
             {[
-              { label: "Ad Spend", value: `$${(metrics.spend / 1000).toFixed(1)}K`, icon: "dollar" },
-              { label: "Impressions", value: `${(metrics.impressions / 1000000).toFixed(1)}M`, icon: "eye" },
-              { label: "Clicks", value: `${(metrics.clicks / 1000).toFixed(1)}K`, icon: "cursor" },
-              { label: "Conversions", value: metrics.conversions.toLocaleString(), icon: "check" },
+              { label: sw.adSpend, value: `$${(metrics.spend / 1000).toFixed(1)}K`, icon: "dollar" },
+              { label: sw.impressions, value: `${(metrics.impressions / 1000000).toFixed(1)}M`, icon: "eye" },
+              { label: sw.clicks, value: `${(metrics.clicks / 1000).toFixed(1)}K`, icon: "cursor" },
+              { label: sw.conversions, value: metrics.conversions.toLocaleString(), icon: "check" },
             ].map((metric) => (
               <motion.div
                 key={metric.label}
@@ -510,7 +515,7 @@ export function PaidAdvertisingWidget() {
 
           {/* Platform breakdown */}
           <div className="mt-auto">
-            <div className="text-[10px] text-text-muted mb-2">Spend by Platform</div>
+            <div className="text-[10px] text-text-muted mb-2">{sw.spendByPlatform}</div>
             <div className="space-y-2">
               {platforms.map((platform) => (
                 <div key={platform.name} className="flex items-center gap-2">
@@ -540,6 +545,7 @@ export function PaidAdvertisingWidget() {
 // Search rankings visualization
 // ============================================
 export function SEOWidget() {
+  const sw = useT("serviceWidgets");
   const [animatedRanks, setAnimatedRanks] = useState([12, 8, 3]);
 
   useEffect(() => {
@@ -575,13 +581,13 @@ export function SEOWidget() {
             <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            <span className="text-xs font-medium text-text-header">SEO Rankings</span>
+            <span className="text-xs font-medium text-text-header">{sw.seoRankings}</span>
           </div>
           <div className="flex items-center gap-1 bg-emerald-500/20 px-2 py-0.5 rounded-full">
             <svg className="w-3 h-3 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
             </svg>
-            <span className="text-[10px] text-emerald-400">Rising</span>
+            <span className="text-[10px] text-emerald-400">{sw.rising}</span>
           </div>
         </div>
 
@@ -623,7 +629,7 @@ export function SEOWidget() {
 
           {/* Organic traffic chart */}
           <div className="flex-1 mt-2">
-            <div className="text-[10px] text-text-muted mb-2">Organic Traffic This Week</div>
+            <div className="text-[10px] text-text-muted mb-2">{sw.organicTrafficThisWeek}</div>
             <div className="flex items-end justify-between h-16 gap-1">
               {organicGrowth.map((day, i) => (
                 <div key={day.day} className="flex-1 flex flex-col items-center gap-1">
@@ -643,15 +649,15 @@ export function SEOWidget() {
           <div className="grid grid-cols-3 gap-2 pt-3 border-t border-white/10">
             <div className="text-center">
               <div className="text-lg font-bold text-theme">#1</div>
-              <div className="text-[9px] text-text-muted">Top Ranking</div>
+              <div className="text-[9px] text-text-muted">{sw.topRanking}</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-bold text-text-header">+312%</div>
-              <div className="text-[9px] text-text-muted">Traffic Growth</div>
+              <div className="text-[9px] text-text-muted">{sw.trafficGrowth}</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-bold text-text-header">847</div>
-              <div className="text-[9px] text-text-muted">Keywords</div>
+              <div className="text-[9px] text-text-muted">{sw.keywords}</div>
             </div>
           </div>
         </div>

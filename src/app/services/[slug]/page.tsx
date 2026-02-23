@@ -137,6 +137,7 @@ export default function ServicePage() {
   const sd = useT("serviceData");
   const sct = useT("serviceCardTitles");
   const scd = useT("serviceCardDescriptions");
+  const sc = useT("serviceContent");
 
   if (!service) {
     return (
@@ -154,6 +155,7 @@ export default function ServicePage() {
   const benefits = serviceBenefits[slug] || serviceBenefits["web-development"];
   const visual = serviceVisuals[slug] || serviceVisuals["web-development"];
   const serviceT = sd[slug as keyof typeof sd];
+  const serviceC = sc[slug as keyof typeof sc];
   const trustIndicators = [dt.noHiddenFees, dt.freeConsultation, dt.resultsGuaranteed];
 
   return (
@@ -213,7 +215,7 @@ export default function ServicePage() {
               </h1>
 
               <p className="text-lg text-text-body leading-relaxed mb-8 max-w-xl">
-                {service.description}
+                {serviceC?.description || service.description}
               </p>
 
               <div className="flex flex-wrap items-center gap-6 mb-10">
@@ -301,7 +303,12 @@ export default function ServicePage() {
             </p>
           </motion.div>
 
-          <ServiceIncludesBento includes={service.includes} />
+          <ServiceIncludesBento includes={(serviceC?.includes?.map((inc, i) => ({
+            ...service.includes[i],
+            title: inc.title as string,
+            description: inc.description as string,
+            features: [...inc.features] as string[],
+          })) || service.includes) as import("@/data/site-copy").ServiceIncludeItem[]} />
         </div>
       </section>
 
