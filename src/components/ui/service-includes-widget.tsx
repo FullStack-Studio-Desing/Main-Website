@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
 import type { ServiceIncludeItem } from "@/data/site-copy";
 
 const iconPaths: Record<ServiceIncludeItem["icon"], React.ReactNode> = {
@@ -44,6 +45,7 @@ interface ServiceIncludesWidgetProps {
 export function ServiceIncludesWidget({ includes, className }: ServiceIncludesWidgetProps) {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const siw = useT("serviceIncludesWidget");
 
   const handleToggle = (index: number) => {
     setExpandedIndex(expandedIndex === index ? null : index);
@@ -172,7 +174,7 @@ export function ServiceIncludesWidget({ includes, className }: ServiceIncludesWi
                 className="mt-4 flex items-center gap-2 text-xs text-theme/60"
                 animate={{ opacity: isHovered && !isExpanded ? 1 : 0 }}
               >
-                <span>Click to expand</span>
+                <span>{siw.clickToExpand}</span>
                 <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>

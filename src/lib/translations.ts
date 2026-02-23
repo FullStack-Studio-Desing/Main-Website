@@ -1092,6 +1092,12 @@ const translations = {
     es: { label: "EN", tooltip: "Switch to English" },
   },
 
+  // ─── Service Includes Widget ────────────────────────────────────
+  serviceIncludesWidget: {
+    en: { clickToExpand: "Click to expand" },
+    es: { clickToExpand: "Clic para expandir" },
+  },
+
   // ─── Breadcrumb ───────────────────────────────────────────────
   breadcrumb: {
     en: { home: "Home" },

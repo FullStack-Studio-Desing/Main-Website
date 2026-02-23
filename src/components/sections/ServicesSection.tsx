@@ -73,6 +73,8 @@ export function ServicesSection() {
   const { locale } = useLocale();
   const sd = t("serviceData", locale) as Record<string, { title: string; headline: string; price: string }>;
   const sl = t("serviceLabels", locale) as Record<string, string>;
+  const sDescs = t("serviceDescs", locale) as Record<string, string>;
+  const sc = t("serviceContent", locale) as unknown as Record<string, { description: string; includes: readonly { title: string }[] }>;
   return (
     <section id="services" className="relative overflow-hidden border-t border-brand-default bg-bg-body py-24 lg:py-32">
       {/* Background Effects */}
@@ -142,12 +144,12 @@ export function ServicesSection() {
                     {sd[s.slug]?.headline || s.headline}
                   </p>
                   <p className="mt-3 text-sm leading-relaxed text-text-body">
-                    {s.description}
+                    {sDescs[s.slug] || sc[s.slug]?.description || s.description}
                   </p>
 
                   {/* Features */}
                   <ul className="mt-6 space-y-2">
-                    {s.includes.slice(0, 4).map((item) => (
+                    {(sc[s.slug]?.includes || s.includes).slice(0, 4).map((item, idx) => (
                       <li key={item.title} className="flex items-start gap-3 text-sm text-text-muted">
                         <span className="mt-1 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-theme/20">
                           <svg className="h-2.5 w-2.5 text-theme" fill="currentColor" viewBox="0 0 12 12">
