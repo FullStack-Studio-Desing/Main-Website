@@ -1,13 +1,16 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { proofCapsules, testimonials } from "@/data/site-copy";
+import { proofCapsules } from "@/data/site-copy";
 
 export function Proof() {
   const reduce = useReducedMotion();
 
   return (
-    <section className="bg-white py-24 lg:py-32">
+    <section
+      className="bg-white py-24 lg:py-32"
+      aria-label="Results at a glance"
+    >
       <div className="mx-auto max-w-[1536px] px-6 sm:px-10">
         <div className="flex flex-col items-center gap-3">
           {proofCapsules.map((capsule, i) => (
@@ -29,35 +32,6 @@ export function Proof() {
                 {capsule.text}
               </span>
             </motion.div>
-          ))}
-        </div>
-
-        <div className="mx-auto mt-24 grid max-w-[1100px] grid-cols-1 gap-12 md:grid-cols-3 lg:mt-32 lg:gap-10">
-          {testimonials.map((item, i) => (
-            <motion.figure
-              key={item.author}
-              initial={reduce ? false : { opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{
-                duration: 0.55,
-                delay: i * 0.1,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="flex flex-col"
-            >
-              <blockquote className="flex-1 text-xl font-medium leading-8 tracking-[-0.01em] text-ink">
-                &ldquo;{item.quote}&rdquo;
-              </blockquote>
-              <figcaption className="mt-8 border-t border-rule pt-5">
-                <span className="block text-base font-medium text-ink">
-                  {item.author}
-                </span>
-                <span className="mt-0.5 block text-base text-muted">
-                  {item.role}
-                </span>
-              </figcaption>
-            </motion.figure>
           ))}
         </div>
       </div>

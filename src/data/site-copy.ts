@@ -495,24 +495,34 @@ export const proofCapsules = [
   { text: "3x average ROI", fill: "mint" },
 ] as const;
 
+export const testimonialsSection = {
+  headline: "Operators who stopped",
+  headlineEmphasis: "guessing",
+  intro:
+    "Real businesses. Clear outcomes. The kind of proof buyers ask for before they book a call.",
+} as const;
+
 export const testimonials = [
   {
     quote:
-      "They rebuilt our entire platform in 8 weeks. Something our previous agency quoted 6 months for. Revenue is up 340% since launch.",
+      "They rebuilt our site and launch funnel in eight weeks — our last shop quoted six months. Qualified inquiries tripled in the first quarter, and we finally know which pages earn the spend.",
     author: "Sarah Mitchell",
-    role: "CEO, TechStart Inc.",
+    role: "CEO, Harborline Logistics",
+    result: "3× qualified inquiries",
   },
   {
     quote:
-      "The weekly reports alone are worth it. For the first time we actually know what our marketing is doing for us.",
+      "The weekly reports alone changed how we run the business. For the first time we see which campaigns produce booked jobs — not vanity clicks — and what to cut next Monday.",
     author: "Marcus Delgado",
     role: "Owner, Delgado & Sons Contracting",
+    result: "Clear cost-per-lead every week",
   },
   {
     quote:
-      "We stopped juggling a web shop, an ads freelancer, and a CRM consultant. One team, one plan, and the pipeline finally makes sense.",
+      "We dropped the web shop, ads freelancer, and half-configured CRM. One team, one plan, and the pipeline finally matches how we sell. Follow-up stopped falling through the cracks.",
     author: "Priya Nair",
     role: "Founder, Northline Wellness",
+    result: "One growth stack, zero vendor hand-offs",
   },
 ] as const;
 
@@ -530,6 +540,10 @@ export const faq = [
     a: "No. The plan covers strategy, build, and management. Ad platforms bill media spend separately so you keep full visibility on what you are buying.",
   },
   {
+    q: "Will this work if we already have a website?",
+    a: "Yes. Most clients come in with an existing site. We keep what converts, fix what leaks, and rebuild only when the foundation is holding growth back — you will know which path we recommend before you spend.",
+  },
+  {
     q: "Can we start on Starter and upgrade later?",
     a: "Yes. Most clients begin where the gaps are loudest and move up when the foundation is working and they want more channels or automation.",
   },
@@ -540,6 +554,10 @@ export const faq = [
   {
     q: "How long is the commitment?",
     a: "Growth work compounds. We recommend staying long enough to see the system work — especially SEO — but we will outline expectations clearly on the first call so there are no surprises.",
+  },
+  {
+    q: "What do I need to provide to get started?",
+    a: "Access to your site, analytics, and ad accounts (if you have them), plus a short walkthrough of how you currently sell. We handle the rest and keep asks tight so you are not buried in homework.",
   },
 ] as const;
 
