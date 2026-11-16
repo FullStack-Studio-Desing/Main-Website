@@ -45,9 +45,9 @@ export function Header() {
   }
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 px-4 pt-4 sm:px-6">
+    <header className="fixed inset-x-0 top-0 z-40 pt-4">
       <div
-        className={`mx-auto flex h-16 max-w-[1280px] items-center justify-between rounded-capsule py-3 pl-5 pr-3 transition-colors duration-300 lg:h-20 lg:pl-6 ${
+        className={`mx-auto flex h-16 max-w-[1536px] items-center justify-between rounded-capsule px-6 py-3 transition-colors duration-300 sm:px-10 lg:h-20 ${
           solid ? "bg-forest/95 backdrop-blur-md" : "bg-transparent"
         }`}
       >
@@ -144,48 +144,50 @@ export function Header() {
       </div>
 
       {open && (
-        <nav className="mx-auto mt-2 max-w-[1280px] rounded-shell bg-forest p-4 lg:hidden">
-          <div className="flex flex-col gap-1">
-            <p className="px-4 pb-1 pt-2 text-xs font-medium uppercase tracking-[0.14em] text-neon">
-              Services
-            </p>
-            <Link
-              href="/services"
-              className="rounded-panel px-4 py-3 text-base font-medium text-white/85 hover:bg-white/10 hover:text-white"
-              onClick={closeAll}
-            >
-              All services
-            </Link>
-            {services.map((service) => (
+        <nav className="mx-auto mt-2 max-w-[1536px] px-6 sm:px-10 lg:hidden">
+          <div className="rounded-shell bg-forest p-4">
+            <div className="flex flex-col gap-1">
+              <p className="px-4 pb-1 pt-2 text-xs font-medium uppercase tracking-[0.14em] text-neon">
+                Services
+              </p>
               <Link
-                key={service.slug}
-                href={`/services/${service.slug}`}
+                href="/services"
                 className="rounded-panel px-4 py-3 text-base font-medium text-white/85 hover:bg-white/10 hover:text-white"
                 onClick={closeAll}
               >
-                {service.shortLabel}
+                All services
               </Link>
-            ))}
+              {services.map((service) => (
+                <Link
+                  key={service.slug}
+                  href={`/services/${service.slug}`}
+                  className="rounded-panel px-4 py-3 text-base font-medium text-white/85 hover:bg-white/10 hover:text-white"
+                  onClick={closeAll}
+                >
+                  {service.shortLabel}
+                </Link>
+              ))}
 
-            <div className="my-2 h-px bg-white/10" />
+              <div className="my-2 h-px bg-white/10" />
 
-            {secondaryLinks.map((link) => (
+              {secondaryLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="rounded-panel px-4 py-3 text-base font-medium text-white/85 hover:bg-white/10 hover:text-white"
+                  onClick={closeAll}
+                >
+                  {link.label}
+                </Link>
+              ))}
               <Link
-                key={link.href}
-                href={link.href}
-                className="rounded-panel px-4 py-3 text-base font-medium text-white/85 hover:bg-white/10 hover:text-white"
+                href="/#contact"
+                className="mt-2 inline-flex h-12 items-center justify-center rounded-action bg-neon px-5 text-base font-medium text-ink"
                 onClick={closeAll}
               >
-                {link.label}
+                Book a call
               </Link>
-            ))}
-            <Link
-              href="/#contact"
-              className="mt-2 inline-flex h-12 items-center justify-center rounded-action bg-neon px-5 text-base font-medium text-ink"
-              onClick={closeAll}
-            >
-              Book a call
-            </Link>
+            </div>
           </div>
         </nav>
       )}
