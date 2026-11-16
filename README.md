@@ -1,37 +1,36 @@
 # FullStack Studio Design
 
-Next.js site for **FullStack Studio Design** — copy from `minifolio-site-copy.txt` (US/Canada), built with [Aceternity UI](https://ui.aceternity.com/components) components.
+Marketing site for **FullStack Studio Design**: websites, marketing, sales growth, AI automation, and custom CRMs on flat monthly plans. Built with Next.js 15, Tailwind, and Framer Motion. English only.
 
-## Pages (routes)
+Visual system: **sculptural green optimism** — light paper chapters, forest-green dark chapters, neon reserved for actions and short emphasis.
+
+## Pages
 
 | Route | Description |
 |-------|-------------|
-| `/` | Home — hero, about, services, packages, portfolio, testimonials, FAQ, contact, marquee |
-| `/about` | About Us — breadcrumb, about section, testimonials |
-| `/services` | Services — breadcrumb, all 6 services (Wobble Cards) with full copy |
-| `/packages` | Packages — breadcrumb, all 4 packages (Card Spotlight) |
-| `/portfolio` | Portfolio — breadcrumb, 6 featured projects |
-| `/contact` | Contact — breadcrumb, contact form + info |
-| `/faq` | FAQ — breadcrumb, accordion, “Contact Us” CTA, testimonials |
-| `/blog` | Blog — breadcrumb, 3 posts (Card Spotlight) |
-| `/privacy` | Privacy Policy — placeholder content |
-| `/terms` | Terms of Service — placeholder content |
-| 404 | Custom not-found — “Back To Home” + “Contact Me” |
+| `/` | Single-page site: hero, services, process, pricing (3 plans), proof, closing, contact form |
+| `/services` | Services index |
+| `/services/[slug]` | Service detail (websites, marketing, sales-growth, ai-automation, custom-crm) |
+| `/privacy` | Privacy policy |
+| `/terms` | Terms of service |
+| `/api/contact` | Contact form endpoint (nodemailer, needs `EMAIL_SENDER`, `EMAIL_PASSWORD`, `EMAIL_RECEIVER` env vars) |
 
-Header and Footer are in the root layout and appear on every page. Each page (except home and 404) has a **Breadcrumb** (Home > Page Title).
+Old routes (`/services`, `/packages`, `/blog`, `/faq`, `/contact`) permanently redirect to the matching home-page section (see `next.config.ts`).
 
-## Aceternity UI components used
+## Plans
 
-- `Spotlight` – hero
-- `MovingBorder` – CTAs (header, hero, packages, contact)
-- `BentoGrid` / `BentoGridItem` – about values, portfolio
-- `WobbleCard` – service cards
-- `CardSpotlight` – package cards
-- `InfiniteMovingCards` – testimonials
-- `Accordion` – FAQ
-- `Marquee` – above footer
+- **Starter** $999/mo: basic SEO, one managed campaign, weekly report
+- **Growth** $1,500/mo: full SEO, Google + Meta ads, landing pages, strategy calls
+- **Scale** $2,500/mo: AI automation, custom CRM, funnels, dedicated manager
 
-Copy and data: `src/data/site-copy.ts` (from `minifolio-site-copy.txt`).
+## Structure
+
+- Copy and data: `src/data/site-copy.ts` (single source of truth for all site text)
+- Design tokens: `src/app/globals.css` + `tailwind.config.ts`
+- Sections: `src/components/sections/`
+- Fonts: Inter (Aeonik stand-in), Lilita One (display), Instrument Serif (accent)
+
+The services wide card uses a brand-native browser preview until a real client screenshot is available.
 
 ## Run
 

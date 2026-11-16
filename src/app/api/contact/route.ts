@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
           </p>
 
           <p style="color: #333; line-height: 1.8; margin-bottom: 20px; font-size: 15px;">
-            In the meantime, feel free to check out our services and packages at
+            In the meantime, feel free to check out our services and plans at
             <a href="https://fullstackstudiodesign.com" style="color: #1a1a1a; font-weight: 500;">fullstackstudiodesign.com</a>.
           </p>
 
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
           </p>
 
           <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #999; font-size: 12px;">
-            FullStack Studio Design — Build. Scale. Dominate.
+            FullStack Studio Design. Websites, marketing, sales growth, AI automation, and custom CRMs.
           </div>
         </div>
       `,

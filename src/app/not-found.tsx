@@ -1,40 +1,20 @@
-"use client";
-
 import Link from "next/link";
-import { MovingBorder } from "@/components/ui/moving-border";
-import { useT } from "@/lib/i18n";
+import { btnInverse } from "@/components/buttons";
 
 export default function NotFound() {
-  const nf = useT("notFound");
-
   return (
-    <main className="flex min-h-[80vh] flex-col items-center justify-center bg-white px-4 dark:bg-neutral-900">
-      <p className="text-6xl font-bold text-neutral-300 dark:text-neutral-600">
-        {nf.code}
-      </p>
-      <h1 className="mt-4 text-2xl font-bold text-neutral-900 dark:text-white sm:text-3xl">
-        {nf.headline}
-      </h1>
-      <p className="mt-4 max-w-md text-center text-neutral-600 dark:text-neutral-400">
-        {nf.description}
-      </p>
-      <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-        <MovingBorder
-          as={Link}
-          href="/"
-          borderRadius="0.5rem"
-          className="bg-neutral-900 px-6 py-3 font-semibold text-white dark:bg-white dark:text-neutral-900"
-        >
-          {nf.backHome}
-        </MovingBorder>
-        <MovingBorder
-          as={Link}
-          href="/contact"
-          borderRadius="0.5rem"
-          className="border border-neutral-300 bg-transparent px-6 py-3 font-semibold text-neutral-900 dark:border-neutral-600 dark:text-white"
-        >
-          {nf.contactMe}
-        </MovingBorder>
+    <main className="flex min-h-[100dvh] items-center justify-center bg-paper px-6 pt-20">
+      <div className="text-center">
+        <h1 className="font-display text-[44px] uppercase leading-[0.95] tracking-[-0.01em] text-sage sm:text-[64px]">
+          This page does <span className="text-neon-active">not exist</span>
+        </h1>
+        <p className="mx-auto mt-6 max-w-[40ch] text-base leading-relaxed text-body">
+          The page you are looking for was moved or removed in our latest
+          redesign.
+        </p>
+        <Link href="/" className={`${btnInverse} mt-10`}>
+          Back to home
+        </Link>
       </div>
     </main>
   );

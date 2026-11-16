@@ -1,41 +1,42 @@
-"use client";
-
-import { Breadcrumb } from "@/components/Breadcrumb";
+import type { Metadata } from "next";
 import { brand } from "@/data/site-copy";
-import { useT } from "@/lib/i18n";
+
+export const metadata: Metadata = {
+  title: `Terms of Service | ${brand.name}`,
+};
 
 export default function TermsPage() {
-  const tm = useT("terms");
-
   return (
-    <main className="min-h-screen bg-white dark:bg-neutral-900">
-      <Breadcrumb title={tm.title} />
-      <section className="border-t border-neutral-200 bg-neutral-50 py-20 dark:border-neutral-800 dark:bg-neutral-950">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <div className="prose prose-neutral dark:prose-invert max-w-none">
-            <p className="text-neutral-600 dark:text-neutral-400">
-              {tm.lastUpdated}
+    <main className="bg-white pt-28">
+      <section className="mx-auto max-w-3xl px-6 py-20 sm:px-10">
+        <h1 className="font-display text-[36px] uppercase leading-[0.95] tracking-[-0.0143em] text-ink sm:text-[48px]">
+          Terms of Service
+        </h1>
+        <div className="mt-10 flex flex-col gap-8 text-base leading-relaxed text-body">
+          <div>
+            <h2 className="text-2xl font-medium leading-8 text-ink">Services</h2>
+            <p className="mt-3">
+              {brand.name} provides web development, digital marketing, AI
+              automation, and related services under monthly plans. The scope
+              of each engagement is defined in the agreement signed before work
+              begins.
             </p>
-            <h2 className="mt-8 text-xl font-semibold text-neutral-900 dark:text-white">
-              {tm.servicesTitle}
-            </h2>
-            <p className="mt-2 text-neutral-600 dark:text-neutral-400">
-              {brand.name} {tm.servicesBody}
+          </div>
+          <div>
+            <h2 className="text-2xl font-medium leading-8 text-ink">Billing</h2>
+            <p className="mt-3">
+              Monthly plans are billed in advance at the start of each billing
+              period. Specific payment terms, renewal, and cancellation
+              conditions are set out in your service agreement.
             </p>
-            <h2 className="mt-8 text-xl font-semibold text-neutral-900 dark:text-white">
-              {tm.paymentTitle}
-            </h2>
-            <p className="mt-2 text-neutral-600 dark:text-neutral-400">
-              {tm.paymentBody}
-            </p>
-            <h2 className="mt-8 text-xl font-semibold text-neutral-900 dark:text-white">
-              {tm.contactTitle}
-            </h2>
-            <p className="mt-2 text-neutral-600 dark:text-neutral-400">
-              {tm.contactBody}{" "}
+          </div>
+          <div>
+            <h2 className="text-2xl font-medium leading-8 text-ink">Contact</h2>
+            <p className="mt-3">
+              Questions about these terms? Email us at{" "}
               <a
                 href={`mailto:${brand.email}`}
-                className="text-neutral-900 underline dark:text-white"
+                className="text-leaf underline-offset-2 hover:underline"
               >
                 {brand.email}
               </a>

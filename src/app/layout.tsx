@@ -1,34 +1,36 @@
 import type { Metadata } from "next";
-import { Big_Shoulders, Bricolage_Grotesque, Manrope } from "next/font/google";
+import { Inter, Lilita_One, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { PromoBanner } from "@/components/PromoBanner";
-import { LocaleProvider } from "@/lib/locale-context";
 
-/* Big Shoulders: display-style font (same family as Big Shoulders Display per Minifolio branding) */
-const bigShoulders = Big_Shoulders({
+/* Aeonik substitute per the brand guide */
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  display: "swap",
+  variable: "--font-sans",
+});
+
+/* Ozik substitute: heavy condensed display, used uppercase only */
+const lilita = Lilita_One({
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
   variable: "--font-display",
 });
 
-const bricolage = Bricolage_Grotesque({
+const instrument = Instrument_Serif({
   subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
   display: "swap",
-  variable: "--font-body",
-});
-
-const manrope = Manrope({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-ui",
+  variable: "--font-serif",
 });
 
 export const metadata: Metadata = {
-  title: "FullStack Studio Design — Build. Scale. Dominate.",
+  title: "FullStack Studio Design",
   description:
-    "Full-service digital agency: web development, software, AI solutions, and digital marketing. Serving US & Canada.",
+    "Websites, marketing, sales growth, AI automation, and custom CRMs. One team, one monthly plan, measurable results.",
 };
 
 export default function RootLayout({
@@ -37,14 +39,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${bigShoulders.variable} ${bricolage.variable} ${manrope.variable}`}>
-      <body className="antialiased font-body overflow-x-hidden">
-        <LocaleProvider>
-          <Header />
-          {children}
-          <Footer />
-          <PromoBanner />
-        </LocaleProvider>
+    <html
+      lang="en"
+      className={`${inter.variable} ${lilita.variable} ${instrument.variable}`}
+    >
+      <body className="antialiased">
+        <Header />
+        {children}
+        <Footer />
       </body>
     </html>
   );

@@ -1,41 +1,45 @@
-"use client";
-
-import { Breadcrumb } from "@/components/Breadcrumb";
+import type { Metadata } from "next";
 import { brand } from "@/data/site-copy";
-import { useT } from "@/lib/i18n";
+
+export const metadata: Metadata = {
+  title: `Privacy Policy | ${brand.name}`,
+};
 
 export default function PrivacyPage() {
-  const pv = useT("privacy");
-
   return (
-    <main className="min-h-screen bg-white dark:bg-neutral-900">
-      <Breadcrumb title={pv.title} />
-      <section className="border-t border-neutral-200 bg-neutral-50 py-20 dark:border-neutral-800 dark:bg-neutral-950">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <div className="prose prose-neutral dark:prose-invert max-w-none">
-            <p className="text-neutral-600 dark:text-neutral-400">
-              {pv.lastUpdated} {brand.name} {pv.lastUpdatedSuffix}
-            </p>
-            <h2 className="mt-8 text-xl font-semibold text-neutral-900 dark:text-white">
-              {pv.infoCollect}
+    <main className="bg-white pt-28">
+      <section className="mx-auto max-w-3xl px-6 py-20 sm:px-10">
+        <h1 className="font-display text-[36px] uppercase leading-[0.95] tracking-[-0.0143em] text-ink sm:text-[48px]">
+          Privacy Policy
+        </h1>
+        <div className="mt-10 flex flex-col gap-8 text-base leading-relaxed text-body">
+          <div>
+            <h2 className="text-2xl font-medium leading-8 text-ink">
+              Information we collect
             </h2>
-            <p className="mt-2 text-neutral-600 dark:text-neutral-400">
-              {pv.infoCollectBody}
+            <p className="mt-3">
+              When you contact us through this site, we collect the details you
+              provide: your name, email address, company, and message. We do
+              not collect anything you do not give us directly.
             </p>
-            <h2 className="mt-8 text-xl font-semibold text-neutral-900 dark:text-white">
-              {pv.howUse}
+          </div>
+          <div>
+            <h2 className="text-2xl font-medium leading-8 text-ink">
+              How we use your information
             </h2>
-            <p className="mt-2 text-neutral-600 dark:text-neutral-400">
-              {pv.howUseBody}
+            <p className="mt-3">
+              We use your contact details to respond to your inquiry and to
+              discuss working together. We do not sell or share your
+              information with third parties for marketing purposes.
             </p>
-            <h2 className="mt-8 text-xl font-semibold text-neutral-900 dark:text-white">
-              {pv.contactTitle}
-            </h2>
-            <p className="mt-2 text-neutral-600 dark:text-neutral-400">
-              {pv.contactBody}{" "}
+          </div>
+          <div>
+            <h2 className="text-2xl font-medium leading-8 text-ink">Contact</h2>
+            <p className="mt-3">
+              Questions about this policy? Email us at{" "}
               <a
                 href={`mailto:${brand.email}`}
-                className="text-neutral-900 underline dark:text-white"
+                className="text-leaf underline-offset-2 hover:underline"
               >
                 {brand.email}
               </a>

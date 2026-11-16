@@ -1,33 +1,27 @@
-"use client";
-
-import dynamic from "next/dynamic";
-import { HeroSection } from "@/components/sections/HeroSection";
-import { ScrollingTagline } from "@/components/ui/scrolling-banner";
-import { useT } from "@/lib/i18n";
-
-// Below-fold sections: lazy loaded to reduce initial bundle
-const AboutSection = dynamic(() => import("@/components/sections/AboutSection").then(m => m.AboutSection));
-const ServicesSection = dynamic(() => import("@/components/sections/ServicesSection").then(m => m.ServicesSection));
-const PackagesSection = dynamic(() => import("@/components/sections/PackagesSection").then(m => m.PackagesSection));
-const TestimonialsSection = dynamic(() => import("@/components/sections/TestimonialsSection").then(m => m.TestimonialsSection));
-const FAQSection = dynamic(() => import("@/components/sections/FAQSection").then(m => m.FAQSection));
-const ContactSection = dynamic(() => import("@/components/sections/ContactSection").then(m => m.ContactSection));
-const Marquee = dynamic(() => import("@/components/ui/marquee").then(m => m.Marquee));
+import { Hero } from "@/components/sections/Hero";
+import { Services } from "@/components/sections/Services";
+import { Audience } from "@/components/sections/Audience";
+import { Process } from "@/components/sections/Process";
+import { WeeklyReport } from "@/components/sections/WeeklyReport";
+import { Pricing } from "@/components/sections/Pricing";
+import { Proof } from "@/components/sections/Proof";
+import { FAQ } from "@/components/sections/FAQ";
+import { Closing } from "@/components/sections/Closing";
+import { Contact } from "@/components/sections/Contact";
 
 export default function Home() {
-  const mq = useT("marquee");
-
   return (
-    <main className="min-h-screen bg-bg-body">
-      <HeroSection />
-      <ScrollingTagline words={[...mq.scrollingWords]} speed="slow" />
-      <AboutSection />
-      <ServicesSection />
-      <PackagesSection />
-      <TestimonialsSection />
-      <FAQSection />
-      <ContactSection />
-      <Marquee text={mq.bottomText} />
+    <main>
+      <Hero />
+      <Services />
+      <Audience />
+      <Process />
+      <WeeklyReport />
+      <Pricing />
+      <Proof />
+      <FAQ />
+      <Closing />
+      <Contact />
     </main>
   );
 }
