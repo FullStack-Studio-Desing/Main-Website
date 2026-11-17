@@ -18,7 +18,7 @@ export function WeeklyReport() {
         }}
       />
 
-      <div className="relative mx-auto max-w-[1100px] px-6 sm:px-10">
+      <div className="relative mx-auto max-w-[1536px] px-6 sm:px-10">
         <div className="relative max-w-[720px]">
           <StickerBurst
             className="absolute -right-2 -top-5 h-8 w-8 sm:-right-8 sm:-top-3"

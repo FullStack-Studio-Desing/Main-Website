@@ -187,6 +187,18 @@ export function HeroLeadCard() {
     return () => window.clearTimeout(id);
   }, []);
 
+  // Lock page scroll while the mobile full-screen chat modal is open
+  useEffect(() => {
+    if (!open) return;
+    const mq = window.matchMedia("(max-width: 639px)");
+    if (!mq.matches) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
   // Unlock audio on first gesture; play a ding in-gesture if bubbles already showed
   useEffect(() => {
     const unlock = () => {
@@ -438,182 +450,198 @@ export function HeroLeadCard() {
           : chat.placeholderNote;
 
   return (
-    <div className="pointer-events-none fixed bottom-5 right-5 z-[60] flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
-      {/* Panel */}
-      <div
-        className={`pointer-events-auto w-[min(100vw-1.5rem,380px)] origin-bottom-right transition-all duration-300 ease-out ${
+    <>
+      {/* Backdrop — mobile modal only */}
+      <button
+        type="button"
+        aria-label="Close chat"
+        className={`fixed inset-0 z-[65] bg-[rgba(18,35,20,0.55)] transition-opacity duration-300 sm:hidden ${
           open
-            ? "translate-y-0 scale-100 opacity-100"
-            : "pointer-events-none translate-y-3 scale-95 opacity-0"
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0"
         }`}
+        onClick={() => setOpen(false)}
+        tabIndex={open ? 0 : -1}
+        aria-hidden={!open}
+      />
+
+      {/* Panel: full-screen modal on mobile, floating card on desktop */}
+      <div
+        role="dialog"
+        aria-modal={open ? "true" : undefined}
+        aria-label={`Chat with ${agent.name}`}
+        className={`fixed z-[70] flex flex-col overflow-hidden bg-white text-ink transition-all duration-300 ease-out ${
+          open
+            ? "pointer-events-auto translate-y-0 opacity-100 max-sm:scale-100 sm:translate-y-0 sm:scale-100"
+            : "pointer-events-none translate-y-full opacity-0 max-sm:scale-100 sm:translate-y-3 sm:scale-95"
+        } inset-0 sm:inset-auto sm:bottom-24 sm:right-6 sm:h-[560px] sm:w-[min(100vw-1.5rem,380px)] sm:origin-bottom-right sm:rounded-[24px] sm:shadow-form-lift sm:ring-1 sm:ring-black/5`}
         aria-hidden={!open}
       >
-        <div className="flex h-[min(520px,70dvh)] flex-col overflow-hidden rounded-[24px] bg-white text-ink shadow-form-lift ring-1 ring-black/5 sm:h-[560px]">
-          {/* Chat header — live agent */}
-          <div className="flex items-center gap-3 border-b border-rule bg-paper px-4 py-3.5 sm:px-5">
-            <div className="relative h-11 w-11 shrink-0">
-              <AgentAvatar agent={agent} size="lg" />
-              <span
-                className="absolute bottom-0 right-0 z-10 h-3 w-3 rounded-full border-2 border-paper bg-[#32d200]"
-                aria-hidden
-              />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-base font-medium text-ink">
-                {agent.name}
-              </p>
-              <p className="flex items-center gap-1.5 text-sm text-leaf">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-leaf opacity-40" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-leaf" />
-                </span>
-                {chat.statusOnline}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-white hover:text-ink"
-              aria-label="Close chat"
-            >
-              <X size={18} weight="bold" />
-            </button>
+        {/* Chat header — live agent */}
+        <div className="flex items-center gap-3 border-b border-rule bg-paper px-4 py-3.5 sm:px-5">
+          <div className="relative h-11 w-11 shrink-0">
+            <AgentAvatar agent={agent} size="lg" />
+            <span
+              className="absolute bottom-0 right-0 z-10 h-3 w-3 rounded-full border-2 border-paper bg-[#32d200]"
+              aria-hidden
+            />
           </div>
-
-          {/* Messages */}
-          <div
-            ref={listRef}
-            className="flex flex-1 flex-col gap-3 overflow-y-auto bg-white px-4 py-5 sm:px-5"
-            aria-live="polite"
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-base font-medium text-ink">
+              {agent.name}
+            </p>
+            <p className="flex items-center gap-1.5 text-sm text-leaf">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-leaf opacity-40" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-leaf" />
+              </span>
+              {chat.statusOnline}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-white hover:text-ink"
+            aria-label="Close chat"
           >
-            {messages.map((m) =>
-              m.from === "agent" ? (
-                <div key={m.id} className="flex max-w-[88%] items-end gap-2">
-                  <AgentAvatar agent={agent} size="sm" />
-                  <div className="rounded-2xl rounded-bl-md bg-paper px-3.5 py-2.5 text-[15px] leading-snug text-body">
-                    {m.text}
-                  </div>
-                </div>
-              ) : (
-                <div
-                  key={m.id}
-                  className="ml-auto max-w-[85%] rounded-2xl rounded-br-md bg-ink px-3.5 py-2.5 text-[15px] leading-snug text-white"
-                >
+            <X size={18} weight="bold" />
+          </button>
+        </div>
+
+        {/* Messages */}
+        <div
+          ref={listRef}
+          className="flex flex-1 flex-col gap-3 overflow-y-auto bg-white px-4 py-5 sm:px-5"
+          aria-live="polite"
+        >
+          {messages.map((m) =>
+            m.from === "agent" ? (
+              <div key={m.id} className="flex max-w-[88%] items-end gap-2">
+                <AgentAvatar agent={agent} size="sm" />
+                <div className="rounded-2xl rounded-bl-md bg-paper px-3.5 py-2.5 text-[15px] leading-snug text-body">
                   {m.text}
                 </div>
-              ),
-            )}
-
-            {typing && (
-              <div className="flex max-w-[88%] items-end gap-2">
-                <AgentAvatar agent={agent} size="sm" />
-                <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-md bg-paper px-3.5 py-3">
-                  <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-muted" />
-                  <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-muted [animation-delay:180ms]" />
-                  <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-muted [animation-delay:360ms]" />
-                </div>
               </div>
-            )}
-
-            {status === "error" && (
-              <p className="text-sm text-red-600">
-                Something went wrong. Try again, or email {brand.email}.
-              </p>
-            )}
-
-            {step === "done" && status === "sent" && (
-              <div className="mt-2 rounded-2xl border border-rule bg-paper p-4">
-                <p className="text-sm text-body">{chat.schedulePrompt}</p>
-                <div className="mt-3">
-                  <GoogleSchedulingButton
-                    label={contact.bookingLabel}
-                    color="#273f2b"
-                  />
-                </div>
+            ) : (
+              <div
+                key={m.id}
+                className="ml-auto max-w-[85%] rounded-2xl rounded-br-md bg-ink px-3.5 py-2.5 text-[15px] leading-snug text-white"
+              >
+                {m.text}
               </div>
-            )}
-          </div>
+            ),
+          )}
 
-          {/* Composer */}
-          {step !== "done" && status !== "sent" && (
-            <form
-              onSubmit={handleSubmit}
-              className="border-t border-rule bg-white px-3 py-3 sm:px-4"
-            >
-              <div className="flex items-end gap-2">
-                {step === "note" ? (
-                  <textarea
-                    ref={textareaRef}
-                    rows={2}
-                    value={draft}
-                    disabled={typing || status === "sending"}
-                    onChange={(e) => setDraft(e.target.value)}
-                    onKeyDown={(e: KeyboardEvent<HTMLTextAreaElement>) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        handleSubmit(e);
-                      }
-                    }}
-                    placeholder={placeholder}
-                    className="max-h-24 min-h-[48px] flex-1 resize-none rounded-2xl border border-input-edge bg-paper px-4 py-3 text-base text-ink placeholder:text-muted outline-none transition-colors focus:border-leaf disabled:opacity-60"
-                  />
-                ) : (
-                  <input
-                    ref={inputRef}
-                    type={inputType}
-                    value={draft}
-                    disabled={typing || status === "sending"}
-                    onChange={(e) => setDraft(e.target.value)}
-                    autoComplete={
-                      step === "name"
-                        ? "name"
-                        : step === "email"
-                          ? "email"
-                          : step === "phone"
-                            ? "tel"
-                            : "off"
-                    }
-                    placeholder={placeholder}
-                    className="h-12 flex-1 rounded-full border border-input-edge bg-paper px-4 text-base text-ink placeholder:text-muted outline-none transition-colors focus:border-leaf disabled:opacity-60"
-                  />
-                )}
-
-                {(step === "phone" || step === "note") && !draft.trim() ? (
-                  <button
-                    type="submit"
-                    disabled={typing || status === "sending"}
-                    className="h-12 shrink-0 rounded-full border border-rule px-4 text-sm font-medium text-ink transition-colors hover:bg-paper disabled:opacity-60"
-                  >
-                    {chat.skip}
-                  </button>
-                ) : (
-                  <button
-                    type="submit"
-                    disabled={!canSend || typing || status === "sending"}
-                    className={`${btnInverse} !h-12 !w-12 !shrink-0 !rounded-full !px-0 disabled:opacity-60`}
-                    aria-label={
-                      step === "note" || STEPS.indexOf(step) === STEPS.length - 1
-                        ? chat.send
-                        : chat.next
-                    }
-                  >
-                    {status === "sending" ? (
-                      <CircleNotch size={18} className="animate-spin" />
-                    ) : (
-                      <PaperPlaneTilt size={18} weight="fill" />
-                    )}
-                  </button>
-                )}
+          {typing && (
+            <div className="flex max-w-[88%] items-end gap-2">
+              <AgentAvatar agent={agent} size="sm" />
+              <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-md bg-paper px-3.5 py-3">
+                <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-muted" />
+                <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-muted [animation-delay:180ms]" />
+                <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-muted [animation-delay:360ms]" />
               </div>
-              <p className="mt-2 px-1 text-center text-xs text-muted">
-                {copy.trust}
-              </p>
-            </form>
+            </div>
+          )}
+
+          {status === "error" && (
+            <p className="text-sm text-red-600">
+              Something went wrong. Try again, or email {brand.email}.
+            </p>
+          )}
+
+          {step === "done" && status === "sent" && (
+            <div className="mt-2 rounded-2xl border border-rule bg-paper p-4">
+              <p className="text-sm text-body">{chat.schedulePrompt}</p>
+              <div className="mt-3">
+                <GoogleSchedulingButton
+                  label={contact.bookingLabel}
+                  color="#273f2b"
+                />
+              </div>
+            </div>
           )}
         </div>
+
+        {/* Composer */}
+        {step !== "done" && status !== "sent" && (
+          <form
+            onSubmit={handleSubmit}
+            className="border-t border-rule bg-white px-3 py-3 sm:px-4"
+          >
+            <div className="flex items-end gap-2">
+              {step === "note" ? (
+                <textarea
+                  ref={textareaRef}
+                  rows={2}
+                  value={draft}
+                  disabled={typing || status === "sending"}
+                  onChange={(e) => setDraft(e.target.value)}
+                  onKeyDown={(e: KeyboardEvent<HTMLTextAreaElement>) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmit(e);
+                    }
+                  }}
+                  placeholder={placeholder}
+                  className="max-h-24 min-h-[48px] flex-1 resize-none rounded-2xl border border-input-edge bg-paper px-4 py-3 text-base text-ink placeholder:text-muted outline-none transition-colors focus:border-leaf disabled:opacity-60"
+                />
+              ) : (
+                <input
+                  ref={inputRef}
+                  type={inputType}
+                  value={draft}
+                  disabled={typing || status === "sending"}
+                  onChange={(e) => setDraft(e.target.value)}
+                  autoComplete={
+                    step === "name"
+                      ? "name"
+                      : step === "email"
+                        ? "email"
+                        : step === "phone"
+                          ? "tel"
+                          : "off"
+                  }
+                  placeholder={placeholder}
+                  className="h-12 flex-1 rounded-full border border-input-edge bg-paper px-4 text-base text-ink placeholder:text-muted outline-none transition-colors focus:border-leaf disabled:opacity-60"
+                />
+              )}
+
+              {(step === "phone" || step === "note") && !draft.trim() ? (
+                <button
+                  type="submit"
+                  disabled={typing || status === "sending"}
+                  className="h-12 shrink-0 rounded-full border border-rule px-4 text-sm font-medium text-ink transition-colors hover:bg-paper disabled:opacity-60"
+                >
+                  {chat.skip}
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={!canSend || typing || status === "sending"}
+                  className={`${btnInverse} !h-12 !w-12 !shrink-0 !rounded-full !px-0 disabled:opacity-60`}
+                  aria-label={
+                    step === "note" ||
+                    STEPS.indexOf(step) === STEPS.length - 1
+                      ? chat.send
+                      : chat.next
+                  }
+                >
+                  {status === "sending" ? (
+                    <CircleNotch size={18} className="animate-spin" />
+                  ) : (
+                    <PaperPlaneTilt size={18} weight="fill" />
+                  )}
+                </button>
+              )}
+            </div>
+            <p className="mt-2 px-1 text-center text-xs text-muted">
+              {copy.trust}
+            </p>
+          </form>
+        )}
       </div>
 
-      {/* Launcher */}
+      {/* Launcher — hidden on mobile while modal is open */}
       <button
         type="button"
         onClick={() => {
@@ -634,7 +662,9 @@ export function HeroLeadCard() {
           });
           setOpen((v) => !v);
         }}
-        className="pointer-events-auto inline-flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-neon text-forest shadow-[0_12px_32px_rgba(18,35,20,0.35)] transition-transform hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neon"
+        className={`pointer-events-auto fixed bottom-5 right-5 z-[60] inline-flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-neon text-forest shadow-[0_12px_32px_rgba(18,35,20,0.35)] transition-transform hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neon sm:bottom-6 sm:right-6 ${
+          open ? "max-sm:hidden" : ""
+        }`}
         aria-label={open ? "Close chat" : `Chat with ${agent.name}`}
         aria-expanded={open}
       >
@@ -644,6 +674,6 @@ export function HeroLeadCard() {
           <ChatCircleDots size={28} weight="fill" />
         )}
       </button>
-    </div>
+    </>
   );
 }
