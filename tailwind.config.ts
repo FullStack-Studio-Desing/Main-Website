@@ -29,7 +29,6 @@ export default {
       fontFamily: {
         display: ["var(--font-display)", "Arial", "sans-serif"],
         sans: ["var(--font-sans)", "Arial", "sans-serif"],
-        serif: ["var(--font-serif)", "Georgia", "serif"],
       },
       borderRadius: {
         action: "28px",

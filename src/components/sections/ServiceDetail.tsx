@@ -149,7 +149,7 @@ export function ServiceDetail({ service }: { service: Service }) {
       <section className="bg-white py-24 lg:py-32">
         <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-14 px-6 sm:px-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-20">
           <motion.div {...inView(0)}>
-            <p className="font-serif text-[28px] italic leading-snug tracking-tight text-ink sm:text-[32px] sm:leading-[1.25]">
+            <p className="font-sans text-[28px] italic leading-snug tracking-tight text-ink sm:text-[32px] sm:leading-[1.25]">
               {lead}
             </p>
             <div className="mt-10 flex flex-col gap-6 border-t border-rule pt-10">
@@ -275,7 +275,7 @@ export function ServiceDetail({ service }: { service: Service }) {
                 <span className="font-display text-2xl text-sage">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <h3 className="font-serif text-3xl italic tracking-tight text-ink">
+                <h3 className="font-sans text-3xl italic tracking-tight text-ink">
                   {step.title}
                 </h3>
                 <p className="max-w-[420px] text-base leading-relaxed text-body md:col-span-2 lg:col-span-1">
@@ -338,7 +338,7 @@ export function ServiceDetail({ service }: { service: Service }) {
                 <StickerBurst className="h-3.5 w-3.5" tone="ink" />
                 Plans
               </StickerPill>
-              <p className="mt-8 font-serif text-[28px] italic leading-snug text-white sm:text-[32px]">
+              <p className="mt-8 font-sans text-[28px] italic leading-snug text-white sm:text-[32px]">
                 {service.page.planNote}
               </p>
             </div>
