@@ -7,6 +7,7 @@ export const brand = {
 } as const;
 
 export const navLinks = [
+  { href: "/", label: "Home" },
   { href: "/services", label: "Services" },
   { href: "/#pricing", label: "Pricing" },
   { href: "/#faq", label: "FAQ" },

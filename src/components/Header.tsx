@@ -37,7 +37,10 @@ export function Header() {
   }, []);
 
   const solid = scrolled || open || servicesOpen;
-  const secondaryLinks = navLinks.filter((l) => l.label !== "Services");
+  const homeLink = navLinks.find((l) => l.label === "Home");
+  const secondaryLinks = navLinks.filter(
+    (l) => l.label !== "Services" && l.label !== "Home",
+  );
 
   function closeAll() {
     setOpen(false);
@@ -66,6 +69,15 @@ export function Header() {
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">
+          {homeLink && (
+            <Link
+              href={homeLink.href}
+              className="rounded-action px-4 py-2 text-base font-medium text-white/85 transition-colors duration-200 hover:text-neon"
+            >
+              {homeLink.label}
+            </Link>
+          )}
+
           <div ref={servicesRef} className="relative">
             <button
               type="button"
@@ -147,6 +159,16 @@ export function Header() {
         <nav className="mx-auto mt-2 max-w-[1536px] px-6 sm:px-10 lg:hidden">
           <div className="rounded-shell bg-forest p-4">
             <div className="flex flex-col gap-1">
+              {homeLink && (
+                <Link
+                  href={homeLink.href}
+                  className="rounded-panel px-4 py-3 text-base font-medium text-white/85 hover:bg-white/10 hover:text-white"
+                  onClick={closeAll}
+                >
+                  {homeLink.label}
+                </Link>
+              )}
+
               <p className="px-4 pb-1 pt-2 text-xs font-medium uppercase tracking-[0.14em] text-neon">
                 Services
               </p>
