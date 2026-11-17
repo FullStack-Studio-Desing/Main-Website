@@ -25,18 +25,22 @@ const brands: Brand[] = [
 function BrandIcon({ name, src, width, height }: Brand) {
   return (
     <span
-      className="inline-flex h-12 w-[4.5rem] shrink-0 items-center justify-center md:h-14 md:w-20"
-      title={name}
+      className="inline-flex w-[4.75rem] shrink-0 flex-col items-center justify-center gap-1.5 md:w-[5.5rem]"
       aria-label={name}
     >
-      <Image
-        src={src}
-        alt={name}
-        width={width}
-        height={height}
-        className="h-10 w-auto max-w-full object-contain md:h-12"
-        unoptimized
-      />
+      <span className="inline-flex h-10 w-full items-center justify-center md:h-12">
+        <Image
+          src={src}
+          alt=""
+          width={width}
+          height={height}
+          className="h-8 w-auto max-w-full object-contain md:h-10"
+          unoptimized
+        />
+      </span>
+      <span className="max-w-full truncate text-center text-[10px] font-medium leading-none tracking-wide text-sage/80 md:text-[11px]">
+        {name}
+      </span>
     </span>
   );
 }
@@ -56,7 +60,7 @@ export function TechMarquee({ className = "" }: { className?: string }) {
         className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-forest to-transparent"
       />
       <div
-        className={`flex w-max items-center gap-8 md:gap-10 ${reduce ? "" : "animate-marquee"}`}
+        className={`flex w-max items-end gap-6 md:gap-8 ${reduce ? "" : "animate-marquee"}`}
         style={reduce ? undefined : { animationDuration: "28s" }}
       >
         {row.map((brand, i) => (

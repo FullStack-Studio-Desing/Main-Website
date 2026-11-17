@@ -57,18 +57,6 @@
   }
 }
 
-/* Google Appointment Scheduling — compact white panel, not fullscreen */
-iframe[src*="calendar.google.com/calendar/appointments"],
-iframe[src*="calendar.app.google"] {
-  background-color: #ffffff !important;
-  background: #ffffff !important;
-  width: min(440px, calc(100vw - 32px)) !important;
-  max-width: 440px !important;
-  height: min(640px, calc(100vh - 48px)) !important;
-  max-height: min(640px, calc(100vh - 48px)) !important;
-  border-radius: 16px !important;
-}
-
 @layer utilities {
   /* Fine photographic grain for sculptural art and dark chapters */
   .grain::after {
