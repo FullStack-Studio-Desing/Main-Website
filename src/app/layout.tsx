@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Lilita_One } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 
 /* Aeonik substitute per the brand guide */
 const inter = Inter({
@@ -35,11 +33,7 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${lilita.variable}`}
     >
-      <body className="antialiased">
-        <Header />
-        {children}
-        <Footer />
-      </body>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }
