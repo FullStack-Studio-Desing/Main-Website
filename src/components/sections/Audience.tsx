@@ -47,28 +47,6 @@ export function Audience() {
             </motion.li>
           ))}
         </ul>
-
-        <div className="mt-12 border-t border-rule pt-10 lg:mt-16 lg:pt-12">
-          <p className="font-mono text-sm font-medium uppercase tracking-[0.12em] text-ink">
-            {audience.notFitsLabel}
-          </p>
-          <ul className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-8">
-            {audience.notFits.map((item) => (
-              <li
-                key={item}
-                className="flex gap-3 text-base leading-snug text-ink sm:text-[17px]"
-              >
-                <span
-                  aria-hidden
-                  className="mt-[0.35em] text-sm font-medium text-neon-active"
-                >
-                  ×
-                </span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
       </div>
     </section>
   );
