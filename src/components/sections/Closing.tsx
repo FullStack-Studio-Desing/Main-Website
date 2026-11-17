@@ -4,6 +4,10 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { closing } from "@/data/site-copy";
 import { btnInverse } from "@/components/buttons";
+import {
+  StickerBurst,
+  StickerPill,
+} from "@/components/graphics/BrandStickers";
 
 export function Closing() {
   const reduce = useReducedMotion();
@@ -26,11 +30,17 @@ export function Closing() {
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         className="relative mx-auto flex max-w-[880px] flex-col items-center px-6 text-center sm:px-10"
       >
+        <div className="mb-8 flex justify-center">
+          <StickerPill tone="neon">
+            <StickerBurst className="h-4 w-4" tone="ink" />
+            Ready when you are
+          </StickerPill>
+        </div>
         <p className="font-display text-[44px] uppercase leading-[0.95] tracking-[-0.01em] text-sage sm:text-[60px] lg:text-[80px] lg:leading-[0.9]">
           {closing.lineStart}{" "}
           <span className="text-neon-active">{closing.lineEmphasis}</span>
         </p>
-        <Link href="/#contact" className={`${btnInverse} mt-12`}>
+        <Link href="/contact" className={`${btnInverse} mt-12`}>
           {closing.cta}
         </Link>
       </motion.div>

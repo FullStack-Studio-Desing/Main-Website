@@ -49,7 +49,7 @@ export function Process() {
                 </p>
               </div>
               <div>
-                <h3 className="font-serif text-3xl italic tracking-tight text-ink">
+                <h3 className="font-sans text-3xl italic tracking-tight text-ink">
                   {step.title}
                 </h3>
                 <p className="mt-4 text-base leading-relaxed text-body">

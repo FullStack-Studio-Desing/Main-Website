@@ -7,20 +7,64 @@ export const brand = {
 } as const;
 
 export const navLinks = [
+  { href: "/", label: "Home" },
   { href: "/services", label: "Services" },
   { href: "/#pricing", label: "Pricing" },
   { href: "/#faq", label: "FAQ" },
-  { href: "/#contact", label: "Contact" },
+  { href: "/contact", label: "Contact" },
 ] as const;
 
 export const hero = {
-  headlineStart: "The growth team behind",
-  headlineEmphasis: "your business",
+  headlineStart: "Growth systems that",
+  headlineEmphasis: "actually sell",
   subheadline:
-    "Websites, marketing, sales systems, AI automation, and custom CRMs. One team, one monthly plan, measurable results.",
-  primaryCta: "Book a call",
-  secondaryCta: "See pricing",
-  trustLine: "Trusted by 200+ businesses across the US and Canada",
+    "Websites, marketing, sales, AI, and CRMs — one team, one monthly plan.",
+  primaryCta: "See services",
+  primaryHref: "/services",
+  secondaryCta: "Client results",
+  secondaryHref: "/#testimonials",
+  highlights: [
+    "One partner across web, marketing, sales, AI, and CRM",
+    "Monthly plans from $999 — start on Starter, upgrade as you grow",
+    "Weekly performance reporting on every plan",
+  ],
+  lead: {
+    eyebrow: "Live chat",
+    title: "Want an agent to reach out?",
+    body: "Leave a few details — someone from our team will contact you within one business day. No tickets, no black hole.",
+    submit: "Have someone contact me",
+    trust: "Real humans. Reply in 1 business day.",
+    successTitle: "You're on our list.",
+    successBody:
+      "A teammate will reach out soon — usually within one business day.",
+    chat: {
+      statusOnline: "Online now",
+      greeting:
+        "Hey! I'm {agent} from the team. I'm here now and can get someone to reach out to you.",
+      greetingWithCity:
+        "Hey! I'm {agent} from the team. I can see you're in {city}.",
+      greetingCityPitch:
+        "We're actively taking on clients in {city} right now. I can get someone from our side on your case.",
+      askName: "What's your name?",
+      askEmail: "Nice to meet you, {name}. What's the best email to reach you?",
+      askPhone:
+        "Got a phone number we can use? Totally optional, you can skip.",
+      askNote:
+        "Last one. What should we talk about when we call? A sentence is enough.",
+      closing:
+        "Perfect. I've got your details. A teammate will reach out within one business day. You're not in a ticket queue.",
+      schedulePrompt: "Want to pick a time yourself instead?",
+      placeholderName: "Type your name…",
+      placeholderEmail: "you@company.com",
+      placeholderPhone: "Best number to reach you",
+      placeholderNote: "Website, ads, CRM, whatever's on your mind…",
+      next: "Next",
+      send: "Send",
+      skip: "Skip",
+      skipPhoneLabel: "I'd rather skip the phone",
+      skipNoteLabel: "Just have someone contact me",
+    },
+  },
 } as const;
 
 export const services = [
@@ -443,6 +487,7 @@ export const weeklyReport = {
 
 export const plans = [
   {
+    id: "starter",
     name: "Starter",
     price: "$999",
     period: "/month",
@@ -458,6 +503,7 @@ export const plans = [
     highlighted: false,
   },
   {
+    id: "growth",
     name: "Growth",
     price: "$1,500",
     period: "/month",
@@ -473,6 +519,7 @@ export const plans = [
     highlighted: true,
   },
   {
+    id: "scale",
     name: "Scale",
     price: "$2,500",
     period: "/month",
@@ -495,24 +542,34 @@ export const proofCapsules = [
   { text: "3x average ROI", fill: "mint" },
 ] as const;
 
+export const testimonialsSection = {
+  headline: "Operators who stopped",
+  headlineEmphasis: "guessing",
+  intro:
+    "Real businesses. Clear outcomes. The kind of proof buyers ask for before they book a call.",
+} as const;
+
 export const testimonials = [
   {
     quote:
-      "They rebuilt our entire platform in 8 weeks. Something our previous agency quoted 6 months for. Revenue is up 340% since launch.",
+      "They rebuilt our site and launch funnel in eight weeks — our last shop quoted six months. Qualified inquiries tripled in the first quarter, and we finally know which pages earn the spend.",
     author: "Sarah Mitchell",
-    role: "CEO, TechStart Inc.",
+    role: "CEO, Harborline Logistics",
+    result: "3× qualified inquiries",
   },
   {
     quote:
-      "The weekly reports alone are worth it. For the first time we actually know what our marketing is doing for us.",
+      "The weekly reports alone changed how we run the business. For the first time we see which campaigns produce booked jobs — not vanity clicks — and what to cut next Monday.",
     author: "Marcus Delgado",
     role: "Owner, Delgado & Sons Contracting",
+    result: "Clear cost-per-lead every week",
   },
   {
     quote:
-      "We stopped juggling a web shop, an ads freelancer, and a CRM consultant. One team, one plan, and the pipeline finally makes sense.",
+      "We dropped the web shop, ads freelancer, and half-configured CRM. One team, one plan, and the pipeline finally matches how we sell. Follow-up stopped falling through the cracks.",
     author: "Priya Nair",
     role: "Founder, Northline Wellness",
+    result: "One growth stack, zero vendor hand-offs",
   },
 ] as const;
 
@@ -530,6 +587,10 @@ export const faq = [
     a: "No. The plan covers strategy, build, and management. Ad platforms bill media spend separately so you keep full visibility on what you are buying.",
   },
   {
+    q: "Will this work if we already have a website?",
+    a: "Yes. Most clients come in with an existing site. We keep what converts, fix what leaks, and rebuild only when the foundation is holding growth back — you will know which path we recommend before you spend.",
+  },
+  {
     q: "Can we start on Starter and upgrade later?",
     a: "Yes. Most clients begin where the gaps are loudest and move up when the foundation is working and they want more channels or automation.",
   },
@@ -540,6 +601,10 @@ export const faq = [
   {
     q: "How long is the commitment?",
     a: "Growth work compounds. We recommend staying long enough to see the system work — especially SEO — but we will outline expectations clearly on the first call so there are no surprises.",
+  },
+  {
+    q: "What do I need to provide to get started?",
+    a: "Access to your site, analytics, and ad accounts (if you have them), plus a short walkthrough of how you currently sell. We handle the rest and keep asks tight so you are not buried in homework.",
   },
 ] as const;
 
@@ -552,11 +617,14 @@ export const closing = {
 export const contact = {
   headlineStart: "Tell us where you want to be in",
   headlineEmphasis: "90 days",
-  body: "Send a few details and we'll come back within one business day with an honest read on how we can help.",
+  body: "Book a call or send a few details — we'll come back within one business day with an honest read on how we can help.",
+  bookingPrompt: "Prefer to talk live?",
+  bookingBody: "Pick a time that works — we’ll walk through goals, fit, and next steps.",
+  bookingLabel: "Book an appointment",
+  formDivider: "Or send a message",
 } as const;
 
 export const footer = {
-  commitment: "A clear report of what your money earned you, every single week.",
   columns: [
     {
       label: "Services",
@@ -580,7 +648,7 @@ export const footer = {
       label: "Company",
       links: [
         { href: "/#faq", label: "FAQ" },
-        { href: "/#contact", label: "Contact" },
+        { href: "/contact", label: "Contact" },
         { href: "/privacy", label: "Privacy" },
         { href: "/terms", label: "Terms" },
       ],

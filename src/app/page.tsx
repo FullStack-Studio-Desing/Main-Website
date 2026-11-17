@@ -5,9 +5,9 @@ import { Process } from "@/components/sections/Process";
 import { WeeklyReport } from "@/components/sections/WeeklyReport";
 import { Pricing } from "@/components/sections/Pricing";
 import { Proof } from "@/components/sections/Proof";
+import { Testimonials } from "@/components/sections/Testimonials";
 import { FAQ } from "@/components/sections/FAQ";
 import { Closing } from "@/components/sections/Closing";
-import { Contact } from "@/components/sections/Contact";
 
 export default function Home() {
   return (
@@ -19,9 +19,9 @@ export default function Home() {
       <WeeklyReport />
       <Pricing />
       <Proof />
+      <Testimonials />
       <FAQ />
       <Closing />
-      <Contact />
     </main>
   );
 }

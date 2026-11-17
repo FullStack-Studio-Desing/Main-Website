@@ -43,7 +43,7 @@ export function Audience() {
           </ul>
 
           <div className="rounded-shell bg-paper p-8 lg:p-10">
-            <p className="font-serif text-2xl italic text-ink">Not a fit if</p>
+            <p className="font-sans text-2xl italic text-ink">Not a fit if</p>
             <ul className="mt-6 flex flex-col gap-4">
               {audience.notFits.map((item) => (
                 <li

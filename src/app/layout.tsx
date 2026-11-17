@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Lilita_One, Instrument_Serif } from "next/font/google";
+import { Inter, Lilita_One } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -19,14 +19,6 @@ const lilita = Lilita_One({
   variable: "--font-display",
 });
 
-const instrument = Instrument_Serif({
-  subsets: ["latin"],
-  weight: "400",
-  style: ["normal", "italic"],
-  display: "swap",
-  variable: "--font-serif",
-});
-
 export const metadata: Metadata = {
   title: "FullStack Studio Design",
   description:
@@ -41,7 +33,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${lilita.variable} ${instrument.variable}`}
+      className={`${inter.variable} ${lilita.variable}`}
     >
       <body className="antialiased">
         <Header />

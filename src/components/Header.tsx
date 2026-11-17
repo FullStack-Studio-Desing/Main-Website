@@ -37,7 +37,10 @@ export function Header() {
   }, []);
 
   const solid = scrolled || open || servicesOpen;
-  const secondaryLinks = navLinks.filter((l) => l.label !== "Services");
+  const homeLink = navLinks.find((l) => l.label === "Home");
+  const secondaryLinks = navLinks.filter(
+    (l) => l.label !== "Services" && l.label !== "Home",
+  );
 
   function closeAll() {
     setOpen(false);
@@ -45,10 +48,10 @@ export function Header() {
   }
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 px-4 pt-4 sm:px-6">
+    <header className="fixed inset-x-0 top-0 z-40 pt-4">
       <div
-        className={`mx-auto flex h-16 max-w-[1280px] items-center justify-between rounded-capsule py-3 pl-5 pr-3 transition-colors duration-300 lg:h-20 lg:pl-6 ${
-          solid ? "bg-forest/95 backdrop-blur-md" : "bg-transparent"
+        className={`mx-auto flex h-16 max-w-[1536px] items-center justify-between rounded-capsule px-6 py-3 transition-colors duration-300 sm:px-10 lg:h-20 ${
+          solid ? "bg-forest" : "bg-transparent"
         }`}
       >
         <Link
@@ -56,16 +59,23 @@ export function Header() {
           className="flex items-center gap-2.5 text-white"
           onClick={closeAll}
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-neon/15 ring-1 ring-neon/25">
-            <LogoMark className="h-5 w-5" tone="neon" />
-          </span>
-          <span className="text-base font-medium tracking-tight">
+          <LogoMark className="h-7 w-7 shrink-0 sm:h-8 sm:w-8" tone="neon" />
+          <span className="text-xl font-bold tracking-tight sm:text-2xl">
             {brand.shortName}
             <span className="text-neon">.</span>
           </span>
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">
+          {homeLink && (
+            <Link
+              href={homeLink.href}
+              className="rounded-action px-4 py-2 text-base font-medium text-white/85 transition-colors duration-200 hover:text-neon"
+            >
+              {homeLink.label}
+            </Link>
+          )}
+
           <div ref={servicesRef} className="relative">
             <button
               type="button"
@@ -123,7 +133,7 @@ export function Header() {
             </Link>
           ))}
           <Link
-            href="/#contact"
+            href="/contact"
             className="ml-2 inline-flex h-12 items-center justify-center rounded-action bg-neon px-5 text-base font-medium text-ink transition-colors duration-200 hover:bg-neon-active lg:h-14"
           >
             Book a call
@@ -144,48 +154,60 @@ export function Header() {
       </div>
 
       {open && (
-        <nav className="mx-auto mt-2 max-w-[1280px] rounded-shell bg-forest p-4 lg:hidden">
-          <div className="flex flex-col gap-1">
-            <p className="px-4 pb-1 pt-2 text-xs font-medium uppercase tracking-[0.14em] text-neon">
-              Services
-            </p>
-            <Link
-              href="/services"
-              className="rounded-panel px-4 py-3 text-base font-medium text-white/85 hover:bg-white/10 hover:text-white"
-              onClick={closeAll}
-            >
-              All services
-            </Link>
-            {services.map((service) => (
+        <nav className="mx-auto mt-2 max-w-[1536px] px-6 sm:px-10 lg:hidden">
+          <div className="rounded-shell bg-forest p-4">
+            <div className="flex flex-col gap-1">
+              {homeLink && (
+                <Link
+                  href={homeLink.href}
+                  className="rounded-panel px-4 py-3 text-base font-medium text-white/85 hover:bg-white/10 hover:text-white"
+                  onClick={closeAll}
+                >
+                  {homeLink.label}
+                </Link>
+              )}
+
+              <p className="px-4 pb-1 pt-2 text-xs font-medium uppercase tracking-[0.14em] text-neon">
+                Services
+              </p>
               <Link
-                key={service.slug}
-                href={`/services/${service.slug}`}
+                href="/services"
                 className="rounded-panel px-4 py-3 text-base font-medium text-white/85 hover:bg-white/10 hover:text-white"
                 onClick={closeAll}
               >
-                {service.shortLabel}
+                All services
               </Link>
-            ))}
+              {services.map((service) => (
+                <Link
+                  key={service.slug}
+                  href={`/services/${service.slug}`}
+                  className="rounded-panel px-4 py-3 text-base font-medium text-white/85 hover:bg-white/10 hover:text-white"
+                  onClick={closeAll}
+                >
+                  {service.shortLabel}
+                </Link>
+              ))}
 
-            <div className="my-2 h-px bg-white/10" />
+              <div className="my-2 h-px bg-white/10" />
 
-            {secondaryLinks.map((link) => (
+              {secondaryLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="rounded-panel px-4 py-3 text-base font-medium text-white/85 hover:bg-white/10 hover:text-white"
+                  onClick={closeAll}
+                >
+                  {link.label}
+                </Link>
+              ))}
               <Link
-                key={link.href}
-                href={link.href}
-                className="rounded-panel px-4 py-3 text-base font-medium text-white/85 hover:bg-white/10 hover:text-white"
+                href="/contact"
+                className="mt-2 inline-flex h-12 items-center justify-center rounded-action bg-neon px-5 text-base font-medium text-ink"
                 onClick={closeAll}
               >
-                {link.label}
+                Book a call
               </Link>
-            ))}
-            <Link
-              href="/#contact"
-              className="mt-2 inline-flex h-12 items-center justify-center rounded-action bg-neon px-5 text-base font-medium text-ink"
-              onClick={closeAll}
-            >
-              Book a call
-            </Link>
+            </div>
           </div>
         </nav>
       )}
