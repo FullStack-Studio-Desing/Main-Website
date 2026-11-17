@@ -91,7 +91,7 @@ export function ReportForm({
         >
           {(["published", "draft"] as ReportStatus[]).map((status) => (
             <option key={status} value={status}>
-              {status === "published" ? "Published — client can see it" : "Draft — studio only"}
+              {status === "published" ? "Published, client can see it" : "Draft, studio only"}
             </option>
           ))}
         </select>

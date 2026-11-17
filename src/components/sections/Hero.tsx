@@ -3,15 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import {
-  CalendarCheck,
-  CheckCircle,
-  Lightning,
-} from "@phosphor-icons/react";
+import { CheckCircle } from "@phosphor-icons/react";
 import { hero } from "@/data/site-copy";
 import { btnPrimary, btnGlass } from "@/components/buttons";
 import { HeroLeadCard } from "@/components/HeroLeadCard";
-import { StickerPill } from "@/components/graphics/BrandStickers";
+import { HeroTypewriter } from "@/components/HeroTypewriter";
 import { TechMarquee } from "@/components/graphics/TechMarquee";
 
 const ease = [0.16, 1, 0.3, 1] as const;
@@ -29,7 +25,7 @@ export function Hero() {
         };
 
   return (
-    <section className="relative min-h-[100dvh] overflow-hidden bg-forest text-white">
+    <section className="relative min-h-[100dvh] overflow-hidden rounded-b-[32px] bg-forest text-white md:rounded-b-none">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
@@ -50,27 +46,16 @@ export function Hero() {
       <div className="relative mx-auto flex min-h-[100dvh] max-w-[1536px] flex-col justify-center px-6 pb-20 pt-32 sm:px-10 lg:pb-24 lg:pt-36">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
           {/* Left — offer */}
-          <div className="relative z-10 max-w-[640px]">
-            <motion.div
-              {...enter(0)}
-              className="mb-6 flex flex-wrap items-center gap-3"
-            >
-              <StickerPill tone="neon">
-                <CalendarCheck size={16} weight="duotone" />
-                Book a call
-              </StickerPill>
-              <StickerPill tone="mint">
-                <Lightning size={16} weight="duotone" />
-                Reply in 1 day
-              </StickerPill>
-            </motion.div>
-
+          <div className="relative z-10 max-w-[720px]">
             <motion.h1
-              {...enter(0.06)}
-              className="font-display text-[40px] uppercase leading-[0.92] tracking-[-0.0143em] sm:text-[56px] lg:text-[64px] xl:text-[72px] lg:leading-[0.9]"
+              {...enter(0)}
+              className="font-display text-[48px] uppercase leading-[0.9] tracking-[-0.02em] sm:text-[68px] lg:text-[80px] xl:text-[92px] lg:leading-[0.88]"
             >
               {hero.headlineStart}{" "}
-              <span className="text-neon">{hero.headlineEmphasis}</span>
+              <HeroTypewriter
+                phrases={hero.headlineRotations}
+                className="text-neon"
+              />
             </motion.h1>
 
             <motion.p
@@ -90,7 +75,7 @@ export function Hero() {
                   className="flex items-start gap-3 text-base font-medium leading-snug text-fog sm:text-[17px]"
                 >
                   <CheckCircle
-                    size={20}
+                    size={26}
                     weight="fill"
                     className="mt-0.5 shrink-0 text-neon"
                   />

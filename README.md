@@ -2,7 +2,7 @@
 
 Marketing site for **FullStack Studio Design**: websites, marketing, sales growth, AI automation, and custom CRMs on flat monthly plans. Built with Next.js 15, Tailwind, and Framer Motion. English only.
 
-Visual system: **sculptural green optimism** — light paper chapters, forest-green dark chapters, neon reserved for actions and short emphasis.
+Visual system: **sculptural green optimism**. Light paper chapters, forest-green dark chapters, neon reserved for actions and short emphasis.
 
 ## Pages
 
