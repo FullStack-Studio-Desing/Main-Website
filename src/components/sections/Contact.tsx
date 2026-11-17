@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CircleNotch } from "@phosphor-icons/react";
 import { brand, contact } from "@/data/site-copy";
 import { btnInverse } from "@/components/buttons";
+import { GoogleSchedulingButton } from "@/components/GoogleSchedulingButton";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
@@ -74,116 +75,152 @@ export function Contact() {
                 Your message is in our inbox. Expect a reply within one
                 business day.
               </p>
+              <p className="mt-8 text-base font-medium text-ink">
+                {contact.bookingPrompt}
+              </p>
+              <p className="mt-2 text-base leading-relaxed text-body">
+                {contact.bookingBody}
+              </p>
+              <div className="mt-5 flex justify-center">
+                <GoogleSchedulingButton label={contact.bookingLabel} />
+              </div>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div className="flex flex-col gap-2">
-                  <label htmlFor="name" className="text-base font-medium text-ink">
-                    Name
-                  </label>
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    required
-                    autoComplete="name"
-                    placeholder="Your name"
-                    className={inputClasses}
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label htmlFor="email" className="text-base font-medium text-ink">
-                    Email
-                  </label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    autoComplete="email"
-                    placeholder="you@company.com"
-                    className={inputClasses}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div className="flex flex-col gap-2">
-                  <label
-                    htmlFor="company"
-                    className="text-base font-medium text-ink"
-                  >
-                    Company
-                  </label>
-                  <input
-                    id="company"
-                    name="company"
-                    type="text"
-                    autoComplete="organization"
-                    placeholder="Company name"
-                    className={inputClasses}
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label
-                    htmlFor="budget"
-                    className="text-base font-medium text-ink"
-                  >
-                    Plan you&apos;re considering
-                  </label>
-                  <select
-                    id="budget"
-                    name="budget"
-                    defaultValue=""
-                    className={inputClasses}
-                  >
-                    <option value="" disabled>
-                      Select a plan
-                    </option>
-                    <option value="Starter ($999/mo)">Starter, $999/mo</option>
-                    <option value="Growth ($1,500/mo)">Growth, $1,500/mo</option>
-                    <option value="Scale ($2,500/mo)">Scale, $2,500/mo</option>
-                    <option value="Not sure yet">Not sure yet</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label
-                  htmlFor="message"
-                  className="text-base font-medium text-ink"
-                >
-                  What are you trying to grow?
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  required
-                  rows={5}
-                  placeholder="Tell us about your business and goals"
-                  className="w-full resize-y rounded-md border border-input-edge bg-white px-4 py-3 text-base text-ink placeholder:text-muted outline-none transition-colors duration-200 focus:border-leaf"
+            <div className="flex flex-col gap-10">
+              <div className="flex flex-col items-start gap-3 sm:items-center sm:text-center">
+                <p className="text-xl font-medium tracking-[-0.0125em] text-ink">
+                  {contact.bookingPrompt}
+                </p>
+                <p className="max-w-[520px] text-base leading-relaxed text-body">
+                  {contact.bookingBody}
+                </p>
+                <GoogleSchedulingButton
+                  className="mt-1 sm:items-center"
+                  label={contact.bookingLabel}
                 />
               </div>
 
-              {status === "error" && (
-                <p className="text-base text-red-600">
-                  Something went wrong sending your message. Please try again,
-                  or email us directly at {brand.email}.
-                </p>
-              )}
-
-              <button
-                type="submit"
-                disabled={status === "sending"}
-                className={`${btnInverse} mt-2 self-start disabled:opacity-60`}
+              <div
+                className="flex items-center gap-4"
+                role="separator"
+                aria-label={contact.formDivider}
               >
-                {status === "sending" && (
-                  <CircleNotch size={18} className="animate-spin" />
+                <span className="h-px flex-1 bg-rule" />
+                <span className="shrink-0 text-sm font-medium uppercase tracking-[0.08em] text-muted">
+                  {contact.formDivider}
+                </span>
+                <span className="h-px flex-1 bg-rule" />
+              </div>
+
+              <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="name" className="text-base font-medium text-ink">
+                      Name
+                    </label>
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      required
+                      autoComplete="name"
+                      placeholder="Your name"
+                      className={inputClasses}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="email" className="text-base font-medium text-ink">
+                      Email
+                    </label>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      required
+                      autoComplete="email"
+                      placeholder="you@company.com"
+                      className={inputClasses}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <div className="flex flex-col gap-2">
+                    <label
+                      htmlFor="company"
+                      className="text-base font-medium text-ink"
+                    >
+                      Company
+                    </label>
+                    <input
+                      id="company"
+                      name="company"
+                      type="text"
+                      autoComplete="organization"
+                      placeholder="Company name"
+                      className={inputClasses}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label
+                      htmlFor="budget"
+                      className="text-base font-medium text-ink"
+                    >
+                      Plan you&apos;re considering
+                    </label>
+                    <select
+                      id="budget"
+                      name="budget"
+                      defaultValue=""
+                      className={inputClasses}
+                    >
+                      <option value="" disabled>
+                        Select a plan
+                      </option>
+                      <option value="Starter ($999/mo)">Starter, $999/mo</option>
+                      <option value="Growth ($1,500/mo)">Growth, $1,500/mo</option>
+                      <option value="Scale ($2,500/mo)">Scale, $2,500/mo</option>
+                      <option value="Not sure yet">Not sure yet</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <label
+                    htmlFor="message"
+                    className="text-base font-medium text-ink"
+                  >
+                    What are you trying to grow?
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    required
+                    rows={5}
+                    placeholder="Tell us about your business and goals"
+                    className="w-full resize-y rounded-md border border-input-edge bg-white px-4 py-3 text-base text-ink placeholder:text-muted outline-none transition-colors duration-200 focus:border-leaf"
+                  />
+                </div>
+
+                {status === "error" && (
+                  <p className="text-base text-red-600">
+                    Something went wrong sending your message. Please try again,
+                    or email us directly at {brand.email}.
+                  </p>
                 )}
-                {status === "sending" ? "Sending" : "Send message"}
-              </button>
-            </form>
+
+                <button
+                  type="submit"
+                  disabled={status === "sending"}
+                  className={`${btnInverse} mt-2 self-start disabled:opacity-60`}
+                >
+                  {status === "sending" && (
+                    <CircleNotch size={18} className="animate-spin" />
+                  )}
+                  {status === "sending" ? "Sending" : "Send message"}
+                </button>
+              </form>
+            </div>
           )}
         </div>
       </div>

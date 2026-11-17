@@ -573,7 +573,11 @@ export const closing = {
 export const contact = {
   headlineStart: "Tell us where you want to be in",
   headlineEmphasis: "90 days",
-  body: "Send a few details and we'll come back within one business day with an honest read on how we can help.",
+  body: "Book a call or send a few details — we'll come back within one business day with an honest read on how we can help.",
+  bookingPrompt: "Prefer to talk live?",
+  bookingBody: "Pick a time that works — we’ll walk through goals, fit, and next steps.",
+  bookingLabel: "Book an appointment",
+  formDivider: "Or send a message",
 } as const;
 
 export const footer = {
