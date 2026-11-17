@@ -25,7 +25,7 @@ export function Hero() {
         };
 
   return (
-    <section className="relative min-h-[100dvh] overflow-hidden bg-forest text-white">
+    <section className="relative min-h-[100dvh] overflow-hidden rounded-b-[32px] bg-forest text-white md:rounded-b-none">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
