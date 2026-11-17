@@ -149,6 +149,8 @@ export function HeroLeadCard() {
   const chat = copy.chat;
 
   const [open, setOpen] = useState(false);
+  /** Mobile-only: feed teaser bubbles beside FAB without opening the sheet */
+  const [preview, setPreview] = useState(false);
   const [started, setStarted] = useState(false);
   const [agent] = useState(() => pickAgent());
   const [step, setStep] = useState<Step>("name");
@@ -173,6 +175,8 @@ export function HeroLeadCard() {
   messagesRef.current = messages;
   const [audioReady, setAudioReady] = useState(false);
 
+  const live = open || preview;
+
   function pushMsg(from: ChatMsg["from"], text: string) {
     msgId.current += 1;
     setMessages((prev) => [
@@ -181,13 +185,17 @@ export function HeroLeadCard() {
     ]);
   }
 
-  // Auto-pop after a beat so it feels like a widget entering
+  // Desktop: auto-open panel. Mobile: tease with bubbles — never auto-open.
   useEffect(() => {
-    const id = window.setTimeout(() => setOpen(true), 1800);
+    const desktop = window.matchMedia("(min-width: 640px)");
+    const id = window.setTimeout(() => {
+      if (desktop.matches) setOpen(true);
+      else setPreview(true);
+    }, 1800);
     return () => window.clearTimeout(id);
   }, []);
 
-  // Lock page scroll while the mobile full-screen chat modal is open
+  // Lock page scroll while the mobile ~70% chat sheet is open
   useEffect(() => {
     if (!open) return;
     const mq = window.matchMedia("(max-width: 639px)");
@@ -227,9 +235,9 @@ export function HeroLeadCard() {
     };
   }, []);
 
-  // Chime when each new agent bubble appears (retry after unlock if blocked)
+  // Chime when each new agent bubble appears (panel or mobile teaser)
   useEffect(() => {
-    if (!open) return;
+    if (!live) return;
 
     const pending = messages.filter(
       (m) =>
@@ -262,11 +270,11 @@ export function HeroLeadCard() {
       // Allow retry if we cancelled mid-flight (e.g. Strict Mode)
       for (const m of pending) ringingIds.current.delete(m.id);
     };
-  }, [messages, open, audioReady]);
+  }, [messages, live, audioReady]);
 
-  // Initial greeting (+ city if we can) + first question — once opened
+  // Initial greeting (+ city) — when panel opens (desktop) or mobile preview starts
   useEffect(() => {
-    if (!open || started) return;
+    if (!live || started) return;
 
     let cancelled = false;
     const timers: number[] = [];
@@ -334,7 +342,7 @@ export function HeroLeadCard() {
       setTyping(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, started]);
+  }, [live, started]);
 
   useEffect(() => {
     if (!open) return;
@@ -465,7 +473,7 @@ export function HeroLeadCard() {
         aria-hidden={!open}
       />
 
-      {/* Panel: full-screen modal on mobile, floating card on desktop */}
+      {/* Panel: ~70% sheet on mobile, floating card on desktop */}
       <div
         role="dialog"
         aria-modal={open ? "true" : undefined}
@@ -474,7 +482,7 @@ export function HeroLeadCard() {
           open
             ? "pointer-events-auto translate-y-0 opacity-100 max-sm:scale-100 sm:translate-y-0 sm:scale-100"
             : "pointer-events-none translate-y-full opacity-0 max-sm:scale-100 sm:translate-y-3 sm:scale-95"
-        } inset-0 sm:inset-auto sm:bottom-24 sm:right-6 sm:h-[560px] sm:w-[min(100vw-1.5rem,380px)] sm:origin-bottom-right sm:rounded-[24px] sm:shadow-form-lift sm:ring-1 sm:ring-black/5`}
+        } inset-x-0 bottom-0 h-[70dvh] max-h-[70dvh] rounded-t-[24px] shadow-form-lift ring-1 ring-black/5 sm:inset-auto sm:bottom-24 sm:right-6 sm:h-[560px] sm:max-h-none sm:w-[min(100vw-1.5rem,380px)] sm:origin-bottom-right sm:rounded-[24px]`}
         aria-hidden={!open}
       >
         {/* Chat header — live agent */}
@@ -641,7 +649,44 @@ export function HeroLeadCard() {
         )}
       </div>
 
-      {/* Launcher — hidden on mobile while modal is open */}
+      {/* Mobile teaser bubbles — notification stack beside FAB (closed only) */}
+      {!open && (
+        <div
+          className="pointer-events-none fixed bottom-[5.75rem] right-5 z-[61] flex w-[min(16.5rem,calc(100vw-5.5rem))] flex-col items-end gap-2 sm:hidden"
+          aria-live="polite"
+          aria-atomic="false"
+        >
+          {messages
+            .filter((m) => m.from === "agent")
+            .slice(-2)
+            .map((m) => (
+              <button
+                key={m.id}
+                type="button"
+                onClick={() => setOpen(true)}
+                className="pointer-events-auto flex max-w-full items-end gap-2 text-left transition-transform active:scale-[0.98]"
+              >
+                <span className="sr-only">Open chat: </span>
+                <AgentAvatar agent={agent} size="sm" />
+                <span className="rounded-2xl rounded-br-md bg-white px-3.5 py-2.5 text-[13px] leading-snug text-body shadow-[0_8px_28px_rgba(18,35,20,0.18)] ring-1 ring-black/5">
+                  {m.text}
+                </span>
+              </button>
+            ))}
+          {typing && messages.filter((m) => m.from === "agent").length === 0 && (
+            <div className="pointer-events-none flex items-end gap-2">
+              <AgentAvatar agent={agent} size="sm" />
+              <div className="flex items-center gap-1.5 rounded-2xl rounded-br-md bg-white px-3.5 py-3 shadow-[0_8px_28px_rgba(18,35,20,0.18)] ring-1 ring-black/5">
+                <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-muted" />
+                <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-muted [animation-delay:180ms]" />
+                <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-muted [animation-delay:360ms]" />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Launcher — hidden on mobile while sheet is open */}
       <button
         type="button"
         onClick={() => {
