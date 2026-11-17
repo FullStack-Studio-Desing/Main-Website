@@ -4,9 +4,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { brand, hero } from "@/data/site-copy";
 import { btnPrimary, btnGlass } from "@/components/buttons";
-import { LogoMark } from "@/components/LogoMark";
 import {
-  StickerBurst,
   StickerPill,
   StickerStack,
 } from "@/components/graphics/BrandStickers";
@@ -129,24 +127,17 @@ export function Hero() {
 
       <div className="relative mx-auto flex min-h-[100dvh] max-w-[1536px] items-center px-6 pb-24 pt-32 sm:px-10 lg:pt-28">
         <div className="relative z-10 w-full max-w-[640px] lg:max-w-[600px] xl:max-w-[680px]">
-          <motion.div {...enter(0)} className="flex items-center gap-3">
-            <span className="relative flex h-12 w-12 items-center justify-center rounded-full bg-neon/15 ring-1 ring-neon/30">
-              <LogoMark className="h-7 w-7" tone="neon" />
-              <StickerBurst className="absolute -right-3 -top-3 h-7 w-7" tone="neon" />
-            </span>
-          </motion.div>
-
           {/* Brand leads — same display voice as the promise, never smaller */}
           <motion.p
-            {...enter(0.06)}
-            className="mt-8 font-display text-[40px] uppercase leading-[0.92] tracking-[-0.01em] text-white sm:text-[56px] lg:text-[68px] xl:text-[76px]"
+            {...enter(0)}
+            className="font-display text-[40px] uppercase leading-[0.92] tracking-[-0.01em] text-white sm:text-[56px] lg:text-[68px] xl:text-[76px]"
           >
             {brand.shortName}
             <span className="text-neon">.</span>
           </motion.p>
 
           <motion.h1
-            {...enter(0.12)}
+            {...enter(0.06)}
             className="mt-5 max-w-[560px] text-xl font-medium leading-snug tracking-[-0.015em] text-fog sm:text-2xl lg:text-[28px] lg:leading-8"
           >
             {hero.headlineStart}{" "}
@@ -154,14 +145,14 @@ export function Hero() {
           </motion.h1>
 
           <motion.p
-            {...enter(0.18)}
+            {...enter(0.12)}
             className="mt-6 max-w-[460px] text-base font-medium leading-relaxed text-sage sm:text-lg"
           >
             {hero.subheadline}
           </motion.p>
 
           <motion.div
-            {...enter(0.24)}
+            {...enter(0.18)}
             className="mt-10 flex flex-wrap gap-4"
           >
             <Link href="/contact" className={btnPrimary}>
@@ -173,7 +164,7 @@ export function Hero() {
           </motion.div>
 
           <motion.div
-            {...enter(0.3)}
+            {...enter(0.24)}
             className="mt-12 flex flex-wrap items-center gap-3"
           >
             <StickerPill tone="neon" animate={false}>
@@ -189,7 +180,7 @@ export function Hero() {
           </motion.div>
 
           <motion.p
-            {...enter(0.34)}
+            {...enter(0.28)}
             className="mt-5 max-w-[420px] text-sm font-medium text-sage sm:text-base"
           >
             {hero.trustLine}
