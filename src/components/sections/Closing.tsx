@@ -28,7 +28,7 @@ export function Closing() {
         whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
         viewport={{ once: true, amount: 0.5 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="relative mx-auto flex max-w-[880px] flex-col items-center px-6 text-center sm:px-10"
+        className="relative mx-auto flex max-w-[1536px] flex-col items-center px-6 text-center sm:px-10"
       >
         <div className="mb-8 flex justify-center">
           <StickerPill tone="neon">

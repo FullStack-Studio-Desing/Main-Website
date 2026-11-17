@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "framer-motion";
 import { testimonials, testimonialsSection } from "@/data/site-copy";
 import {
   StickerAvatar,
@@ -16,8 +16,35 @@ function authorInitials(name: string) {
     .toUpperCase();
 }
 
+function TestimonialCard({
+  item,
+  tone,
+}: {
+  item: (typeof testimonials)[number];
+  tone: "mint" | "neon";
+}) {
+  return (
+    <figure className="flex w-[min(85vw,360px)] shrink-0 flex-col rounded-shell bg-white p-7 shadow-culture-card sm:w-[380px] sm:p-8">
+      <StickerQuote className="h-9 w-11" tone={tone} />
+      <blockquote className="mt-5 flex-1 text-xl font-medium leading-8 tracking-[-0.01em] text-ink">
+        &ldquo;{item.quote}&rdquo;
+      </blockquote>
+      <figcaption className="mt-8 flex items-center gap-3 border-t border-rule pt-5">
+        <StickerAvatar initials={authorInitials(item.author)} />
+        <span>
+          <span className="block text-base font-medium text-ink">
+            {item.author}
+          </span>
+          <span className="mt-0.5 block text-base text-ink/80">{item.role}</span>
+        </span>
+      </figcaption>
+    </figure>
+  );
+}
+
 export function Testimonials() {
   const reduce = useReducedMotion();
+  const row = [...testimonials, ...testimonials];
 
   return (
     <section
@@ -36,45 +63,35 @@ export function Testimonials() {
               {testimonialsSection.headlineEmphasis}
             </span>
           </h2>
-          <p className="mx-auto mt-6 max-w-[560px] text-lg font-medium leading-6 text-muted">
+          <p className="mx-auto mt-6 max-w-[560px] text-lg font-medium leading-6 text-ink">
             {testimonialsSection.intro}
           </p>
         </div>
 
-        <div className="mx-auto mt-16 grid max-w-[1100px] grid-cols-1 gap-6 md:grid-cols-3 lg:mt-20 lg:gap-8">
-          {testimonials.map((item, i) => (
-            <motion.figure
-              key={item.author}
-              initial={reduce ? false : { opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{
-                duration: 0.55,
-                delay: i * 0.1,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="flex flex-col rounded-shell bg-white p-7 shadow-culture-card sm:p-8"
-            >
-              <StickerQuote
-                className="h-9 w-11"
-                tone={i === 1 ? "neon" : "mint"}
+        <div
+          className="relative mt-16 overflow-hidden lg:mt-20"
+          aria-label="Client testimonials"
+        >
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-paper to-transparent sm:w-12"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-paper to-transparent sm:w-12"
+          />
+          <div
+            className={`flex w-max gap-6 sm:gap-8 ${reduce ? "" : "animate-marquee"}`}
+            style={reduce ? undefined : { animationDuration: "55s" }}
+          >
+            {row.map((item, i) => (
+              <TestimonialCard
+                key={`${item.author}-${i}`}
+                item={item}
+                tone={i % 2 === 1 ? "neon" : "mint"}
               />
-              <blockquote className="mt-5 flex-1 text-xl font-medium leading-8 tracking-[-0.01em] text-ink">
-                &ldquo;{item.quote}&rdquo;
-              </blockquote>
-              <figcaption className="mt-8 flex items-center gap-3 border-t border-rule pt-5">
-                <StickerAvatar initials={authorInitials(item.author)} />
-                <span>
-                  <span className="block text-base font-medium text-ink">
-                    {item.author}
-                  </span>
-                  <span className="mt-0.5 block text-base text-muted">
-                    {item.role}
-                  </span>
-                </span>
-              </figcaption>
-            </motion.figure>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>

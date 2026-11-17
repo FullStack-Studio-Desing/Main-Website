@@ -98,7 +98,7 @@ export function FAQ() {
       className="scroll-mt-24 bg-white py-24 lg:py-32"
       aria-labelledby="faq-heading"
     >
-      <div className="relative mx-auto max-w-[1100px] px-6 sm:px-10">
+      <div className="relative mx-auto max-w-[1536px] px-6 sm:px-10">
         <StickerBurst
           className="pointer-events-none absolute -left-1 top-2 hidden h-8 w-8 sm:block lg:-left-6"
           tone="neon"

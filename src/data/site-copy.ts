@@ -393,31 +393,35 @@ export function getService(slug: string): Service | undefined {
 }
 
 export const audience = {
-  headline: "Built for operators who are",
-  headlineEmphasis: "done guessing",
+  headline: "Who this is",
+  headlineEmphasis: "for",
   intro:
-    "We work best with businesses that already have something worth selling — and want a clearer system for finding, converting, and keeping customers.",
+    "If you already sell something real and want more of the right customers — without guessing where the money went — you are in the right place.",
   fits: [
     {
-      title: "Service businesses ready to grow",
+      label: "You run",
+      title: "A service business",
       detail:
-        "Contractors, agencies, clinics, consultants, and local brands that need a reliable flow of qualified inquiries.",
+        "Contractors, agencies, clinics, consultants, and local brands that need a steady flow of qualified inquiries.",
     },
     {
-      title: "Owners tired of agency hand-offs",
+      label: "You want",
+      title: "One team, not vendors",
       detail:
-        "One team for site, marketing, sales systems, and automation — so nothing falls between vendors.",
+        "Site, marketing, sales systems, and automation in one place — so nothing falls between hand-offs.",
     },
     {
-      title: "Teams that want weekly clarity",
+      label: "You expect",
+      title: "Weekly proof",
       detail:
-        "You get a report on what your money earned, not a slide deck of impressions and vague progress.",
+        "A clear report on what your money earned, not a slide deck of impressions and vague progress.",
     },
   ],
+  notFitsLabel: "Not a fit if",
   notFits: [
-    "Businesses looking for the cheapest logo-and-brochure site",
-    "Companies that want a six-month strategy project before any work ships",
-    "Teams that will not act on the data once they have it",
+    "You only need a cheap logo-and-brochure site",
+    "You want six months of strategy before any work ships",
+    "You will not act on the data once you have it",
   ],
 } as const;
 
@@ -570,6 +574,41 @@ export const testimonials = [
     author: "Priya Nair",
     role: "Founder, Northline Wellness",
     result: "One growth stack, zero vendor hand-offs",
+  },
+  {
+    quote:
+      "Our old site looked fine and converted almost nothing. After the rebuild and tracking cleanup, booked consults jumped and we stopped guessing which landing pages deserved the budget.",
+    author: "James Okonkwo",
+    role: "Managing Partner, Okonkwo Law Group",
+    result: "Booked consults up sharply",
+  },
+  {
+    quote:
+      "They connected our ads, CRM, and follow-up so the sales team finally gets warm leads the same day. Pipeline is cleaner, and Monday meetings start with numbers instead of opinions.",
+    author: "Elena Vargas",
+    role: "VP Growth, Rivermark Home Services",
+    result: "Same-day warm lead handoff",
+  },
+  {
+    quote:
+      "We needed SEO that actually tied to revenue. Within a quarter the priority pages were ranking, and the weekly report showed which keywords turned into real inquiries.",
+    author: "Daniel Cho",
+    role: "Owner, Cho Dental Group",
+    result: "SEO tied to real inquiries",
+  },
+  {
+    quote:
+      "Campaign spend used to feel like a black hole. Now every dollar is tagged to a form fill or booked call, and we know what to scale before the week is over.",
+    author: "Amanda Reyes",
+    role: "Marketing Director, BrightPath Clinics",
+    result: "Spend tied to booked calls",
+  },
+  {
+    quote:
+      "They shipped fast without the agency theater. Site fixes, ads, and reporting went live in the first month — and we still get a clear action list every single week.",
+    author: "Tom Brennan",
+    role: "Founder, Brennan Supply Co.",
+    result: "Live in month one, report every week",
   },
 ] as const;
 
