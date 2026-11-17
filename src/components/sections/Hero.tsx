@@ -75,7 +75,7 @@ export function Hero() {
                   className="flex items-start gap-3 text-base font-medium leading-snug text-fog sm:text-[17px]"
                 >
                   <CheckCircle
-                    size={20}
+                    size={26}
                     weight="fill"
                     className="mt-0.5 shrink-0 text-neon"
                   />

@@ -11,30 +11,30 @@ type Brand = {
 };
 
 const brands: Brand[] = [
-  { name: "Google", src: "/images/brands/google.svg", width: 48, height: 48 },
-  { name: "WordPress", src: "/images/brands/wordpress.svg", width: 48, height: 48 },
-  { name: "Shopify", src: "/images/brands/shopify.svg", width: 42, height: 48 },
-  { name: "Google Ads", src: "/images/brands/google-ads.svg", width: 54, height: 48 },
-  { name: "Meta Ads", src: "/images/brands/meta.svg", width: 72, height: 48 },
-  { name: "HubSpot", src: "/images/brands/hubspot.svg", width: 48, height: 48 },
-  { name: "GoHighLevel", src: "/images/brands/gohighlevel.svg", width: 120, height: 28 },
-  { name: "Klaviyo", src: "/images/brands/klaviyo.svg", width: 48, height: 48 },
-  { name: "Stripe", src: "/images/brands/stripe.svg", width: 48, height: 48 },
+  { name: "Google", src: "/images/brands/google.svg", width: 62, height: 62 },
+  { name: "WordPress", src: "/images/brands/wordpress.svg", width: 62, height: 62 },
+  { name: "Shopify", src: "/images/brands/shopify.svg", width: 55, height: 62 },
+  { name: "Google Ads", src: "/images/brands/google-ads.svg", width: 70, height: 62 },
+  { name: "Meta Ads", src: "/images/brands/meta.svg", width: 94, height: 62 },
+  { name: "HubSpot", src: "/images/brands/hubspot.svg", width: 62, height: 62 },
+  { name: "GoHighLevel", src: "/images/brands/gohighlevel.svg", width: 156, height: 36 },
+  { name: "Klaviyo", src: "/images/brands/klaviyo.svg", width: 62, height: 62 },
+  { name: "Stripe", src: "/images/brands/stripe.svg", width: 62, height: 62 },
 ];
 
 function BrandIcon({ name, src, width, height }: Brand) {
   return (
     <span
-      className="inline-flex w-[4.75rem] shrink-0 flex-col items-center justify-center gap-1.5 md:w-[5.5rem]"
+      className="inline-flex w-[6.175rem] shrink-0 flex-col items-center justify-center gap-1.5 md:w-[7.15rem]"
       aria-label={name}
     >
-      <span className="inline-flex h-10 w-full items-center justify-center md:h-12">
+      <span className="inline-flex h-[3.25rem] w-full items-center justify-center md:h-[3.9rem]">
         <Image
           src={src}
           alt=""
           width={width}
           height={height}
-          className="h-8 w-auto max-w-full object-contain md:h-10"
+          className="h-[2.6rem] w-auto max-w-full object-contain md:h-[3.25rem]"
           unoptimized
         />
       </span>
