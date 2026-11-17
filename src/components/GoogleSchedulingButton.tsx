@@ -13,6 +13,8 @@ const JS_SRC =
 /** Brand ink — Google default #039BE5 clashes with the forest/neon system. */
 export const GOOGLE_SCHEDULE_COLOR = "#273f2b";
 
+const POPUP_STYLE_ID = "fssd-google-schedule-popup-style";
+
 declare global {
   interface Window {
     calendar?: {
@@ -40,6 +42,97 @@ function ensureStylesheet() {
   link.rel = "stylesheet";
   link.href = CSS_HREF;
   document.head.appendChild(link);
+}
+
+/** Opaque white panel + compact centered size (not fullscreen). */
+function ensurePopupStyles() {
+  if (document.getElementById(POPUP_STYLE_ID)) return;
+  const style = document.createElement("style");
+  style.id = POPUP_STYLE_ID;
+  style.textContent = `
+    /* Dim backdrop — keep translucent, never bleach full viewport white */
+    .qxJTeb,
+    .R5cc3e,
+    div[jscontroller][aria-modal="true"],
+    div[role="dialog"][aria-modal="true"] {
+      background-color: rgba(18, 35, 20, 0.55) !important;
+      background: rgba(18, 35, 20, 0.55) !important;
+    }
+
+    /* Compact white appointment panel */
+    iframe[src*="calendar.google.com/calendar/appointments"],
+    iframe[src*="calendar.app.google"],
+    div[role="dialog"] iframe[src*="calendar"] {
+      background-color: #ffffff !important;
+      background: #ffffff !important;
+      width: min(440px, calc(100vw - 32px)) !important;
+      max-width: 440px !important;
+      height: min(640px, calc(100vh - 48px)) !important;
+      max-height: min(640px, calc(100vh - 48px)) !important;
+      border: none !important;
+      border-radius: 16px !important;
+      box-shadow: 0 24px 64px rgba(18, 35, 20, 0.28) !important;
+    }
+
+    /* Inner panel wrappers Google nests around the iframe */
+    .iFjyZd,
+    div[role="dialog"][aria-modal="true"] > div,
+    div[aria-modal="true"] .VfPpkd-P5QLlc,
+    div[aria-modal="true"] .W7g1Rb-rymPhb {
+      background-color: #ffffff !important;
+      background: #ffffff !important;
+      width: min(440px, calc(100vw - 32px)) !important;
+      max-width: 440px !important;
+      max-height: min(640px, calc(100vh - 48px)) !important;
+      border-radius: 16px !important;
+      overflow: hidden !important;
+      margin: auto !important;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function sizePopupPanel(el: HTMLElement) {
+  el.style.width = "min(440px, calc(100vw - 32px))";
+  el.style.maxWidth = "440px";
+  el.style.height = "min(640px, calc(100vh - 48px))";
+  el.style.maxHeight = "min(640px, calc(100vh - 48px))";
+  el.style.borderRadius = "16px";
+  el.style.overflow = "hidden";
+  el.style.backgroundColor = "#ffffff";
+  el.style.background = "#ffffff";
+}
+
+function paintPopupWhite(root: ParentNode = document) {
+  const iframes = root.querySelectorAll<HTMLIFrameElement>(
+    'iframe[src*="calendar.google.com"], iframe[src*="calendar.app.google"]',
+  );
+  iframes.forEach((iframe) => {
+    sizePopupPanel(iframe);
+    const parent = iframe.parentElement;
+    if (parent) sizePopupPanel(parent);
+  });
+
+  const dialogs = root.querySelectorAll<HTMLElement>(
+    '[role="dialog"][aria-modal="true"], [aria-modal="true"]',
+  );
+  dialogs.forEach((el) => {
+    // Keep the full-viewport dimmer translucent; only whiten/size the panel
+    const looksLikeBackdrop =
+      el.childElementCount === 1 ||
+      getComputedStyle(el).position === "fixed";
+    if (looksLikeBackdrop) {
+      el.style.backgroundColor = "rgba(18, 35, 20, 0.55)";
+      el.style.background = "rgba(18, 35, 20, 0.55)";
+      el.style.display = "flex";
+      el.style.alignItems = "center";
+      el.style.justifyContent = "center";
+      const panel = el.firstElementChild as HTMLElement | null;
+      if (panel) sizePopupPanel(panel);
+      return;
+    }
+    sizePopupPanel(el);
+  });
 }
 
 function loadScript(): Promise<void> {
@@ -82,6 +175,28 @@ export function GoogleSchedulingButton({
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    ensurePopupStyles();
+    const timers: number[] = [];
+    const observer = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        if (!m.addedNodes.length) continue;
+        paintPopupWhite();
+        // Google often applies fullscreen inline styles a tick later
+        timers.push(
+          window.setTimeout(paintPopupWhite, 50),
+          window.setTimeout(paintPopupWhite, 200),
+        );
+        break;
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => {
+      timers.forEach((id) => window.clearTimeout(id));
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
     const host = hostRef.current;
     if (!host) return;
 
@@ -90,6 +205,7 @@ export function GoogleSchedulingButton({
     host.replaceChildren(mount);
 
     ensureStylesheet();
+    ensurePopupStyles();
 
     loadScript()
       .then(() => {

@@ -15,13 +15,56 @@ export const navLinks = [
 ] as const;
 
 export const hero = {
-  headlineStart: "The growth team behind",
-  headlineEmphasis: "your business",
+  headlineStart: "Growth systems that",
+  headlineEmphasis: "actually sell",
   subheadline:
-    "Websites, marketing, sales systems, AI automation, and custom CRMs. One team, one monthly plan, measurable results.",
-  primaryCta: "Book a call",
-  secondaryCta: "See pricing",
-  trustLine: "Trusted by 200+ businesses across the US and Canada",
+    "Websites, marketing, sales, AI, and CRMs — one team, one monthly plan.",
+  primaryCta: "See services",
+  primaryHref: "/services",
+  secondaryCta: "Client results",
+  secondaryHref: "/#testimonials",
+  highlights: [
+    "One partner across web, marketing, sales, AI, and CRM",
+    "Monthly plans from $999 — start on Starter, upgrade as you grow",
+    "Weekly performance reporting on every plan",
+  ],
+  lead: {
+    eyebrow: "Live chat",
+    title: "Want an agent to reach out?",
+    body: "Leave a few details — someone from our team will contact you within one business day. No tickets, no black hole.",
+    submit: "Have someone contact me",
+    trust: "Real humans. Reply in 1 business day.",
+    successTitle: "You're on our list.",
+    successBody:
+      "A teammate will reach out soon — usually within one business day.",
+    chat: {
+      statusOnline: "Online now",
+      greeting:
+        "Hey! I'm {agent} from the team. I'm here now and can get someone to reach out to you.",
+      greetingWithCity:
+        "Hey! I'm {agent} from the team. I can see you're in {city}.",
+      greetingCityPitch:
+        "We're actively taking on clients in {city} right now. I can get someone from our side on your case.",
+      askName: "What's your name?",
+      askEmail: "Nice to meet you, {name}. What's the best email to reach you?",
+      askPhone:
+        "Got a phone number we can use? Totally optional, you can skip.",
+      askNote:
+        "Last one. What should we talk about when we call? A sentence is enough.",
+      closing:
+        "Perfect. I've got your details. A teammate will reach out within one business day. You're not in a ticket queue.",
+      schedulePrompt: "Want to pick a time yourself instead?",
+      placeholderName: "Type your name…",
+      placeholderEmail: "you@company.com",
+      placeholderPhone: "Best number to reach you",
+      placeholderNote: "Website, ads, CRM, whatever's on your mind…",
+      next: "Next",
+      send: "Send",
+      skip: "Skip",
+      skipPhoneLabel: "I'd rather skip the phone",
+      skipNoteLabel: "Just have someone contact me",
+    },
+  },
 } as const;
 
 export const services = [
@@ -582,7 +625,6 @@ export const contact = {
 } as const;
 
 export const footer = {
-  commitment: "A clear report of what your money earned you, every single week.",
   columns: [
     {
       label: "Services",

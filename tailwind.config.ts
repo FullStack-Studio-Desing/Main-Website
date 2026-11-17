@@ -43,6 +43,20 @@ export default {
         "culture-card": "0px 1px 3px 0px rgba(0, 0, 0, 0.04)",
         "cinematic-glow": "0px 4px 40px 0px rgba(104, 239, 63, 0.4)",
       },
+      keyframes: {
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+        "chat-dot": {
+          "0%, 100%": { opacity: "0.35", transform: "translateY(0)" },
+          "50%": { opacity: "1", transform: "translateY(-2px)" },
+        },
+      },
+      animation: {
+        marquee: "marquee 28s linear infinite",
+        "chat-dot": "chat-dot 1.1s ease-out infinite",
+      },
     },
   },
   plugins: [],

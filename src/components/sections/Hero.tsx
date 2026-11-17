@@ -1,97 +1,20 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { brand, hero } from "@/data/site-copy";
+import {
+  CalendarCheck,
+  CheckCircle,
+  Lightning,
+} from "@phosphor-icons/react";
+import { hero } from "@/data/site-copy";
 import { btnPrimary, btnGlass } from "@/components/buttons";
+import { HeroLeadCard } from "@/components/HeroLeadCard";
 import { StickerPill } from "@/components/graphics/BrandStickers";
+import { TechMarquee } from "@/components/graphics/TechMarquee";
 
-/* Full-height sculptural field: pale olive torus with dark cavity,
-   clipped by the right edge. Slow drift is the page's first motion. */
-function RingSculpture({ animate }: { animate: boolean }) {
-  return (
-    <div
-      aria-hidden
-      className="pointer-events-none absolute inset-y-0 right-0 w-full overflow-hidden lg:w-[58%]"
-    >
-      {/* Soft neon atmosphere behind the volume */}
-      <div
-        className="absolute right-[-10%] top-[18%] h-[55%] w-[70%] rounded-full opacity-40 blur-3xl"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(104,239,63,0.28) 0%, transparent 70%)",
-        }}
-      />
-
-      <motion.div
-        className="absolute -right-[22%] top-[8%] h-[min(88vh,820px)] w-[min(88vh,820px)] sm:-right-[18%] lg:-right-[12%] lg:top-[4%]"
-        initial={false}
-        animate={
-          animate ? { y: [0, -22, 0], rotate: [0, 3, 0] } : undefined
-        }
-        transition={
-          animate
-            ? { duration: 16, repeat: Infinity, ease: "easeInOut" }
-            : undefined
-        }
-      >
-        <div
-          className="grain absolute inset-0 rounded-full"
-          style={{
-            background:
-              "radial-gradient(circle at 28% 24%, #e8edd8 0%, #c8cfb4 26%, #8f997c 52%, #55634c 76%, #152318 100%)",
-            boxShadow:
-              "0 70px 140px rgba(0,0,0,0.55), inset -32px -40px 70px rgba(0,0,0,0.4), inset 22px 28px 54px rgba(255,255,255,0.2)",
-          }}
-        />
-        <div
-          className="absolute left-[18%] top-[32%] h-[45%] w-[45%] rounded-full"
-          style={{
-            background:
-              "radial-gradient(circle at 64% 34%, #040704 0%, #0b140c 50%, #122314 100%)",
-            boxShadow:
-              "inset 0 20px 56px rgba(0,0,0,0.8), 0 0 0 1px rgba(104,239,63,0.1)",
-          }}
-        />
-        <div
-          className="absolute left-[14%] top-[12%] h-[26%] w-[36%] rounded-full opacity-45 blur-md"
-          style={{
-            background:
-              "radial-gradient(ellipse at center, rgba(255,255,255,0.6) 0%, transparent 72%)",
-          }}
-        />
-      </motion.div>
-
-      {/* Secondary smaller volume for depth */}
-      <motion.div
-        className="absolute bottom-[-8%] right-[8%] hidden h-[280px] w-[280px] xl:block"
-        initial={false}
-        animate={animate ? { y: [0, 14, 0] } : undefined}
-        transition={
-          animate
-            ? { duration: 11, repeat: Infinity, ease: "easeInOut", delay: 1.2 }
-            : undefined
-        }
-      >
-        <div
-          className="grain absolute inset-0 rounded-full opacity-80"
-          style={{
-            background:
-              "radial-gradient(circle at 35% 30%, #b7bda5 0%, #3e5b43 55%, #122314 100%)",
-            boxShadow: "0 40px 80px rgba(0,0,0,0.45)",
-          }}
-        />
-        <div
-          className="absolute left-[28%] top-[28%] h-[40%] w-[40%] rounded-full"
-          style={{
-            background:
-              "radial-gradient(circle at 60% 40%, #060b06 0%, #122314 100%)",
-          }}
-        />
-      </motion.div>
-    </div>
-  );
-}
+const ease = [0.16, 1, 0.3, 1] as const;
 
 export function Hero() {
   const reduce = useReducedMotion();
@@ -100,13 +23,9 @@ export function Hero() {
     reduce
       ? {}
       : {
-          initial: { opacity: 0.01, y: 18 },
-          animate: { opacity: 1, y: 0 },
-          transition: {
-            duration: 0.7,
-            delay,
-            ease: [0.16, 1, 0.3, 1] as const,
-          },
+          initial: { opacity: 0.01, y: 22, filter: "blur(6px)" },
+          animate: { opacity: 1, y: 0, filter: "blur(0px)" },
+          transition: { duration: 0.75, delay, ease },
         };
 
   return (
@@ -116,79 +35,111 @@ export function Hero() {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 70% 55% at 18% 45%, rgba(62,91,67,0.55) 0%, transparent 58%), linear-gradient(90deg, #122314 0%, #122314 42%, rgba(18,35,20,0.55) 68%, rgba(18,35,20,0.15) 100%)",
+            "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(62,91,67,0.55) 0%, transparent 55%)",
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-24 top-1/3 h-[420px] w-[420px] rounded-full opacity-40 blur-3xl"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(104,239,63,0.22) 0%, transparent 70%)",
         }}
       />
 
-      <RingSculpture animate={!reduce} />
+      <div className="relative mx-auto flex min-h-[100dvh] max-w-[1536px] flex-col justify-center px-6 pb-20 pt-32 sm:px-10 lg:pb-24 lg:pt-36">
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
+          {/* Left — offer */}
+          <div className="relative z-10 max-w-[640px]">
+            <motion.div
+              {...enter(0)}
+              className="mb-6 flex flex-wrap items-center gap-3"
+            >
+              <StickerPill tone="neon">
+                <CalendarCheck size={16} weight="duotone" />
+                Book a call
+              </StickerPill>
+              <StickerPill tone="mint">
+                <Lightning size={16} weight="duotone" />
+                Reply in 1 day
+              </StickerPill>
+            </motion.div>
 
-      <div className="relative mx-auto flex min-h-[100dvh] max-w-[1536px] items-center px-6 pb-24 pt-32 sm:px-10 lg:pt-28">
-        <div className="relative z-10 w-full max-w-[640px] lg:max-w-[600px] xl:max-w-[680px]">
-          {/* Brand leads — same display voice as the promise, never smaller */}
-          <motion.p
-            {...enter(0)}
-            className="font-display text-[40px] uppercase leading-[0.92] tracking-[-0.01em] text-white sm:text-[56px] lg:text-[68px] xl:text-[76px]"
-          >
-            {brand.shortName}
-            <span className="text-neon">.</span>
-          </motion.p>
+            <motion.h1
+              {...enter(0.06)}
+              className="font-display text-[40px] uppercase leading-[0.92] tracking-[-0.0143em] sm:text-[56px] lg:text-[64px] xl:text-[72px] lg:leading-[0.9]"
+            >
+              {hero.headlineStart}{" "}
+              <span className="text-neon">{hero.headlineEmphasis}</span>
+            </motion.h1>
 
-          <motion.h1
-            {...enter(0.06)}
-            className="mt-5 max-w-[560px] text-xl font-medium leading-snug tracking-[-0.015em] text-fog sm:text-2xl lg:text-[28px] lg:leading-8"
-          >
-            {hero.headlineStart}{" "}
-            <span className="text-neon">{hero.headlineEmphasis}</span>
-          </motion.h1>
+            <motion.p
+              {...enter(0.12)}
+              className="mt-6 max-w-[520px] text-lg font-medium leading-relaxed text-sage sm:text-xl sm:leading-snug"
+            >
+              {hero.subheadline}
+            </motion.p>
 
-          <motion.p
-            {...enter(0.12)}
-            className="mt-6 max-w-[460px] text-base font-medium leading-relaxed text-sage sm:text-lg"
-          >
-            {hero.subheadline}
-          </motion.p>
+            <motion.ul
+              {...enter(0.18)}
+              className="mt-8 flex flex-col gap-3"
+            >
+              {hero.highlights.map((line) => (
+                <li
+                  key={line}
+                  className="flex items-start gap-3 text-base font-medium leading-snug text-fog sm:text-[17px]"
+                >
+                  <CheckCircle
+                    size={20}
+                    weight="fill"
+                    className="mt-0.5 shrink-0 text-neon"
+                  />
+                  <span>{line}</span>
+                </li>
+              ))}
+            </motion.ul>
 
+            <motion.div
+              {...enter(0.24)}
+              className="mt-10 flex flex-wrap gap-4"
+            >
+              <Link href={hero.primaryHref} className={btnPrimary}>
+                {hero.primaryCta}
+              </Link>
+              <Link href={hero.secondaryHref} className={btnGlass}>
+                {hero.secondaryCta}
+              </Link>
+            </motion.div>
+
+            <motion.div {...enter(0.3)} className="mt-10">
+              <TechMarquee />
+            </motion.div>
+          </div>
+
+          {/* Right — hero graphic */}
           <motion.div
-            {...enter(0.18)}
-            className="mt-10 flex flex-wrap gap-4"
+            {...(reduce
+              ? {}
+              : {
+                  initial: { opacity: 0.01, y: 28, scale: 0.98 },
+                  animate: { opacity: 1, y: 0, scale: 1 },
+                  transition: { duration: 0.85, delay: 0.18, ease },
+                })}
+            className="relative z-10 w-full max-w-[720px] justify-self-center lg:justify-self-end"
           >
-            <Link href="/contact" className={btnPrimary}>
-              {hero.primaryCta}
-            </Link>
-            <Link href="/#pricing" className={btnGlass}>
-              {hero.secondaryCta}
-            </Link>
+            <Image
+              src="/images/hero-heading.png"
+              alt="Growth marketing illustration"
+              width={1000}
+              height={1000}
+              priority
+              className="h-auto w-full select-none"
+            />
           </motion.div>
-
-          <motion.div
-            {...enter(0.24)}
-            className="mt-12 flex flex-wrap items-center gap-3"
-          >
-            <StickerPill tone="neon" animate={false}>
-              200+ businesses
-            </StickerPill>
-            <StickerPill tone="forest" animate={false} className="ring-1 ring-white/15">
-              US &amp; Canada
-            </StickerPill>
-            <StickerPill tone="mint" animate={false}>
-              One monthly plan
-            </StickerPill>
-          </motion.div>
-
-          <motion.p
-            {...enter(0.28)}
-            className="mt-5 max-w-[420px] text-sm font-medium text-sage sm:text-base"
-          >
-            {hero.trustLine}
-          </motion.p>
         </div>
       </div>
 
-      {/* Mobile: soft sculpture fade so type stays readable */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-forest to-transparent lg:hidden"
-      />
+      <HeroLeadCard />
     </section>
   );
 }

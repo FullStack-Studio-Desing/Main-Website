@@ -4,7 +4,6 @@ import { motion, useReducedMotion } from "framer-motion";
 import { testimonials, testimonialsSection } from "@/data/site-copy";
 import {
   StickerAvatar,
-  StickerPill,
   StickerQuote,
 } from "@/components/graphics/BrandStickers";
 
@@ -28,11 +27,6 @@ export function Testimonials() {
     >
       <div className="mx-auto max-w-[1536px] px-6 sm:px-10">
         <div className="mx-auto max-w-[800px] text-center">
-          <div className="mb-6 flex justify-center">
-            <StickerPill tone="mint">
-              Client results
-            </StickerPill>
-          </div>
           <h2
             id="testimonials-heading"
             className="font-display text-[36px] uppercase leading-[0.95] tracking-[-0.0143em] text-ink sm:text-[48px] lg:text-[56px] lg:leading-[48px]"
@@ -47,7 +41,7 @@ export function Testimonials() {
           </p>
         </div>
 
-        <div className="mx-auto mt-16 grid max-w-[1100px] grid-cols-1 gap-12 md:grid-cols-3 lg:mt-20 lg:gap-10">
+        <div className="mx-auto mt-16 grid max-w-[1100px] grid-cols-1 gap-6 md:grid-cols-3 lg:mt-20 lg:gap-8">
           {testimonials.map((item, i) => (
             <motion.figure
               key={item.author}
@@ -59,21 +53,12 @@ export function Testimonials() {
                 delay: i * 0.1,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className="flex flex-col"
+              className="flex flex-col rounded-shell bg-white p-7 shadow-culture-card sm:p-8"
             >
               <StickerQuote
                 className="h-9 w-11"
                 tone={i === 1 ? "neon" : "mint"}
               />
-              <p className="mt-4">
-                <StickerPill
-                  tone={i % 2 === 0 ? "neon" : "mint"}
-                  animate={false}
-                  className="normal-case tracking-[0.04em]"
-                >
-                  {item.result}
-                </StickerPill>
-              </p>
               <blockquote className="mt-5 flex-1 text-xl font-medium leading-8 tracking-[-0.01em] text-ink">
                 &ldquo;{item.quote}&rdquo;
               </blockquote>
