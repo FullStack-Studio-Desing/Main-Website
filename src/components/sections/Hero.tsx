@@ -3,15 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import {
-  CalendarCheck,
-  CheckCircle,
-  Lightning,
-} from "@phosphor-icons/react";
+import { CheckCircle } from "@phosphor-icons/react";
 import { hero } from "@/data/site-copy";
 import { btnPrimary, btnGlass } from "@/components/buttons";
 import { HeroLeadCard } from "@/components/HeroLeadCard";
-import { StickerPill } from "@/components/graphics/BrandStickers";
 import { TechMarquee } from "@/components/graphics/TechMarquee";
 
 const ease = [0.16, 1, 0.3, 1] as const;
@@ -51,22 +46,8 @@ export function Hero() {
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
           {/* Left — offer */}
           <div className="relative z-10 max-w-[640px]">
-            <motion.div
-              {...enter(0)}
-              className="mb-6 flex flex-wrap items-center gap-3"
-            >
-              <StickerPill tone="neon">
-                <CalendarCheck size={16} weight="duotone" />
-                Book a call
-              </StickerPill>
-              <StickerPill tone="mint">
-                <Lightning size={16} weight="duotone" />
-                Reply in 1 day
-              </StickerPill>
-            </motion.div>
-
             <motion.h1
-              {...enter(0.06)}
+              {...enter(0)}
               className="font-display text-[40px] uppercase leading-[0.92] tracking-[-0.0143em] sm:text-[56px] lg:text-[64px] xl:text-[72px] lg:leading-[0.9]"
             >
               {hero.headlineStart}{" "}
