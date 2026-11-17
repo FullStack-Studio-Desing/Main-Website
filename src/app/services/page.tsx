@@ -7,8 +7,8 @@ import {
   Robot,
   TrendUp,
   ArrowRight,
-  type Icon,
 } from "@phosphor-icons/react/dist/ssr";
+import type { Icon } from "@phosphor-icons/react";
 import { brand, services } from "@/data/site-copy";
 import { btnPrimary } from "@/components/buttons";
 
