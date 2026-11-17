@@ -417,12 +417,6 @@ export const audience = {
         "A clear report on what your money earned, not a slide deck of impressions and vague progress.",
     },
   ],
-  notFitsLabel: "Not a fit if",
-  notFits: [
-    "You only need a cheap logo-and-brochure site",
-    "You want six months of strategy before any work ships",
-    "You will not act on the data once you have it",
-  ],
 } as const;
 
 export const process = [
