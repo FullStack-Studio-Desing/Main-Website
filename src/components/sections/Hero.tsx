@@ -7,6 +7,7 @@ import { CheckCircle } from "@phosphor-icons/react";
 import { hero } from "@/data/site-copy";
 import { btnPrimary, btnGlass } from "@/components/buttons";
 import { HeroLeadCard } from "@/components/HeroLeadCard";
+import { HeroTypewriter } from "@/components/HeroTypewriter";
 import { TechMarquee } from "@/components/graphics/TechMarquee";
 
 const ease = [0.16, 1, 0.3, 1] as const;
@@ -45,13 +46,16 @@ export function Hero() {
       <div className="relative mx-auto flex min-h-[100dvh] max-w-[1536px] flex-col justify-center px-6 pb-20 pt-32 sm:px-10 lg:pb-24 lg:pt-36">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
           {/* Left — offer */}
-          <div className="relative z-10 max-w-[640px]">
+          <div className="relative z-10 max-w-[720px]">
             <motion.h1
               {...enter(0)}
-              className="font-display text-[40px] uppercase leading-[0.92] tracking-[-0.0143em] sm:text-[56px] lg:text-[64px] xl:text-[72px] lg:leading-[0.9]"
+              className="font-display text-[48px] uppercase leading-[0.9] tracking-[-0.02em] sm:text-[68px] lg:text-[80px] xl:text-[92px] lg:leading-[0.88]"
             >
               {hero.headlineStart}{" "}
-              <span className="text-neon">{hero.headlineEmphasis}</span>
+              <HeroTypewriter
+                phrases={hero.headlineRotations}
+                className="text-neon"
+              />
             </motion.h1>
 
             <motion.p

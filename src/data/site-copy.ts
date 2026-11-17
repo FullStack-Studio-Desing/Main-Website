@@ -17,6 +17,13 @@ export const navLinks = [
 export const hero = {
   headlineStart: "Growth systems that",
   headlineEmphasis: "actually sell",
+  /** Green typewriter phrases — cycles after the static headline start */
+  headlineRotations: [
+    "actually sell",
+    "book calls",
+    "drive revenue",
+    "close deals",
+  ] as const,
   subheadline:
     "Websites, marketing, sales, AI, and CRMs — one team, one monthly plan.",
   primaryCta: "See services",
