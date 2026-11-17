@@ -51,7 +51,7 @@ export function Header() {
     <header className="fixed inset-x-0 top-0 z-40 pt-4">
       <div
         className={`mx-auto flex h-16 max-w-[1536px] items-center justify-between rounded-capsule px-6 py-3 transition-colors duration-300 sm:px-10 lg:h-20 ${
-          solid ? "bg-forest/95 backdrop-blur-md" : "bg-transparent"
+          solid ? "bg-forest" : "bg-transparent"
         }`}
       >
         <Link
