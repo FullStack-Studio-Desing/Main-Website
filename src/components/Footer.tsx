@@ -1,10 +1,22 @@
 import Link from "next/link";
 import { brand, footer } from "@/data/site-copy";
+import { LogoMark } from "@/components/LogoMark";
 
 export function Footer() {
   return (
-    <footer className="bg-forest text-white">
-      <div className="mx-auto max-w-[1536px] px-6 pb-16 pt-20 sm:px-10">
+    <footer className="w-full bg-black text-white">
+      <div className="mx-auto w-full max-w-[1536px] px-6 pb-16 pt-20 sm:px-10">
+        <Link
+          href="/"
+          className="mb-14 inline-flex items-center gap-2.5 text-white"
+        >
+          <LogoMark className="h-8 w-8 shrink-0 sm:h-9 sm:w-9" tone="neon" />
+          <span className="text-2xl font-bold tracking-tight sm:text-3xl">
+            {brand.shortName}
+            <span className="text-neon">.</span>
+          </span>
+        </Link>
+
         {/* Link columns */}
         <div className="grid grid-cols-2 gap-10 md:grid-cols-4 md:gap-6">
           {footer.columns.map((column) => (

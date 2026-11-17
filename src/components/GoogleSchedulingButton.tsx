@@ -1,34 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
+import { btnInverse } from "@/components/buttons";
 
 export const GOOGLE_SCHEDULE_URL =
   "https://calendar.google.com/calendar/appointments/schedules/AcZssZ3OJ3AcMuPqTQNJf1KBT-Rdswt-YDTILRStjizfO25Rqk7IJphMT_bPVD6hINldtYkC8XEeSzHp?gv=true";
 
-const CSS_HREF =
-  "https://calendar.google.com/calendar/scheduling-button-script.css";
-const JS_SRC =
-  "https://calendar.google.com/calendar/scheduling-button-script.js";
-
-/** Brand ink — Google default #039BE5 clashes with the forest/neon system. */
+/** Brand ink — used for the default booking CTA. */
 export const GOOGLE_SCHEDULE_COLOR = "#273f2b";
-
-const POPUP_STYLE_ID = "fssd-google-schedule-popup-style";
-
-declare global {
-  interface Window {
-    calendar?: {
-      schedulingButton: {
-        load: (opts: {
-          url: string;
-          color: string;
-          label: string;
-          target: HTMLElement;
-        }) => void;
-      };
-    };
-  }
-}
 
 type Props = {
   className?: string;
@@ -36,221 +15,44 @@ type Props = {
   label?: string;
 };
 
-function ensureStylesheet() {
-  if (document.querySelector(`link[href="${CSS_HREF}"]`)) return;
-  const link = document.createElement("link");
-  link.rel = "stylesheet";
-  link.href = CSS_HREF;
-  document.head.appendChild(link);
-}
-
-/** Opaque white panel + compact centered size (not fullscreen). */
-function ensurePopupStyles() {
-  if (document.getElementById(POPUP_STYLE_ID)) return;
-  const style = document.createElement("style");
-  style.id = POPUP_STYLE_ID;
-  style.textContent = `
-    /* Dim backdrop — keep translucent, never bleach full viewport white */
-    .qxJTeb,
-    .R5cc3e,
-    div[jscontroller][aria-modal="true"],
-    div[role="dialog"][aria-modal="true"] {
-      background-color: rgba(18, 35, 20, 0.55) !important;
-      background: rgba(18, 35, 20, 0.55) !important;
-    }
-
-    /* Compact white appointment panel */
-    iframe[src*="calendar.google.com/calendar/appointments"],
-    iframe[src*="calendar.app.google"],
-    div[role="dialog"] iframe[src*="calendar"] {
-      background-color: #ffffff !important;
-      background: #ffffff !important;
-      width: min(440px, calc(100vw - 32px)) !important;
-      max-width: 440px !important;
-      height: min(640px, calc(100vh - 48px)) !important;
-      max-height: min(640px, calc(100vh - 48px)) !important;
-      border: none !important;
-      border-radius: 16px !important;
-      box-shadow: 0 24px 64px rgba(18, 35, 20, 0.28) !important;
-    }
-
-    /* Inner panel wrappers Google nests around the iframe */
-    .iFjyZd,
-    div[role="dialog"][aria-modal="true"] > div,
-    div[aria-modal="true"] .VfPpkd-P5QLlc,
-    div[aria-modal="true"] .W7g1Rb-rymPhb {
-      background-color: #ffffff !important;
-      background: #ffffff !important;
-      width: min(440px, calc(100vw - 32px)) !important;
-      max-width: 440px !important;
-      max-height: min(640px, calc(100vh - 48px)) !important;
-      border-radius: 16px !important;
-      overflow: hidden !important;
-      margin: auto !important;
-    }
-  `;
-  document.head.appendChild(style);
-}
-
-function sizePopupPanel(el: HTMLElement) {
-  el.style.width = "min(440px, calc(100vw - 32px))";
-  el.style.maxWidth = "440px";
-  el.style.height = "min(640px, calc(100vh - 48px))";
-  el.style.maxHeight = "min(640px, calc(100vh - 48px))";
-  el.style.borderRadius = "16px";
-  el.style.overflow = "hidden";
-  el.style.backgroundColor = "#ffffff";
-  el.style.background = "#ffffff";
-}
-
-function paintPopupWhite(root: ParentNode = document) {
-  const iframes = root.querySelectorAll<HTMLIFrameElement>(
-    'iframe[src*="calendar.google.com"], iframe[src*="calendar.app.google"]',
-  );
-  iframes.forEach((iframe) => {
-    sizePopupPanel(iframe);
-    const parent = iframe.parentElement;
-    if (parent) sizePopupPanel(parent);
-  });
-
-  const dialogs = root.querySelectorAll<HTMLElement>(
-    '[role="dialog"][aria-modal="true"], [aria-modal="true"]',
-  );
-  dialogs.forEach((el) => {
-    // Keep the full-viewport dimmer translucent; only whiten/size the panel
-    const looksLikeBackdrop =
-      el.childElementCount === 1 ||
-      getComputedStyle(el).position === "fixed";
-    if (looksLikeBackdrop) {
-      el.style.backgroundColor = "rgba(18, 35, 20, 0.55)";
-      el.style.background = "rgba(18, 35, 20, 0.55)";
-      el.style.display = "flex";
-      el.style.alignItems = "center";
-      el.style.justifyContent = "center";
-      const panel = el.firstElementChild as HTMLElement | null;
-      if (panel) sizePopupPanel(panel);
-      return;
-    }
-    sizePopupPanel(el);
-  });
-}
-
-function loadScript(): Promise<void> {
-  if (window.calendar?.schedulingButton) return Promise.resolve();
-
-  const existing = document.querySelector<HTMLScriptElement>(
-    `script[src="${JS_SRC}"]`,
-  );
-  if (existing) {
-    return new Promise((resolve, reject) => {
-      if (window.calendar?.schedulingButton) {
-        resolve();
-        return;
-      }
-      existing.addEventListener("load", () => resolve(), { once: true });
-      existing.addEventListener(
-        "error",
-        () => reject(new Error("Google scheduling script failed")),
-        { once: true },
-      );
-    });
-  }
-
-  return new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = JS_SRC;
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Google scheduling script failed"));
-    document.body.appendChild(script);
-  });
-}
-
+/**
+ * Opens Google Appointment Scheduling in a branded on-page iframe modal.
+ */
 export function GoogleSchedulingButton({
   className,
   color = GOOGLE_SCHEDULE_COLOR,
   label = "Book an appointment",
 }: Props) {
-  const hostRef = useRef<HTMLDivElement>(null);
-  const [ready, setReady] = useState(false);
+  const [open, setOpen] = useState(false);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const titleId = useId();
+
+  const isLight =
+    color.toLowerCase() === "#ffffff" ||
+    color.toLowerCase() === "#fff" ||
+    color.toLowerCase() === "white";
+
+  const tone = isLight
+    ? "inline-flex h-12 items-center justify-center rounded-action bg-white px-5 text-base font-medium text-ink transition-colors duration-200 hover:bg-mint focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-neon"
+    : btnInverse;
 
   useEffect(() => {
-    ensurePopupStyles();
-    const timers: number[] = [];
-    const observer = new MutationObserver((mutations) => {
-      for (const m of mutations) {
-        if (!m.addedNodes.length) continue;
-        paintPopupWhite();
-        // Google often applies fullscreen inline styles a tick later
-        timers.push(
-          window.setTimeout(paintPopupWhite, 50),
-          window.setTimeout(paintPopupWhite, 200),
-        );
-        break;
-      }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-    return () => {
-      timers.forEach((id) => window.clearTimeout(id));
-      observer.disconnect();
+    if (!open) return;
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeRef.current?.focus();
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
     };
-  }, []);
-
-  useEffect(() => {
-    const host = hostRef.current;
-    if (!host) return;
-
-    let cancelled = false;
-    const mount = document.createElement("div");
-    host.replaceChildren(mount);
-
-    ensureStylesheet();
-    ensurePopupStyles();
-
-    loadScript()
-      .then(() => {
-        if (cancelled || !window.calendar?.schedulingButton) return;
-        window.calendar.schedulingButton.load({
-          url: GOOGLE_SCHEDULE_URL,
-          color,
-          label,
-          target: mount,
-        });
-
-        const injected = mount.nextElementSibling;
-        if (injected instanceof HTMLElement) {
-          injected.style.borderRadius = "28px";
-          injected.style.height = "48px";
-          injected.style.padding = "0 20px";
-          injected.style.fontSize = "16px";
-          injected.style.fontWeight = "500";
-          injected.style.lineHeight = "1";
-          injected.style.cursor = "pointer";
-          // Solid fill — Google’s default can read as transparent on dark surfaces
-          injected.style.backgroundColor = color;
-          injected.style.backgroundImage = "none";
-          injected.style.opacity = "1";
-          const isLight =
-            color.toLowerCase() === "#ffffff" ||
-            color.toLowerCase() === "#fff" ||
-            color.toLowerCase() === "white";
-          injected.style.color = isLight ? "#122314" : "#ffffff";
-          injected.style.border = isLight
-            ? "1px solid rgba(255,255,255,0.9)"
-            : "none";
-        }
-
-        if (!cancelled) setReady(true);
-      })
-      .catch(() => {
-        if (!cancelled) setReady(false);
-      });
+    window.addEventListener("keydown", onKey);
 
     return () => {
-      cancelled = true;
-      host.replaceChildren();
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKey);
     };
-  }, [color, label]);
+  }, [open]);
 
   return (
     <div
@@ -260,24 +62,64 @@ export function GoogleSchedulingButton({
           : "inline-flex flex-col items-start"
       }
     >
-      {/* Imperative mount node — Google injects beside this; React never reconciles inside. */}
-      <div ref={hostRef} className="inline-flex min-h-12 items-center" />
-      {!ready && (
-        <a
-          href={GOOGLE_SCHEDULE_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={
-            color.toLowerCase() === "#ffffff" ||
-            color.toLowerCase() === "#fff" ||
-            color.toLowerCase() === "white"
-              ? "inline-flex h-12 items-center justify-center rounded-action bg-white px-5 text-base font-medium text-ink transition-colors duration-200 hover:bg-mint focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-neon"
-              : "inline-flex h-12 items-center justify-center rounded-action bg-ink px-5 text-base font-medium text-white transition-colors duration-200 hover:bg-moss focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-neon"
-          }
+      <button type="button" className={tone} onClick={() => setOpen(true)}>
+        {label}
+      </button>
+
+      {open ? (
+        <div
+          className="fixed inset-0 z-[80] flex items-center justify-center p-4"
+          role="presentation"
         >
-          {label}
-        </a>
-      )}
+          <button
+            type="button"
+            aria-label="Close scheduling dialog"
+            className="absolute inset-0 bg-[rgba(18,35,20,0.55)]"
+            onClick={() => setOpen(false)}
+          />
+
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
+            className="relative z-10 flex w-full max-w-[440px] flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_64px_rgba(18,35,20,0.28)]"
+            style={{ height: "min(640px, calc(100vh - 48px))" }}
+          >
+            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-rule px-4 py-3">
+              <h2 id={titleId} className="text-sm font-medium text-ink">
+                Book an appointment
+              </h2>
+              <button
+                ref={closeRef}
+                type="button"
+                onClick={() => setOpen(false)}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-ink transition-colors hover:bg-mint focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-neon"
+                aria-label="Close"
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  aria-hidden="true"
+                >
+                  <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <iframe
+              title="Google Calendar appointment scheduling"
+              src={GOOGLE_SCHEDULE_URL}
+              className="h-full w-full flex-1 border-0 bg-white"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
