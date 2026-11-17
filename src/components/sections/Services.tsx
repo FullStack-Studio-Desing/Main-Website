@@ -49,13 +49,13 @@ export function Services() {
               >
                 <Link
                   href={`/services/${item.slug}`}
-                  className="group flex items-start justify-between gap-6 py-6 sm:items-baseline sm:py-8"
+                  className="group flex items-start justify-between gap-6 py-6 transition-opacity duration-150 active:opacity-90 sm:items-center sm:py-8"
                 >
-                  <span className="flex min-w-0 items-start gap-4 sm:gap-5">
-                    <span className="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15 transition-colors duration-200 group-hover:bg-neon/20 group-hover:ring-neon/40 sm:mt-2 sm:h-12 sm:w-12">
+                  <span className="flex min-w-0 items-start gap-4 sm:items-center sm:gap-5">
+                    <span className="mt-0.5 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15 transition-all duration-200 group-hover:bg-neon/20 group-hover:ring-neon/40 group-active:scale-[0.97] sm:mt-0 sm:h-14 sm:w-14">
                       {Glyph ? (
                         <Glyph
-                          size={22}
+                          size={26}
                           weight="duotone"
                           className="text-neon"
                         />
@@ -71,9 +71,9 @@ export function Services() {
                     </span>
                   </span>
                   <ArrowUpRight
-                    size={28}
+                    size={26}
                     weight="bold"
-                    className="mt-2 shrink-0 text-sage transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-neon sm:mt-3"
+                    className="mt-2 shrink-0 text-sage transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-neon sm:mt-0"
                   />
                 </Link>
               </motion.li>
