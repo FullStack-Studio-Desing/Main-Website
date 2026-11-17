@@ -14,6 +14,13 @@ Visual system: **sculptural green optimism** — light paper chapters, forest-gr
 | `/privacy` | Privacy policy |
 | `/terms` | Terms of service |
 | `/api/contact` | Contact form endpoint (nodemailer, needs `EMAIL_SENDER`, `EMAIL_PASSWORD`, `EMAIL_RECEIVER` env vars) |
+| `/login` | Studio and client sign-in |
+| `/admin` | Studio admin: clients, plans, payments, and reports |
+| `/portal` | Client portal: current plan, payments, and published reports |
+
+## Client portal
+
+Copy `.env.example` to `.env.local` and fill in the Supabase URL, anon key, service role key, and `PORTAL_ADMIN_EMAILS`. Run `supabase/migrations/20261117120000_client_portal.sql` once in the Supabase SQL editor. Create your user under Authentication → Users with auto-confirm on. Clients only see their own plan, payments, and published reports.
 
 Old routes (`/services`, `/packages`, `/blog`, `/faq`, `/contact`) permanently redirect to the matching home-page section (see `next.config.ts`).
 

@@ -68,6 +68,12 @@ export function Footer() {
             >
               Terms
             </Link>
+            <Link
+              href="/login"
+              className="text-base text-white/50 transition-colors duration-200 hover:text-neon"
+            >
+              Client login
+            </Link>
           </div>
         </div>
       </div>
