@@ -110,6 +110,18 @@ export function GoogleSchedulingButton({
           injected.style.fontWeight = "500";
           injected.style.lineHeight = "1";
           injected.style.cursor = "pointer";
+          // Solid fill — Google’s default can read as transparent on dark surfaces
+          injected.style.backgroundColor = color;
+          injected.style.backgroundImage = "none";
+          injected.style.opacity = "1";
+          const isLight =
+            color.toLowerCase() === "#ffffff" ||
+            color.toLowerCase() === "#fff" ||
+            color.toLowerCase() === "white";
+          injected.style.color = isLight ? "#122314" : "#ffffff";
+          injected.style.border = isLight
+            ? "1px solid rgba(255,255,255,0.9)"
+            : "none";
         }
 
         if (!cancelled) setReady(true);
@@ -139,7 +151,13 @@ export function GoogleSchedulingButton({
           href={GOOGLE_SCHEDULE_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex h-12 items-center justify-center rounded-action bg-ink px-5 text-base font-medium text-white transition-colors duration-200 hover:bg-moss focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-neon"
+          className={
+            color.toLowerCase() === "#ffffff" ||
+            color.toLowerCase() === "#fff" ||
+            color.toLowerCase() === "white"
+              ? "inline-flex h-12 items-center justify-center rounded-action bg-white px-5 text-base font-medium text-ink transition-colors duration-200 hover:bg-mint focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-neon"
+              : "inline-flex h-12 items-center justify-center rounded-action bg-ink px-5 text-base font-medium text-white transition-colors duration-200 hover:bg-moss focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-neon"
+          }
         >
           {label}
         </a>
