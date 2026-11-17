@@ -4,10 +4,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { brand, hero } from "@/data/site-copy";
 import { btnPrimary, btnGlass } from "@/components/buttons";
-import {
-  StickerPill,
-  StickerStack,
-} from "@/components/graphics/BrandStickers";
+import { StickerPill } from "@/components/graphics/BrandStickers";
 
 /* Full-height sculptural field: pale olive torus with dark cavity,
    clipped by the right edge. Slow drift is the page's first motion. */
@@ -168,7 +165,6 @@ export function Hero() {
             className="mt-12 flex flex-wrap items-center gap-3"
           >
             <StickerPill tone="neon" animate={false}>
-              <StickerStack className="h-4 w-4" tone="ink" />
               200+ businesses
             </StickerPill>
             <StickerPill tone="forest" animate={false} className="ring-1 ring-white/15">
