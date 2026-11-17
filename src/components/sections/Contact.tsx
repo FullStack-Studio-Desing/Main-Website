@@ -54,11 +54,11 @@ export function Contact() {
       />
       <div className="relative mx-auto max-w-[1536px] px-6 sm:px-10">
         <div className="mb-6 flex flex-wrap items-center justify-center gap-3">
-          <StickerPill tone="neon" rotate={-4}>
+          <StickerPill tone="neon">
             <CalendarCheck size={16} weight="duotone" />
             Book a call
           </StickerPill>
-          <StickerPill tone="mint" rotate={3}>
+          <StickerPill tone="mint">
             <Lightning size={16} weight="duotone" />
             Reply in 1 day
           </StickerPill>
@@ -87,7 +87,7 @@ export function Contact() {
             tone="sage"
           />
           <div className="pointer-events-none absolute -right-4 -top-5 z-10 hidden sm:block lg:-right-6">
-            <StickerPill tone="neon" rotate={8} animate={false}>
+            <StickerPill tone="neon" animate={false}>
               <StickerStack className="h-4 w-4" tone="ink" />
               Let&apos;s grow
             </StickerPill>

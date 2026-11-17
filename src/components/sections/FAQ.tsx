@@ -26,7 +26,7 @@ export function FAQ() {
           tone="neon"
         />
         <div className="mb-6 flex justify-center">
-          <StickerPill tone="paper" rotate={2}>
+          <StickerPill tone="paper">
             <ChatCircleDots size={16} weight="duotone" className="text-leaf" />
             Straight answers
           </StickerPill>

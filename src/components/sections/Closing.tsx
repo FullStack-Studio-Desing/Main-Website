@@ -31,7 +31,7 @@ export function Closing() {
         className="relative mx-auto flex max-w-[880px] flex-col items-center px-6 text-center sm:px-10"
       >
         <div className="mb-8 flex justify-center">
-          <StickerPill tone="neon" rotate={-3}>
+          <StickerPill tone="neon">
             <StickerBurst className="h-4 w-4" tone="ink" />
             Ready when you are
           </StickerPill>

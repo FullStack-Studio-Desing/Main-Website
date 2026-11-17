@@ -176,14 +176,14 @@ export function Hero() {
             {...enter(0.3)}
             className="mt-12 flex flex-wrap items-center gap-3"
           >
-            <StickerPill tone="neon" rotate={-4} animate={false}>
+            <StickerPill tone="neon" animate={false}>
               <StickerStack className="h-4 w-4" tone="ink" />
               200+ businesses
             </StickerPill>
-            <StickerPill tone="forest" rotate={3} animate={false} className="ring-1 ring-white/15">
+            <StickerPill tone="forest" animate={false} className="ring-1 ring-white/15">
               US &amp; Canada
             </StickerPill>
-            <StickerPill tone="mint" rotate={-2} animate={false}>
+            <StickerPill tone="mint" animate={false}>
               One monthly plan
             </StickerPill>
           </motion.div>

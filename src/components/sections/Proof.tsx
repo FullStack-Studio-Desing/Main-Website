@@ -26,7 +26,7 @@ export function Proof() {
               }}
               className={`flex items-center justify-center rounded-proof px-6 py-4 sm:px-10 lg:h-[104px] lg:px-12 ${
                 capsule.fill === "neon" ? "bg-neon" : "bg-mint"
-              } ${i === 1 ? "lg:-rotate-1" : i === 2 ? "lg:rotate-1" : ""}`}
+              }`}
             >
               <span className="font-display text-[32px] uppercase leading-[0.9] tracking-[-0.01em] text-ink sm:text-[48px] lg:text-[72px]">
                 {capsule.text}

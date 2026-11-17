@@ -29,7 +29,7 @@ export function Testimonials() {
       <div className="mx-auto max-w-[1536px] px-6 sm:px-10">
         <div className="mx-auto max-w-[800px] text-center">
           <div className="mb-6 flex justify-center">
-            <StickerPill tone="mint" rotate={-2}>
+            <StickerPill tone="mint">
               Client results
             </StickerPill>
           </div>
@@ -68,7 +68,6 @@ export function Testimonials() {
               <p className="mt-4">
                 <StickerPill
                   tone={i % 2 === 0 ? "neon" : "mint"}
-                  rotate={i === 1 ? 2 : -3}
                   animate={false}
                   className="normal-case tracking-[0.04em]"
                 >

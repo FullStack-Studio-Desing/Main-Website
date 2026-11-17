@@ -13,17 +13,15 @@ const toneClasses: Record<Tone, string> = {
   ink: "bg-ink text-white",
 };
 
-/** Soft capsule sticker — slight tilt, brand colors, conversion cues. */
+/** Soft capsule sticker — upright, brand colors, conversion cues. */
 export function StickerPill({
   children,
   tone = "neon",
-  rotate = -3,
   className = "",
   animate = true,
 }: {
   children: ReactNode;
   tone?: Tone;
-  rotate?: number;
   className?: string;
   animate?: boolean;
 }) {
@@ -33,12 +31,11 @@ export function StickerPill({
   return (
     <motion.span
       aria-hidden
-      initial={shouldAnimate ? { opacity: 0, scale: 0.88, rotate } : false}
-      whileInView={shouldAnimate ? { opacity: 1, scale: 1, rotate } : undefined}
+      initial={shouldAnimate ? { opacity: 0, scale: 0.88 } : false}
+      whileInView={shouldAnimate ? { opacity: 1, scale: 1 } : undefined}
       viewport={{ once: true, amount: 0.4 }}
       transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
       className={`inline-flex items-center gap-1.5 rounded-proof px-3.5 py-1.5 text-xs font-medium uppercase tracking-[0.06em] shadow-[0_8px_24px_rgba(18,35,20,0.12)] sm:text-sm ${toneClasses[tone]} ${className}`}
-      style={{ rotate: `${rotate}deg` }}
     >
       {children}
     </motion.span>
