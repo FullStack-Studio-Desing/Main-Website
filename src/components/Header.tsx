@@ -59,10 +59,8 @@ export function Header() {
           className="flex items-center gap-2.5 text-white"
           onClick={closeAll}
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-neon/15 ring-1 ring-neon/25">
-            <LogoMark className="h-5 w-5" tone="neon" />
-          </span>
-          <span className="text-base font-medium tracking-tight">
+          <LogoMark className="h-7 w-7 shrink-0 sm:h-8 sm:w-8" tone="neon" />
+          <span className="text-xl font-bold tracking-tight sm:text-2xl">
             {brand.shortName}
             <span className="text-neon">.</span>
           </span>
