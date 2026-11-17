@@ -1,10 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { CircleNotch } from "@phosphor-icons/react";
+import { CircleNotch, CalendarCheck, Lightning } from "@phosphor-icons/react";
 import { brand, contact } from "@/data/site-copy";
 import { btnInverse } from "@/components/buttons";
 import { GoogleSchedulingButton } from "@/components/GoogleSchedulingButton";
+import {
+  StickerOrbit,
+  StickerPill,
+  StickerStack,
+} from "@/components/graphics/BrandStickers";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
@@ -48,6 +53,16 @@ export function Contact() {
         }}
       />
       <div className="relative mx-auto max-w-[1536px] px-6 sm:px-10">
+        <div className="mb-6 flex flex-wrap items-center justify-center gap-3">
+          <StickerPill tone="neon" rotate={-4}>
+            <CalendarCheck size={16} weight="duotone" />
+            Book a call
+          </StickerPill>
+          <StickerPill tone="mint" rotate={3}>
+            <Lightning size={16} weight="duotone" />
+            Reply in 1 day
+          </StickerPill>
+        </div>
         <h2 className="mx-auto max-w-[800px] text-center font-display text-[36px] uppercase leading-[0.95] tracking-[-0.0143em] text-white sm:text-[48px] lg:text-[56px] lg:leading-[48px]">
           {contact.headlineStart}{" "}
           <span className="text-neon">{contact.headlineEmphasis}</span>
@@ -65,7 +80,19 @@ export function Contact() {
           <span className="mt-1 block text-sage">{brand.hours}</span>
         </p>
 
-        <div className="mx-auto mt-16 max-w-[800px] rounded-[32px] bg-white p-8 shadow-form-lift sm:p-12 lg:p-20">
+        <div className="relative mx-auto mt-16 max-w-[800px]">
+          <StickerOrbit className="pointer-events-none absolute -left-16 -top-12 hidden h-36 w-36 lg:block" />
+          <StickerOrbit
+            className="pointer-events-none absolute -bottom-10 -right-14 hidden h-40 w-40 lg:block"
+            tone="sage"
+          />
+          <div className="pointer-events-none absolute -right-4 -top-5 z-10 hidden sm:block lg:-right-6">
+            <StickerPill tone="neon" rotate={8} animate={false}>
+              <StickerStack className="h-4 w-4" tone="ink" />
+              Let&apos;s grow
+            </StickerPill>
+          </div>
+          <div className="relative rounded-[32px] bg-white p-8 shadow-form-lift sm:p-12 lg:p-20">
           {status === "sent" ? (
             <div className="text-center">
               <h3 className="text-2xl font-medium leading-8 tracking-[-0.0125em] text-ink">
@@ -222,6 +249,7 @@ export function Contact() {
               </form>
             </div>
           )}
+          </div>
         </div>
       </div>
     </section>

@@ -5,6 +5,11 @@ import { motion, useReducedMotion } from "framer-motion";
 import { brand, hero } from "@/data/site-copy";
 import { btnPrimary, btnGlass } from "@/components/buttons";
 import { LogoMark } from "@/components/LogoMark";
+import {
+  StickerBurst,
+  StickerPill,
+  StickerStack,
+} from "@/components/graphics/BrandStickers";
 
 /* Full-height sculptural field: pale olive torus with dark cavity,
    clipped by the right edge. Slow drift is the page's first motion. */
@@ -125,8 +130,9 @@ export function Hero() {
       <div className="relative mx-auto flex min-h-[100dvh] max-w-[1536px] items-center px-6 pb-24 pt-32 sm:px-10 lg:pt-28">
         <div className="relative z-10 w-full max-w-[640px] lg:max-w-[600px] xl:max-w-[680px]">
           <motion.div {...enter(0)} className="flex items-center gap-3">
-            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-neon/15 ring-1 ring-neon/30">
+            <span className="relative flex h-12 w-12 items-center justify-center rounded-full bg-neon/15 ring-1 ring-neon/30">
               <LogoMark className="h-7 w-7" tone="neon" />
+              <StickerBurst className="absolute -right-3 -top-3 h-7 w-7" tone="neon" />
             </span>
           </motion.div>
 
@@ -166,9 +172,25 @@ export function Hero() {
             </Link>
           </motion.div>
 
-          <motion.p
+          <motion.div
             {...enter(0.3)}
-            className="mt-14 max-w-[420px] text-sm font-medium text-sage sm:text-base"
+            className="mt-12 flex flex-wrap items-center gap-3"
+          >
+            <StickerPill tone="neon" rotate={-4} animate={false}>
+              <StickerStack className="h-4 w-4" tone="ink" />
+              200+ businesses
+            </StickerPill>
+            <StickerPill tone="forest" rotate={3} animate={false} className="ring-1 ring-white/15">
+              US &amp; Canada
+            </StickerPill>
+            <StickerPill tone="mint" rotate={-2} animate={false}>
+              One monthly plan
+            </StickerPill>
+          </motion.div>
+
+          <motion.p
+            {...enter(0.34)}
+            className="mt-5 max-w-[420px] text-sm font-medium text-sage sm:text-base"
           >
             {hero.trustLine}
           </motion.p>

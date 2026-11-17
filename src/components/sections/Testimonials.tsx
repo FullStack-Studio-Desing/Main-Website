@@ -2,6 +2,20 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import { testimonials, testimonialsSection } from "@/data/site-copy";
+import {
+  StickerAvatar,
+  StickerPill,
+  StickerQuote,
+} from "@/components/graphics/BrandStickers";
+
+function authorInitials(name: string) {
+  return name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0] ?? "")
+    .join("")
+    .toUpperCase();
+}
 
 export function Testimonials() {
   const reduce = useReducedMotion();
@@ -14,6 +28,11 @@ export function Testimonials() {
     >
       <div className="mx-auto max-w-[1536px] px-6 sm:px-10">
         <div className="mx-auto max-w-[800px] text-center">
+          <div className="mb-6 flex justify-center">
+            <StickerPill tone="mint" rotate={-2}>
+              Client results
+            </StickerPill>
+          </div>
           <h2
             id="testimonials-heading"
             className="font-display text-[36px] uppercase leading-[0.95] tracking-[-0.0143em] text-ink sm:text-[48px] lg:text-[56px] lg:leading-[48px]"
@@ -42,18 +61,32 @@ export function Testimonials() {
               }}
               className="flex flex-col"
             >
-              <p className="text-sm font-medium uppercase tracking-[0.06em] text-leaf">
-                {item.result}
+              <StickerQuote
+                className="h-9 w-11"
+                tone={i === 1 ? "neon" : "mint"}
+              />
+              <p className="mt-4">
+                <StickerPill
+                  tone={i % 2 === 0 ? "neon" : "mint"}
+                  rotate={i === 1 ? 2 : -3}
+                  animate={false}
+                  className="normal-case tracking-[0.04em]"
+                >
+                  {item.result}
+                </StickerPill>
               </p>
-              <blockquote className="mt-4 flex-1 text-xl font-medium leading-8 tracking-[-0.01em] text-ink">
+              <blockquote className="mt-5 flex-1 text-xl font-medium leading-8 tracking-[-0.01em] text-ink">
                 &ldquo;{item.quote}&rdquo;
               </blockquote>
-              <figcaption className="mt-8 border-t border-rule pt-5">
-                <span className="block text-base font-medium text-ink">
-                  {item.author}
-                </span>
-                <span className="mt-0.5 block text-base text-muted">
-                  {item.role}
+              <figcaption className="mt-8 flex items-center gap-3 border-t border-rule pt-5">
+                <StickerAvatar initials={authorInitials(item.author)} />
+                <span>
+                  <span className="block text-base font-medium text-ink">
+                    {item.author}
+                  </span>
+                  <span className="mt-0.5 block text-base text-muted">
+                    {item.role}
+                  </span>
                 </span>
               </figcaption>
             </motion.figure>

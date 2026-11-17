@@ -2,8 +2,12 @@
 
 import { useId, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Minus, Plus } from "@phosphor-icons/react";
+import { Minus, Plus, ChatCircleDots } from "@phosphor-icons/react";
 import { faq } from "@/data/site-copy";
+import {
+  StickerBurst,
+  StickerPill,
+} from "@/components/graphics/BrandStickers";
 
 export function FAQ() {
   const reduce = useReducedMotion();
@@ -16,7 +20,17 @@ export function FAQ() {
       className="scroll-mt-24 bg-white py-24 lg:py-32"
       aria-labelledby="faq-heading"
     >
-      <div className="mx-auto max-w-[900px] px-6 sm:px-10">
+      <div className="relative mx-auto max-w-[900px] px-6 sm:px-10">
+        <StickerBurst
+          className="pointer-events-none absolute -left-1 top-2 hidden h-8 w-8 sm:block lg:-left-6"
+          tone="neon"
+        />
+        <div className="mb-6 flex justify-center">
+          <StickerPill tone="paper" rotate={2}>
+            <ChatCircleDots size={16} weight="duotone" className="text-leaf" />
+            Straight answers
+          </StickerPill>
+        </div>
         <h2
           id="faq-heading"
           className="text-center font-display text-[36px] uppercase leading-[0.95] tracking-[-0.0143em] text-ink sm:text-[48px] lg:text-[56px] lg:leading-[48px]"
