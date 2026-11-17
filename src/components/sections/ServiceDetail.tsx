@@ -94,7 +94,7 @@ export function ServiceDetail({ service }: { service: Service }) {
           </motion.p>
 
           <motion.div {...enter(0.22)} className="mt-10 flex flex-wrap gap-4">
-            <Link href="/#contact" className={btnPrimary}>
+            <Link href="/contact" className={btnPrimary}>
               Book a call
             </Link>
             <Link href="/#pricing" className={btnGlass}>
@@ -208,7 +208,7 @@ export function ServiceDetail({ service }: { service: Service }) {
               <Link href="/#pricing" className={btnPrimary}>
                 Compare plans
               </Link>
-              <Link href="/#contact" className={btnGlass}>
+              <Link href="/contact" className={btnGlass}>
                 Ask which fits
               </Link>
             </div>
@@ -308,7 +308,7 @@ export function ServiceDetail({ service }: { service: Service }) {
             Tell us where you want to be in 90 days. We&apos;ll come back with
             an honest read on how we can help.
           </p>
-          <Link href="/#contact" className={`${btnPrimary} mt-10`}>
+          <Link href="/contact" className={`${btnPrimary} mt-10`}>
             Book a call
           </Link>
         </div>

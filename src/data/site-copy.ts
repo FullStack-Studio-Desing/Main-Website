@@ -10,7 +10,7 @@ export const navLinks = [
   { href: "/services", label: "Services" },
   { href: "/#pricing", label: "Pricing" },
   { href: "/#faq", label: "FAQ" },
-  { href: "/#contact", label: "Contact" },
+  { href: "/contact", label: "Contact" },
 ] as const;
 
 export const hero = {
@@ -443,6 +443,7 @@ export const weeklyReport = {
 
 export const plans = [
   {
+    id: "starter",
     name: "Starter",
     price: "$999",
     period: "/month",
@@ -458,6 +459,7 @@ export const plans = [
     highlighted: false,
   },
   {
+    id: "growth",
     name: "Growth",
     price: "$1,500",
     period: "/month",
@@ -473,6 +475,7 @@ export const plans = [
     highlighted: true,
   },
   {
+    id: "scale",
     name: "Scale",
     price: "$2,500",
     period: "/month",
@@ -598,7 +601,7 @@ export const footer = {
       label: "Company",
       links: [
         { href: "/#faq", label: "FAQ" },
-        { href: "/#contact", label: "Contact" },
+        { href: "/contact", label: "Contact" },
         { href: "/privacy", label: "Privacy" },
         { href: "/terms", label: "Terms" },
       ],

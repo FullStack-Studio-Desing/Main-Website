@@ -36,7 +36,7 @@ export function Contact() {
   return (
     <section
       id="contact"
-      className="relative scroll-mt-24 overflow-hidden bg-forest pb-24 pt-24 lg:pt-32"
+      className="relative scroll-mt-24 overflow-hidden bg-forest pb-24 pt-28 lg:pt-36"
     >
       <div
         aria-hidden

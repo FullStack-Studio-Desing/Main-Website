@@ -87,7 +87,7 @@ export default function ServicesIndexPage() {
         </ul>
 
         <div className="mx-auto mt-16 flex justify-center px-6">
-          <Link href="/#contact" className={btnPrimary}>
+          <Link href="/contact" className={btnPrimary}>
             Book a call
           </Link>
         </div>

@@ -30,7 +30,7 @@ export function Closing() {
           {closing.lineStart}{" "}
           <span className="text-neon-active">{closing.lineEmphasis}</span>
         </p>
-        <Link href="/#contact" className={`${btnInverse} mt-12`}>
+        <Link href="/contact" className={`${btnInverse} mt-12`}>
           {closing.cta}
         </Link>
       </motion.div>

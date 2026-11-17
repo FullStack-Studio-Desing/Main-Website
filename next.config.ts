@@ -8,7 +8,6 @@ const nextConfig: NextConfig = {
     // Routes removed in the 2026 redesign; keep old indexed URLs alive.
     return [
       { source: "/packages", destination: "/#pricing", permanent: true },
-      { source: "/contact", destination: "/#contact", permanent: true },
       { source: "/faq", destination: "/", permanent: true },
       { source: "/blog", destination: "/", permanent: true },
       { source: "/service", destination: "/services", permanent: true },

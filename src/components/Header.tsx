@@ -123,7 +123,7 @@ export function Header() {
             </Link>
           ))}
           <Link
-            href="/#contact"
+            href="/contact"
             className="ml-2 inline-flex h-12 items-center justify-center rounded-action bg-neon px-5 text-base font-medium text-ink transition-colors duration-200 hover:bg-neon-active lg:h-14"
           >
             Book a call
@@ -181,7 +181,7 @@ export function Header() {
                 </Link>
               ))}
               <Link
-                href="/#contact"
+                href="/contact"
                 className="mt-2 inline-flex h-12 items-center justify-center rounded-action bg-neon px-5 text-base font-medium text-ink"
                 onClick={closeAll}
               >

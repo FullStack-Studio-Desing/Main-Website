@@ -158,7 +158,7 @@ export function Hero() {
             {...enter(0.24)}
             className="mt-10 flex flex-wrap gap-4"
           >
-            <Link href="/#contact" className={btnPrimary}>
+            <Link href="/contact" className={btnPrimary}>
               {hero.primaryCta}
             </Link>
             <Link href="/#pricing" className={btnGlass}>
