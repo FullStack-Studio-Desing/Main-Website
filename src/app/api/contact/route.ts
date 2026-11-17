@@ -1,20 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_SENDER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
 
 export async function POST(request: NextRequest) {
   try {
+    const apiKey = process.env.RESEND_API_KEY;
+    const to = process.env.RESEND_TO;
+    const from =
+      process.env.RESEND_FROM ||
+      "FullStack Studio Design <onboarding@resend.dev>";
+
+    if (!apiKey || !to) {
+      console.error("Missing RESEND_API_KEY or RESEND_TO");
+      return NextResponse.json(
+        { error: "Email service is not configured" },
+        { status: 500 }
+      );
+    }
+
     const body = await request.json();
     const { name, email, company, budget, message, service } = body;
 
-    // Validate required fields
     if (!name || !email || !message) {
       return NextResponse.json(
         { error: "Name, email, and message are required" },
@@ -22,11 +36,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Email content - Clean professional template
-    const mailOptions = {
-      from: process.env.EMAIL_SENDER,
-      to: process.env.EMAIL_RECEIVER,
-      subject: `New Contact Form Submission from ${name}`,
+    const safeName = escapeHtml(String(name));
+    const safeEmail = escapeHtml(String(email));
+    const safeCompany = company ? escapeHtml(String(company)) : "";
+    const safeService = service ? escapeHtml(String(service)) : "";
+    const safeBudget = budget ? escapeHtml(String(budget)) : "";
+    const safeMessage = escapeHtml(String(message)).replace(/\n/g, "<br>");
+
+    const resend = new Resend(apiKey);
+
+    const { error: notifyError } = await resend.emails.send({
+      from,
+      to: [to],
+      replyTo: String(email),
+      subject: `New Contact Form Submission from ${String(name)}`,
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; padding: 40px; border-radius: 8px; border: 1px solid #e5e5e5;">
           <h2 style="color: #1a1a1a; border-bottom: 2px solid #1a1a1a; padding-bottom: 15px; margin-bottom: 25px; font-weight: 600;">
@@ -36,38 +59,50 @@ export async function POST(request: NextRequest) {
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
               <td style="padding: 12px 0; border-bottom: 1px solid #eee; color: #666; width: 120px; font-size: 14px;">Name</td>
-              <td style="padding: 12px 0; border-bottom: 1px solid #eee; color: #1a1a1a; font-weight: 500;">${name}</td>
+              <td style="padding: 12px 0; border-bottom: 1px solid #eee; color: #1a1a1a; font-weight: 500;">${safeName}</td>
             </tr>
             <tr>
               <td style="padding: 12px 0; border-bottom: 1px solid #eee; color: #666; font-size: 14px;">Email</td>
               <td style="padding: 12px 0; border-bottom: 1px solid #eee;">
-                <a href="mailto:${email}" style="color: #1a1a1a; font-weight: 500;">${email}</a>
+                <a href="mailto:${safeEmail}" style="color: #1a1a1a; font-weight: 500;">${safeEmail}</a>
               </td>
             </tr>
-            ${company ? `
+            ${
+              safeCompany
+                ? `
             <tr>
               <td style="padding: 12px 0; border-bottom: 1px solid #eee; color: #666; font-size: 14px;">Company</td>
-              <td style="padding: 12px 0; border-bottom: 1px solid #eee; color: #1a1a1a; font-weight: 500;">${company}</td>
+              <td style="padding: 12px 0; border-bottom: 1px solid #eee; color: #1a1a1a; font-weight: 500;">${safeCompany}</td>
             </tr>
-            ` : ''}
-            ${service ? `
+            `
+                : ""
+            }
+            ${
+              safeService
+                ? `
             <tr>
               <td style="padding: 12px 0; border-bottom: 1px solid #eee; color: #666; font-size: 14px;">Service</td>
-              <td style="padding: 12px 0; border-bottom: 1px solid #eee; color: #1a1a1a; font-weight: 500;">${service}</td>
+              <td style="padding: 12px 0; border-bottom: 1px solid #eee; color: #1a1a1a; font-weight: 500;">${safeService}</td>
             </tr>
-            ` : ''}
-            ${budget ? `
+            `
+                : ""
+            }
+            ${
+              safeBudget
+                ? `
             <tr>
               <td style="padding: 12px 0; border-bottom: 1px solid #eee; color: #666; font-size: 14px;">Budget</td>
-              <td style="padding: 12px 0; border-bottom: 1px solid #eee; color: #1a1a1a; font-weight: 500;">${budget}</td>
+              <td style="padding: 12px 0; border-bottom: 1px solid #eee; color: #1a1a1a; font-weight: 500;">${safeBudget}</td>
             </tr>
-            ` : ''}
+            `
+                : ""
+            }
           </table>
 
           <div style="margin-top: 25px;">
             <h3 style="color: #1a1a1a; margin-bottom: 12px; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Message</h3>
             <div style="color: #333; line-height: 1.7; background: #f9f9f9; padding: 20px; border-radius: 6px; font-size: 15px;">
-              ${message.replace(/\n/g, '<br>')}
+              ${safeMessage}
             </div>
           </div>
 
@@ -76,20 +111,24 @@ export async function POST(request: NextRequest) {
           </div>
         </div>
       `,
-    };
+    });
 
-    // Send email
-    await transporter.sendMail(mailOptions);
+    if (notifyError) {
+      console.error("Resend notify error:", notifyError);
+      return NextResponse.json(
+        { error: "Failed to send email" },
+        { status: 500 }
+      );
+    }
 
-    // Send auto-reply to the user
-    const autoReplyOptions = {
-      from: process.env.EMAIL_SENDER,
-      to: email,
+    const { error: autoReplyError } = await resend.emails.send({
+      from,
+      to: [String(email)],
       subject: "Thanks for reaching out to FullStack Studio Design!",
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; padding: 40px; border-radius: 8px; border: 1px solid #e5e5e5;">
           <h2 style="color: #1a1a1a; margin-bottom: 25px; font-weight: 600;">
-            Thanks for reaching out, ${name}!
+            Thanks for reaching out, ${safeName}!
           </h2>
 
           <p style="color: #333; line-height: 1.8; margin-bottom: 20px; font-size: 15px;">
@@ -111,9 +150,12 @@ export async function POST(request: NextRequest) {
           </div>
         </div>
       `,
-    };
+    });
 
-    await transporter.sendMail(autoReplyOptions);
+    if (autoReplyError) {
+      // Sandbox / unverified domain often blocks auto-reply to arbitrary addresses.
+      console.warn("Resend auto-reply skipped:", autoReplyError);
+    }
 
     return NextResponse.json(
       { message: "Email sent successfully" },
