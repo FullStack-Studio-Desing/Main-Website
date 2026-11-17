@@ -75,7 +75,7 @@ export function ServicesIndex() {
             transition={{ duration: 0.65, delay: 0.12, ease: easeOut }}
             className="mt-8 max-w-[560px] text-lg font-medium leading-snug text-fog sm:text-xl"
           >
-            Websites, marketing, sales, AI, and CRM — built and run together,
+            Websites, marketing, sales, AI, and CRM, built and run together,
             no hand-offs between agencies.
           </motion.p>
         </div>

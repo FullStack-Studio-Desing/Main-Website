@@ -25,25 +25,25 @@ export const hero = {
     "close deals",
   ] as const,
   subheadline:
-    "Websites, marketing, sales, AI, and CRMs — one team, one monthly plan.",
+    "Websites, marketing, sales, AI, and CRMs. One team, one monthly plan.",
   primaryCta: "See services",
   primaryHref: "/services",
   secondaryCta: "Client results",
   secondaryHref: "/#testimonials",
   highlights: [
     "One partner across web, marketing, sales, AI, and CRM",
-    "Monthly plans from $999 — start on Starter, upgrade as you grow",
+    "Monthly plans from $999. Start on Starter, upgrade as you grow",
     "Weekly performance reporting on every plan",
   ],
   lead: {
     eyebrow: "Live chat",
     title: "Want an agent to reach out?",
-    body: "Leave a few details — someone from our team will contact you within one business day. No tickets, no black hole.",
+    body: "Leave a few details. Someone from our team will contact you within one business day. No tickets, no black hole.",
     submit: "Have someone contact me",
     trust: "Real humans. Reply in 1 business day.",
     successTitle: "You're on our list.",
     successBody:
-      "A teammate will reach out soon — usually within one business day.",
+      "A teammate will reach out soon, usually within one business day.",
     chat: {
       statusOnline: "Online now",
       greeting:
@@ -87,7 +87,7 @@ export const services = [
       headline: "A website built to close,",
       headlineEmphasis: "not just look good",
       intro:
-        "Most business sites explain. Ours sell. We design and build conversion-focused websites in-house — clear offers, fast load, and paths that lead to booked calls and revenue.",
+        "Most business sites explain. Ours sell. We design and build conversion-focused websites in-house. Clear offers, fast load, and paths that lead to booked calls and revenue.",
       body: [
         "A website is often the first salesperson a buyer meets. If it is slow, vague, or built around the wrong offer, every ad dollar and every referral arrives colder than it should.",
         "We start from your revenue goal, not from a template gallery. Information architecture, copy hierarchy, and design decisions all point at one job: make the next step obvious and easy.",
@@ -116,7 +116,7 @@ export const services = [
         {
           title: "Design and build",
           detail:
-            "Custom layout and front-end, optimized for speed, clarity, and mobile — no theme soup.",
+            "Custom layout and front-end, optimized for speed, clarity, and mobile. No theme soup.",
         },
         {
           title: "Launch and iterate",
@@ -152,7 +152,7 @@ export const services = [
       intro:
         "We run SEO and paid campaigns as one system. Search brings compounding organic demand; ads fill the gaps and test offers. You get weekly reporting on what actually moved.",
       body: [
-        "Paid ads alone are a faucet — turn them off and the leads stop. SEO alone can take months to pay off. Together they cover the short game and the long game.",
+        "Paid ads alone are a faucet. Turn them off and the leads stop. SEO alone can take months to pay off. Together they cover the short game and the long game.",
         "We do not optimize for vanity metrics. Traffic matters when it is qualified, attributable, and tied to inquiries or revenue. That is what shows up in your weekly report.",
         "Campaigns and organic work share the same offer logic as your site and funnels, so messaging stays consistent across every touchpoint.",
       ],
@@ -213,7 +213,7 @@ export const services = [
       headline: "From visitor to booked",
       headlineEmphasis: "revenue",
       intro:
-        "Traffic without a sales system leaks money. We design funnels, follow-up sequences, and conversion tracking so every lead has a next step — and you can see what closed.",
+        "Traffic without a sales system leaks money. We design funnels, follow-up sequences, and conversion tracking so every lead has a next step, and you can see what closed.",
       body: [
         "Most businesses lose revenue between the first click and the closed deal: unclear offers, slow follow-up, and no visibility into where leads stall.",
         "We treat sales growth as a system. Landing pages, sequences, and tracking are designed together so you always know which step is working and which one is leaking.",
@@ -247,7 +247,7 @@ export const services = [
         {
           title: "Measure the close",
           detail:
-            "Attribution and conversion tracking show what turned into revenue — not just clicks.",
+            "Attribution and conversion tracking show what turned into revenue, not just clicks.",
         },
       ],
       faqs: [
@@ -276,10 +276,10 @@ export const services = [
       headline: "Automate the busywork,",
       headlineEmphasis: "keep the close",
       intro:
-        "AI should free your team to sell — not create another tool to babysit. We build chatbots, lead qualification, and workflow automation that fit how you already work.",
+        "AI should free your team to sell, not create another tool to babysit. We build chatbots, lead qualification, and workflow automation that fit how you already work.",
       body: [
         "Automation fails when it is bolted on for novelty. It works when it removes real friction: repeated questions, manual data entry, and leads that sit untouched overnight.",
-        "We start with your process. Then we automate the steps that waste time and leave the judgment calls — pricing nuance, relationship closes — with your people.",
+        "We start with your process. Then we automate the steps that waste time and leave the judgment calls, like pricing nuance and relationship closes, with your people.",
         "Every automation has a clear handoff. When a lead is ready for a human, the right person gets the context they need without digging through threads.",
       ],
       outcomes: [
@@ -320,7 +320,7 @@ export const services = [
         },
         {
           q: "What tools do you automate with?",
-          a: "We meet you where you already work — site chat, CRM, email, calendars, and common ops tools. We recommend stack changes only when they clearly help.",
+          a: "We meet you where you already work. Site chat, CRM, email, calendars, and common ops tools. We recommend stack changes only when they clearly help.",
         },
       ],
       planNote:
@@ -342,7 +342,7 @@ export const services = [
         "Off-the-shelf CRMs force your process into their boxes. We build pipeline and operations tooling around how your team actually sells, delivers, and reports.",
       body: [
         "If your team lives in spreadsheets, side chats, and a half-configured CRM, pipeline truth is always somewhere else. That slows follow-up and hides forecast reality.",
-        "A custom CRM is not about more fields. It is about stages, ownership, and reporting that match how you already win work — so people actually use it.",
+        "A custom CRM is not about more fields. It is about stages, ownership, and reporting that match how you already win work, so people actually use it.",
         "We integrate the site, ads, and inbox so leads land in the right place with context, and leadership can see the pipeline without chasing updates.",
       ],
       outcomes: [
@@ -403,7 +403,7 @@ export const audience = {
   headline: "Who this is",
   headlineEmphasis: "for",
   intro:
-    "If you already sell something real and want more of the right customers — without guessing where the money went — you are in the right place.",
+    "If you already sell something real and want more of the right customers, without guessing where the money went, you are in the right place.",
   fits: [
     {
       label: "You run",
@@ -415,7 +415,7 @@ export const audience = {
       label: "You want",
       title: "One team, not vendors",
       detail:
-        "Site, marketing, sales systems, and automation in one place — so nothing falls between hand-offs.",
+        "Site, marketing, sales systems, and automation in one place, so nothing falls between hand-offs.",
     },
     {
       label: "You expect",
@@ -469,7 +469,7 @@ export const weeklyReport = {
   headline: "Every week you see",
   headlineEmphasis: "what your money earned",
   intro:
-    "No mystery retainers. The weekly report is the heartbeat of the engagement — plain language, the numbers that matter, and the next moves.",
+    "No mystery retainers. The weekly report is the heartbeat of the engagement. Plain language, the numbers that matter, and the next moves.",
   items: [
     {
       title: "Traffic and lead quality",
@@ -485,7 +485,7 @@ export const weeklyReport = {
     },
     {
       title: "Actions for the coming week",
-      detail: "A short list of what we are shipping — not a vague promise to optimize.",
+      detail: "A short list of what we are shipping, not a vague promise to optimize.",
     },
   ],
 } as const;
@@ -557,14 +557,14 @@ export const testimonialsSection = {
 export const testimonials = [
   {
     quote:
-      "They rebuilt our site and launch funnel in eight weeks — our last shop quoted six months. Qualified inquiries tripled in the first quarter, and we finally know which pages earn the spend.",
+      "They rebuilt our site and launch funnel in eight weeks. Our last shop quoted six months. Qualified inquiries tripled in the first quarter, and we finally know which pages earn the spend.",
     author: "Sarah Mitchell",
     role: "CEO, Harborline Logistics",
     result: "3× qualified inquiries",
   },
   {
     quote:
-      "The weekly reports alone changed how we run the business. For the first time we see which campaigns produce booked jobs — not vanity clicks — and what to cut next Monday.",
+      "The weekly reports alone changed how we run the business. For the first time we see which campaigns produce booked jobs, not vanity clicks, and what to cut next Monday.",
     author: "Marcus Delgado",
     role: "Owner, Delgado & Sons Contracting",
     result: "Clear cost-per-lead every week",
@@ -606,7 +606,7 @@ export const testimonials = [
   },
   {
     quote:
-      "They shipped fast without the agency theater. Site fixes, ads, and reporting went live in the first month — and we still get a clear action list every single week.",
+      "They shipped fast without the agency theater. Site fixes, ads, and reporting went live in the first month, and we still get a clear action list every single week.",
     author: "Tom Brennan",
     role: "Founder, Brennan Supply Co.",
     result: "Live in month one, report every week",
@@ -628,7 +628,7 @@ export const faq = [
   },
   {
     q: "Will this work if we already have a website?",
-    a: "Yes. Most clients come in with an existing site. We keep what converts, fix what leaks, and rebuild only when the foundation is holding growth back — you will know which path we recommend before you spend.",
+    a: "Yes. Most clients come in with an existing site. We keep what converts, fix what leaks, and rebuild only when the foundation is holding growth back. You will know which path we recommend before you spend.",
   },
   {
     q: "Can we start on Starter and upgrade later?",
@@ -640,7 +640,7 @@ export const faq = [
   },
   {
     q: "How long is the commitment?",
-    a: "Growth work compounds. We recommend staying long enough to see the system work — especially SEO — but we will outline expectations clearly on the first call so there are no surprises.",
+    a: "Growth work compounds. We recommend staying long enough to see the system work, especially SEO, but we will outline expectations clearly on the first call so there are no surprises.",
   },
   {
     q: "What do I need to provide to get started?",
@@ -657,9 +657,9 @@ export const closing = {
 export const contact = {
   headlineStart: "Tell us where you want to be in",
   headlineEmphasis: "90 days",
-  body: "Book a call or send a few details — we'll come back within one business day with an honest read on how we can help.",
+  body: "Book a call or send a few details. We'll come back within one business day with an honest read on how we can help.",
   bookingPrompt: "Prefer to talk live?",
-  bookingBody: "Pick a time that works — we’ll walk through goals, fit, and next steps.",
+  bookingBody: "Pick a time that works. We'll walk through goals, fit, and next steps.",
   bookingLabel: "Book an appointment",
   formDivider: "Or send a message",
 } as const;

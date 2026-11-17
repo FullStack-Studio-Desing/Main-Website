@@ -11,21 +11,21 @@ export const checkoutPlans = {
     name: "Starter",
     amount: 999,
     currency: "USD",
-    reason: "FullStack Studio Design — Starter",
+    reason: "FullStack Studio Design, Starter",
   },
   growth: {
     id: "growth",
     name: "Growth",
     amount: 1500,
     currency: "USD",
-    reason: "FullStack Studio Design — Growth",
+    reason: "FullStack Studio Design, Growth",
   },
   scale: {
     id: "scale",
     name: "Scale",
     amount: 2500,
     currency: "USD",
-    reason: "FullStack Studio Design — Scale",
+    reason: "FullStack Studio Design, Scale",
   },
 } as const;
 
