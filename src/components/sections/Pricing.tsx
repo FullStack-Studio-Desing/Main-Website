@@ -20,7 +20,7 @@ export function Pricing() {
           where your business is now and upgrade when it grows.
         </p>
 
-        <div className="mx-auto mt-16 grid max-w-[1280px] grid-cols-1 gap-6 lg:grid-cols-3 lg:items-stretch">
+        <div className="mx-auto mt-16 grid max-w-[1280px] grid-cols-1 gap-6 lg:grid-cols-3 lg:items-end">
           {plans.map((plan, i) => {
             const dark = plan.highlighted;
             return (
@@ -34,9 +34,9 @@ export function Pricing() {
                   delay: i * 0.08,
                   ease: [0.16, 1, 0.3, 1],
                 }}
-                className={`relative flex flex-col rounded-card p-8 lg:p-10 ${
+                className={`relative flex flex-col rounded-shell p-8 lg:p-10 ${
                   dark
-                    ? "bg-moss text-white shadow-cinematic-glow lg:-translate-y-2 lg:scale-[1.02]"
+                    ? "bg-moss text-white shadow-cinematic-glow lg:min-h-[640px] lg:py-16 lg:scale-[1.03]"
                     : "bg-paper text-ink"
                 }`}
               >

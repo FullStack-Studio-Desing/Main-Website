@@ -2,19 +2,7 @@
 
 import { useReducedMotion } from "framer-motion";
 import { testimonials, testimonialsSection } from "@/data/site-copy";
-import {
-  StickerAvatar,
-  StickerQuote,
-} from "@/components/graphics/BrandStickers";
-
-function authorInitials(name: string) {
-  return name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part[0] ?? "")
-    .join("")
-    .toUpperCase();
-}
+import { StickerQuote } from "@/components/graphics/BrandStickers";
 
 function TestimonialCard({
   item,
@@ -30,12 +18,28 @@ function TestimonialCard({
         &ldquo;{item.quote}&rdquo;
       </blockquote>
       <figcaption className="mt-8 flex items-center gap-3 border-t border-rule pt-5">
-        <StickerAvatar initials={authorInitials(item.author)} />
-        <span>
-          <span className="block text-base font-medium text-ink">
+        <span
+          aria-hidden
+          className="relative inline-block h-10 w-10 shrink-0 overflow-hidden rounded-full bg-fog ring-2 ring-white"
+        >
+          {/* Plain img avoids next/image fill quirks in tiny circular crops */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={item.avatar}
+            alt=""
+            width={40}
+            height={40}
+            className="h-full w-full rounded-full object-cover"
+            draggable={false}
+          />
+        </span>
+        <span className="min-h-[3.25rem] min-w-0 flex-1">
+          <span className="block truncate text-base font-medium leading-6 text-ink">
             {item.author}
           </span>
-          <span className="mt-0.5 block text-base text-ink/80">{item.role}</span>
+          <span className="mt-0.5 block truncate text-base leading-6 text-ink/80">
+            {item.role}
+          </span>
         </span>
       </figcaption>
     </figure>

@@ -561,13 +561,15 @@ export const testimonials = [
     author: "Sarah Mitchell",
     role: "CEO, Harborline Logistics",
     result: "3× qualified inquiries",
+    avatar: "/images/testimonials/sarah-mitchell.webp",
   },
   {
     quote:
       "The weekly reports alone changed how we run the business. For the first time we see which campaigns produce booked jobs, not vanity clicks, and what to cut next Monday.",
     author: "Marcus Delgado",
-    role: "Owner, Delgado & Sons Contracting",
+    role: "Owner, Delgado & Sons",
     result: "Clear cost-per-lead every week",
+    avatar: "/images/testimonials/marcus-delgado.webp",
   },
   {
     quote:
@@ -575,20 +577,23 @@ export const testimonials = [
     author: "Priya Nair",
     role: "Founder, Northline Wellness",
     result: "One growth stack, zero vendor hand-offs",
+    avatar: "/images/testimonials/priya-nair.webp",
   },
   {
     quote:
       "Our old site looked fine and converted almost nothing. After the rebuild and tracking cleanup, booked consults jumped and we stopped guessing which landing pages deserved the budget.",
     author: "James Okonkwo",
-    role: "Managing Partner, Okonkwo Law Group",
+    role: "Managing Partner, Okonkwo Law",
     result: "Booked consults up sharply",
+    avatar: "/images/testimonials/james-okonkwo.webp",
   },
   {
     quote:
       "They connected our ads, CRM, and follow-up so the sales team finally gets warm leads the same day. Pipeline is cleaner, and Monday meetings start with numbers instead of opinions.",
     author: "Elena Vargas",
-    role: "VP Growth, Rivermark Home Services",
+    role: "VP Growth, Rivermark Homes",
     result: "Same-day warm lead handoff",
+    avatar: "/images/testimonials/elena-vargas.webp",
   },
   {
     quote:
@@ -596,13 +601,15 @@ export const testimonials = [
     author: "Daniel Cho",
     role: "Owner, Cho Dental Group",
     result: "SEO tied to real inquiries",
+    avatar: "/images/testimonials/daniel-cho.webp",
   },
   {
     quote:
       "Campaign spend used to feel like a black hole. Now every dollar is tagged to a form fill or booked call, and we know what to scale before the week is over.",
     author: "Amanda Reyes",
-    role: "Marketing Director, BrightPath Clinics",
+    role: "Marketing Director, BrightPath",
     result: "Spend tied to booked calls",
+    avatar: "/images/testimonials/amanda-reyes.webp",
   },
   {
     quote:
@@ -610,6 +617,7 @@ export const testimonials = [
     author: "Tom Brennan",
     role: "Founder, Brennan Supply Co.",
     result: "Live in month one, report every week",
+    avatar: "/images/testimonials/tom-brennan.webp",
   },
 ] as const;
 
