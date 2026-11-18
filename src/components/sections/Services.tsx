@@ -52,7 +52,7 @@ export function Services() {
                   className="group flex items-start justify-between gap-6 py-6 transition-opacity duration-150 active:opacity-90 sm:items-center sm:py-8"
                 >
                   <span className="flex min-w-0 items-start gap-4 sm:items-center sm:gap-5">
-                    <span className="mt-0.5 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15 transition-all duration-200 group-hover:bg-neon/20 group-hover:ring-neon/40 group-active:scale-[0.97] sm:mt-0 sm:h-14 sm:w-14">
+                    <span className="mt-0.5 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/10 transition-all duration-200 group-hover:bg-neon/20 group-hover:ring-[color-mix(in_srgb,var(--color-neon)_40%,transparent)] group-active:scale-[0.97] sm:mt-0 sm:h-14 sm:w-14">
                       {Glyph ? (
                         <Glyph
                           size={26}
