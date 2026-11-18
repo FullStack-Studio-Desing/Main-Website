@@ -230,10 +230,10 @@ export function ServicesIndex() {
                         </span>
                       </div>
 
-                      <h3 className="mt-5 font-display text-[32px] uppercase leading-[0.95] tracking-[-0.01em] text-ink transition-colors duration-200 group-hover:text-moss sm:text-[40px] lg:text-[48px]">
+                      <h3 className="mt-5 line-clamp-2 font-display text-[32px] uppercase leading-[0.95] tracking-[-0.01em] text-ink transition-colors duration-200 group-hover:text-moss sm:text-[40px] lg:text-[48px]">
                         {service.shortLabel}
                       </h3>
-                      <p className="mt-3 max-w-[520px] text-base leading-relaxed text-body sm:text-lg">
+                      <p className="mt-3 line-clamp-2 max-w-[520px] text-base leading-snug text-body sm:text-lg">
                         {service.description}
                       </p>
 
@@ -278,15 +278,14 @@ export function ServicesIndex() {
                         {String(i + 1).padStart(2, "0")} / 05
                       </p>
                       <div>
-                        <p className="max-w-[280px] font-sans text-[22px] italic leading-snug text-fog sm:text-[26px]">
+                        <p className="line-clamp-2 max-w-[280px] font-sans text-[22px] italic leading-snug text-fog sm:text-[26px]">
                           {service.page.headline}{" "}
                           <span className="text-neon">
                             {service.page.headlineEmphasis}
                           </span>
                         </p>
-                        <p className="mt-4 max-w-[300px] text-sm leading-relaxed text-sage">
-                          {service.page.intro.slice(0, 110)}
-                          {service.page.intro.length > 110 ? "…" : ""}
+                        <p className="mt-4 line-clamp-2 max-w-[300px] text-sm leading-snug text-sage">
+                          {service.page.intro}
                         </p>
                       </div>
                     </div>
