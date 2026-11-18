@@ -200,108 +200,116 @@ export function ServicesIndex() {
             </p>
           </motion.div>
 
-          <ul className="mt-14 space-y-5 lg:mt-16">
+          <ol className="mt-14 list-none border-y border-rule lg:mt-16">
             {services.map((service, i) => {
               const Glyph = serviceIcons[service.icon];
               const preview = service.page.outcomes.slice(0, 2);
-              const flip = i % 2 === 1;
+              const indexTotal = String(services.length).padStart(2, "0");
 
               return (
                 <motion.li
                   key={service.slug}
                   initial={reduce ? false : { opacity: 0, y: 22 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.25 }}
+                  viewport={{ once: true, amount: 0.2 }}
                   transition={{
                     duration: 0.55,
-                    delay: i * 0.03,
+                    delay: Math.min(i, 4) * 0.04,
                     ease: easeOut,
                   }}
+                  className="border-b border-rule last:border-b-0"
                 >
                   <Link
                     href={`/services/${service.slug}`}
-                    className={`group grid grid-cols-1 overflow-hidden rounded-[28px] bg-paper ring-1 ring-rule transition-all duration-200 hover:ring-[color-mix(in_srgb,var(--color-moss)_30%,transparent)] active:scale-[0.995] sm:rounded-[32px] lg:grid-cols-[1.15fr_0.85fr] ${
-                      flip ? "lg:[&>*:first-child]:order-2" : ""
-                    }`}
+                    className="group relative block transition-colors duration-200 hover:bg-paper/50 active:bg-paper/70"
                   >
-                    <div className="flex flex-col justify-center px-6 py-8 sm:px-9 sm:py-10 lg:px-12 lg:py-12">
-                      <div className="flex items-center gap-3">
-                        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white ring-1 ring-rule transition-transform duration-200 group-hover:scale-[1.04] group-active:scale-[0.97] sm:h-14 sm:w-14">
-                          <Glyph
-                            size={26}
-                            weight="duotone"
-                            className="text-ink"
-                          />
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-y-0 left-0 w-[3px] origin-top scale-y-0 bg-neon transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-y-100"
+                    />
+                    <div className="grid grid-cols-1 gap-8 px-6 py-10 sm:px-10 sm:py-12 lg:grid-cols-[80px_minmax(0,1.12fr)_minmax(260px,0.88fr)] lg:gap-x-12 lg:gap-y-6 lg:py-14 xl:grid-cols-[96px_minmax(0,1.15fr)_minmax(300px,0.85fr)] xl:gap-x-16">
+                      <div
+                        className="flex items-baseline gap-2 font-mono lg:flex-col lg:items-start lg:gap-0"
+                        aria-label={`Service ${i + 1} of ${services.length}`}
+                      >
+                        <span className="text-lg tracking-[0.14em] text-neon-active sm:text-xl">
+                          {String(i + 1).padStart(2, "0")}
                         </span>
-                        <span className="text-xs font-medium uppercase tracking-[0.12em] text-muted sm:text-sm">
-                          {service.category}
+                        <span className="text-sm tracking-[0.12em] text-muted lg:mt-1">
+                          / {indexTotal}
                         </span>
                       </div>
 
-                      <h3 className="mt-5 line-clamp-2 font-display text-[32px] uppercase leading-[0.95] tracking-[-0.01em] text-ink transition-colors duration-200 group-hover:text-moss sm:text-[40px] lg:text-[48px]">
-                        {service.shortLabel}
-                      </h3>
-                      <p className="mt-3 line-clamp-2 max-w-[520px] text-base leading-snug text-body sm:text-lg">
-                        {service.description}
-                      </p>
-
-                      <ul className="mt-6 space-y-2.5">
-                        {preview.map((item) => (
-                          <li
-                            key={item}
-                            className="flex items-start gap-2.5 text-sm font-medium leading-snug text-ink sm:text-base"
-                          >
-                            <CheckCircle
-                              size={20}
-                              weight="fill"
-                              className="mt-0.5 shrink-0 text-leaf"
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white ring-1 ring-rule transition-transform duration-200 group-hover:scale-[1.03] group-active:scale-[0.98] sm:h-12 sm:w-12">
+                            <Glyph
+                              size={24}
+                              weight="duotone"
+                              className="text-ink"
                             />
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-
-                      <span className="mt-8 inline-flex items-center gap-2 text-base font-medium text-moss">
-                        Explore {service.shortLabel}
-                        <ArrowUpRight
-                          size={20}
-                          weight="bold"
-                          className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                        />
-                      </span>
-                    </div>
-
-                    <div
-                      className="relative flex min-h-[220px] flex-col justify-between overflow-hidden bg-forest px-6 py-8 text-white sm:min-h-[260px] sm:px-9 sm:py-10 lg:px-10"
-                      style={{
-                        background:
-                          "radial-gradient(ellipse 80% 70% at 70% 20%, rgba(62,91,67,0.9) 0%, #122314 70%)",
-                      }}
-                    >
-                      <StickerBurst
-                        className="absolute right-6 top-6 h-8 w-8 opacity-80"
-                        tone="neon"
-                      />
-                      <p className="font-mono text-xs tracking-[0.12em] text-neon">
-                        {String(i + 1).padStart(2, "0")} / 05
-                      </p>
-                      <div>
-                        <p className="line-clamp-2 max-w-[280px] font-sans text-[22px] italic leading-snug text-fog sm:text-[26px]">
-                          {service.page.headline}{" "}
-                          <span className="text-neon">
-                            {service.page.headlineEmphasis}
                           </span>
+                          <span className="text-xs font-medium uppercase tracking-[0.12em] text-muted sm:text-sm">
+                            {service.category}
+                          </span>
+                        </div>
+
+                        <h3 className="mt-4 font-display text-[32px] uppercase leading-[0.94] tracking-[-0.01em] text-ink transition-colors duration-200 group-hover:text-moss sm:mt-5 sm:text-[40px] lg:text-[44px]">
+                          {service.shortLabel}
+                        </h3>
+                        <p className="mt-3 max-w-[560px] text-base leading-snug text-body sm:text-lg sm:leading-snug">
+                          {service.description}
                         </p>
-                        <p className="mt-4 line-clamp-2 max-w-[300px] text-sm leading-snug text-sage">
-                          {service.page.intro}
-                        </p>
+
+                        <ul className="mt-6 space-y-2.5 sm:mt-7">
+                          {preview.map((item) => (
+                            <li
+                              key={item}
+                              className="flex items-start gap-2.5 text-sm font-medium leading-snug text-ink sm:text-base"
+                            >
+                              <CheckCircle
+                                size={20}
+                                weight="fill"
+                                className="mt-0.5 shrink-0 text-leaf"
+                              />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+
+                        <span className="mt-7 inline-flex items-center gap-2 text-base font-medium text-moss sm:mt-8">
+                          Explore {service.shortLabel}
+                          <ArrowUpRight
+                            size={20}
+                            weight="bold"
+                            className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                          />
+                        </span>
+                      </div>
+
+                      <div className="relative flex min-h-[200px] flex-col overflow-hidden rounded-[24px] bg-forest px-6 py-7 text-white ring-1 ring-[color-mix(in_srgb,var(--color-moss)_25%,transparent)] sm:min-h-[220px] sm:rounded-[28px] sm:px-8 sm:py-9 lg:min-h-0 lg:self-stretch">
+                        <StickerBurst
+                          className="pointer-events-none absolute right-5 top-5 h-7 w-7 opacity-70 sm:right-6 sm:top-6 sm:h-8 sm:w-8"
+                          tone="neon"
+                        />
+                        <div className="relative mt-auto">
+                          <p className="max-w-[320px] font-sans text-[20px] font-medium leading-snug text-fog sm:text-[24px] lg:text-[22px] xl:text-[26px]">
+                            {service.page.headline}{" "}
+                            <span className="text-neon">
+                              {service.page.headlineEmphasis}
+                            </span>
+                          </p>
+                          <p className="mt-4 max-w-[340px] text-sm leading-snug text-sage sm:text-[15px]">
+                            {service.page.intro}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </Link>
                 </motion.li>
               );
             })}
-          </ul>
+          </ol>
         </div>
       </section>
 

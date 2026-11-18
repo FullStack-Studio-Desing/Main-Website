@@ -16,6 +16,7 @@ import {
 import { brand, contact, hero } from "@/data/site-copy";
 import { btnInverse } from "@/components/buttons";
 import { GoogleSchedulingButton } from "@/components/GoogleSchedulingButton";
+import { mediaUrl } from "@/lib/media";
 
 type Status = "idle" | "sending" | "sent" | "error";
 type Step = "name" | "email" | "phone" | "note" | "done";
@@ -33,14 +34,14 @@ type ChatAgent = {
 };
 
 const AGENTS: ChatAgent[] = [
-  { name: "Alex", initials: "AX", photo: "/images/agents/male.png" },
-  { name: "Jordan", initials: "JD", photo: "/images/agents/male.png" },
-  { name: "Sam", initials: "SM", photo: "/images/agents/male.png" },
-  { name: "Chris", initials: "CH", photo: "/images/agents/male.png" },
-  { name: "Mia", initials: "MA", photo: "/images/agents/female.png" },
-  { name: "Sofia", initials: "SF", photo: "/images/agents/female.png" },
-  { name: "Emma", initials: "EM", photo: "/images/agents/female.png" },
-  { name: "Olivia", initials: "OL", photo: "/images/agents/female.png" },
+  { name: "Alex", initials: "AX", photo: mediaUrl("/images/agents/male.png") },
+  { name: "Jordan", initials: "JD", photo: mediaUrl("/images/agents/male.png") },
+  { name: "Sam", initials: "SM", photo: mediaUrl("/images/agents/male.png") },
+  { name: "Chris", initials: "CH", photo: mediaUrl("/images/agents/male.png") },
+  { name: "Mia", initials: "MA", photo: mediaUrl("/images/agents/female.png") },
+  { name: "Sofia", initials: "SF", photo: mediaUrl("/images/agents/female.png") },
+  { name: "Emma", initials: "EM", photo: mediaUrl("/images/agents/female.png") },
+  { name: "Olivia", initials: "OL", photo: mediaUrl("/images/agents/female.png") },
 ];
 
 const STEPS: Step[] = ["name", "email", "phone", "note"];
@@ -701,7 +702,7 @@ export function HeroLeadCard() {
           });
           setOpen((v) => !v);
         }}
-        className={`pointer-events-auto fixed bottom-5 right-5 z-[60] inline-flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-neon text-forest shadow-[0_12px_32px_rgba(18,35,20,0.35)] transition-transform hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neon sm:bottom-6 sm:right-6 ${
+        className={`pointer-events-auto fixed bottom-5 right-5 z-[60] inline-flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-white text-forest shadow-[0_12px_32px_rgba(18,35,20,0.22)] ring-1 ring-rule transition-[transform,box-shadow,ring-color] duration-200 hover:scale-105 hover:shadow-[0_14px_36px_rgba(18,35,20,0.28)] hover:ring-black/15 hover:text-ink active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sage sm:bottom-6 sm:right-6 ${
           open ? "max-sm:hidden" : ""
         }`}
         aria-label={open ? "Close chat" : `Chat with ${agent.name}`}

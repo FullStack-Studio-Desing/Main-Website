@@ -69,88 +69,79 @@ export function ServiceHeroVisual({
 
   return (
     <motion.div
-      initial={reduce ? false : { opacity: 0.01, y: 24, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.85, delay: 0.16, ease }}
-      className="relative mx-auto w-full max-w-[520px]"
+      initial={reduce ? false : { opacity: 0.01, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.75, delay: 0.14, ease }}
+      className="relative mx-auto w-full max-w-[480px] lg:max-w-[520px]"
       aria-hidden
     >
-      <StickerOrbit className="pointer-events-none absolute -left-10 -top-8 h-36 w-36 opacity-70" />
-      <StickerBurst
-        className="pointer-events-none absolute -right-2 top-8 h-9 w-9"
-        tone="neon"
-      />
-
-      <div className="relative overflow-hidden rounded-[28px] bg-white/5 p-5 ring-1 ring-white/10 backdrop-blur-xl sm:rounded-[32px] sm:p-6">
-        <div
-          className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full opacity-50 blur-3xl"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(104,239,63,0.35) 0%, transparent 70%)",
-          }}
-        />
-
-        <div className="relative flex items-center justify-between gap-3">
-          <span className="inline-flex items-center gap-2 rounded-full bg-neon/15 px-3 py-1.5 text-xs font-medium uppercase tracking-[0.1em] text-neon ring-1 ring-[color-mix(in_srgb,var(--color-neon)_30%,transparent)]">
-            {Glyph ? <Glyph size={14} weight="duotone" /> : null}
-            {scene.label}
-          </span>
-          <span className="font-mono text-xs tracking-[0.08em] text-sage">
-            LIVE
-          </span>
-        </div>
-
-        <div className="relative mt-6 grid grid-cols-[1.1fr_0.9fr] gap-4">
-          <div className="space-y-3">
-            {scene.lines.map((line, i) => (
-              <motion.div
-                key={line}
-                initial={reduce ? false : { opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.45, delay: 0.28 + i * 0.07, ease }}
-                className="flex items-center gap-3 rounded-2xl bg-white/10 px-3.5 py-3 ring-1 ring-white/10"
-              >
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-neon/20 font-mono text-xs text-neon">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span className="text-sm font-medium text-fog">{line}</span>
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.div
-            initial={reduce ? false : { opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.4, ease }}
-            className="flex flex-col justify-between rounded-[24px] bg-forest p-4 ring-1 ring-white/10"
-            style={{
-              background:
-                "radial-gradient(circle at 30% 20%, #3e5b43 0%, #122314 62%)",
-            }}
-          >
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-neon/15 ring-1 ring-[color-mix(in_srgb,var(--color-neon)_35%,transparent)]">
+      <div
+        className="relative overflow-hidden rounded-[24px] bg-white shadow-form-lift ring-1 ring-rule transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 sm:rounded-[28px]"
+      >
+        <header className="flex items-center justify-between gap-4 border-b border-rule px-5 py-4 sm:px-6 sm:py-5">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-paper ring-1 ring-rule">
               {Glyph ? (
-                <Glyph size={28} weight="duotone" className="text-neon" />
+                <Glyph size={24} weight="duotone" className="text-forest" />
               ) : null}
-            </div>
-            <div className="mt-8">
-              <p className="font-display text-[36px] uppercase leading-none tracking-[-0.02em] text-neon">
-                {scene.metric}
-              </p>
-              <p className="mt-2 text-sm font-medium leading-snug text-sage">
-                {scene.metricLabel}
-              </p>
-            </div>
-          </motion.div>
-        </div>
+            </span>
+            <span className="truncate text-xs font-medium uppercase tracking-[0.14em] text-muted">
+              {scene.label}
+            </span>
+          </div>
+          <span className="inline-flex shrink-0 items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-sage">
+            <span
+              className="h-2 w-2 rounded-full bg-neon-active ring-2 ring-[color-mix(in_srgb,var(--color-neon-active)_35%,transparent)]"
+              aria-hidden
+            />
+            Live
+          </span>
+        </header>
 
-        <div className="relative mt-5 h-2 overflow-hidden rounded-full bg-white/10">
+        <ol className="divide-y divide-rule px-5 sm:px-6">
+          {scene.lines.map((line, i) => (
+            <motion.li
+              key={line}
+              initial={reduce ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.22 + i * 0.06, ease }}
+              className="flex items-center gap-4 py-4 sm:gap-5 sm:py-[18px]"
+            >
+              <span className="w-7 shrink-0 font-mono text-sm font-medium tracking-[0.06em] text-neon-active">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span className="text-base font-medium leading-snug tracking-[-0.01em] text-ink sm:text-[17px]">
+                {line}
+              </span>
+            </motion.li>
+          ))}
+        </ol>
+
+        <div className="grid grid-cols-[auto_1fr] border-t border-rule">
           <motion.div
-            className="h-full rounded-full bg-neon"
-            initial={reduce ? { width: "72%" } : { width: "0%" }}
-            animate={{ width: "72%" }}
-            transition={{ duration: 1.1, delay: 0.55, ease }}
-          />
+            initial={reduce ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.38, ease }}
+            className="flex w-[88px] items-center justify-center border-r border-rule bg-forest sm:w-[100px]"
+          >
+            {Glyph ? (
+              <Glyph size={32} weight="duotone" className="text-neon" />
+            ) : null}
+          </motion.div>
+
+          <motion.div
+            initial={reduce ? false : { opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.42, ease }}
+            className="flex flex-col justify-center bg-paper px-5 py-5 sm:px-6 sm:py-6"
+          >
+            <p className="font-display text-[32px] uppercase leading-[0.92] tracking-[-0.02em] text-ink sm:text-[40px]">
+              {scene.metric}
+            </p>
+            <p className="mt-2 text-sm font-medium leading-snug text-muted">
+              {scene.metricLabel}
+            </p>
+          </motion.div>
         </div>
       </div>
     </motion.div>

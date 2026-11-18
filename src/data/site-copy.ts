@@ -1,3 +1,5 @@
+import { mediaUrl } from "@/lib/media";
+
 export const brand = {
   name: "FullStack Studio Design",
   shortName: "FullStack Studio",
@@ -687,7 +689,7 @@ export const testimonials = [
     author: "Sarah Mitchell",
     role: "CEO, Harborline Logistics",
     result: "3× qualified inquiries",
-    avatar: "/images/testimonials/sarah-mitchell.webp",
+    avatar: mediaUrl("/images/testimonials/sarah-mitchell.webp"),
   },
   {
     quote:
@@ -695,7 +697,7 @@ export const testimonials = [
     author: "Marcus Delgado",
     role: "Owner, Delgado & Sons",
     result: "Clear cost-per-lead every week",
-    avatar: "/images/testimonials/marcus-delgado.webp",
+    avatar: mediaUrl("/images/testimonials/marcus-delgado.webp"),
   },
   {
     quote:
@@ -703,7 +705,7 @@ export const testimonials = [
     author: "Priya Nair",
     role: "Founder, Northline Wellness",
     result: "One growth stack, zero vendor hand-offs",
-    avatar: "/images/testimonials/priya-nair.webp",
+    avatar: mediaUrl("/images/testimonials/priya-nair.webp"),
   },
   {
     quote:
@@ -711,7 +713,7 @@ export const testimonials = [
     author: "James Okonkwo",
     role: "Managing Partner, Okonkwo Law",
     result: "Booked consults up sharply",
-    avatar: "/images/testimonials/james-okonkwo.webp",
+    avatar: mediaUrl("/images/testimonials/james-okonkwo.webp"),
   },
   {
     quote:
@@ -719,7 +721,7 @@ export const testimonials = [
     author: "Elena Vargas",
     role: "VP Growth, Rivermark Homes",
     result: "Same-day warm lead handoff",
-    avatar: "/images/testimonials/elena-vargas.webp",
+    avatar: mediaUrl("/images/testimonials/elena-vargas.webp"),
   },
   {
     quote:
@@ -727,7 +729,7 @@ export const testimonials = [
     author: "Daniel Cho",
     role: "Owner, Cho Dental Group",
     result: "SEO tied to real inquiries",
-    avatar: "/images/testimonials/daniel-cho.webp",
+    avatar: mediaUrl("/images/testimonials/daniel-cho.webp"),
   },
   {
     quote:
@@ -735,7 +737,7 @@ export const testimonials = [
     author: "Amanda Reyes",
     role: "Marketing Director, BrightPath",
     result: "Spend tied to booked calls",
-    avatar: "/images/testimonials/amanda-reyes.webp",
+    avatar: mediaUrl("/images/testimonials/amanda-reyes.webp"),
   },
   {
     quote:
@@ -743,7 +745,7 @@ export const testimonials = [
     author: "Tom Brennan",
     role: "Founder, Brennan Supply Co.",
     result: "Live in month one, report every week",
-    avatar: "/images/testimonials/tom-brennan.webp",
+    avatar: mediaUrl("/images/testimonials/tom-brennan.webp"),
   },
 ] as const;
 

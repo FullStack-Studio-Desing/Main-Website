@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useReducedMotion } from "framer-motion";
+import { mediaUrl } from "@/lib/media";
 
 type Brand = {
   name: string;
@@ -11,15 +12,15 @@ type Brand = {
 };
 
 const brands: Brand[] = [
-  { name: "Google", src: "/images/brands/google.svg", width: 62, height: 62 },
-  { name: "WordPress", src: "/images/brands/wordpress.svg", width: 62, height: 62 },
-  { name: "Shopify", src: "/images/brands/shopify.svg", width: 55, height: 62 },
-  { name: "Google Ads", src: "/images/brands/google-ads.svg", width: 70, height: 62 },
-  { name: "Meta Ads", src: "/images/brands/meta.svg", width: 94, height: 62 },
-  { name: "HubSpot", src: "/images/brands/hubspot.svg", width: 62, height: 62 },
-  { name: "GoHighLevel", src: "/images/brands/gohighlevel.svg", width: 156, height: 36 },
-  { name: "Klaviyo", src: "/images/brands/klaviyo.svg", width: 62, height: 62 },
-  { name: "Stripe", src: "/images/brands/stripe.svg", width: 62, height: 62 },
+  { name: "Google", src: mediaUrl("/images/brands/google.svg"), width: 62, height: 62 },
+  { name: "WordPress", src: mediaUrl("/images/brands/wordpress.svg"), width: 62, height: 62 },
+  { name: "Shopify", src: mediaUrl("/images/brands/shopify.svg"), width: 55, height: 62 },
+  { name: "Google Ads", src: mediaUrl("/images/brands/google-ads.svg"), width: 70, height: 62 },
+  { name: "Meta Ads", src: mediaUrl("/images/brands/meta.svg"), width: 94, height: 62 },
+  { name: "HubSpot", src: mediaUrl("/images/brands/hubspot.svg"), width: 62, height: 62 },
+  { name: "GoHighLevel", src: mediaUrl("/images/brands/gohighlevel.svg"), width: 156, height: 36 },
+  { name: "Klaviyo", src: mediaUrl("/images/brands/klaviyo.svg"), width: 62, height: 62 },
+  { name: "Stripe", src: mediaUrl("/images/brands/stripe.svg"), width: 62, height: 62 },
 ];
 
 function BrandIcon({ name, src, width, height }: Brand) {

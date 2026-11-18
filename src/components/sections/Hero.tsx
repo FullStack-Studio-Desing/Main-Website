@@ -9,6 +9,7 @@ import { btnPrimary, btnGlass } from "@/components/buttons";
 import { HeroLeadCard } from "@/components/HeroLeadCard";
 import { HeroTypewriter } from "@/components/HeroTypewriter";
 import { TechMarquee } from "@/components/graphics/TechMarquee";
+import { mediaUrl } from "@/lib/media";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -113,7 +114,7 @@ export function Hero() {
             className="relative z-10 w-full max-w-[720px] justify-self-center lg:justify-self-end"
           >
             <Image
-              src="/images/hero-heading.png"
+              src={mediaUrl("/images/hero-heading.png")}
               alt="Growth marketing illustration"
               width={1000}
               height={1000}
