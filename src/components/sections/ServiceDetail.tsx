@@ -83,7 +83,7 @@ export function ServiceDetail({ service }: { service: Service }) {
 
   return (
     <main>
-      <section className="relative overflow-hidden rounded-b-[32px] bg-forest text-white md:rounded-b-none">
+      <section className="relative min-h-[100dvh] overflow-hidden rounded-b-[32px] bg-forest text-white md:rounded-b-none">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0"
@@ -109,7 +109,7 @@ export function ServiceDetail({ service }: { service: Service }) {
           }}
         />
 
-        <div className="relative mx-auto max-w-[1536px] px-6 pb-16 pt-32 sm:px-10 lg:pb-24 lg:pt-36">
+        <div className="relative mx-auto flex min-h-[100dvh] max-w-[1536px] flex-col justify-center px-6 pb-16 pt-32 sm:px-10 lg:pb-24 lg:pt-36">
           <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
             <div className="relative z-10 max-w-[720px]">
               <motion.div {...enter(0.05)}>

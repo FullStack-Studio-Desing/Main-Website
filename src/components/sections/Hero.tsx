@@ -1,8 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { CheckCircle } from "@phosphor-icons/react";
 import { hero } from "@/data/site-copy";
 import { btnPrimary, btnGlass } from "@/components/buttons";
@@ -13,8 +14,24 @@ import { mediaUrl } from "@/lib/media";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
+/** Desktop/widgets 2–8 (skip #1) — same set as service heroes. */
+const HERO_WIDGETS = [2, 3, 4, 5, 6, 7, 8].map((n) =>
+  mediaUrl(`/images/services/widgets/${n}.png`),
+);
+
+const ROTATE_MS = 3200;
+
 export function Hero() {
   const reduce = useReducedMotion();
+  const [widgetIndex, setWidgetIndex] = useState(0);
+
+  useEffect(() => {
+    if (reduce) return;
+    const id = window.setInterval(() => {
+      setWidgetIndex((i) => (i + 1) % HERO_WIDGETS.length);
+    }, ROTATE_MS);
+    return () => window.clearInterval(id);
+  }, [reduce]);
 
   const enter = (delay: number) =>
     reduce
@@ -102,7 +119,7 @@ export function Hero() {
             </motion.div>
           </div>
 
-          {/* Right — hero graphic */}
+          {/* Right — rotating service widgets */}
           <motion.div
             {...(reduce
               ? {}
@@ -112,15 +129,39 @@ export function Hero() {
                   transition: { duration: 0.85, delay: 0.18, ease },
                 })}
             className="relative z-10 w-full max-w-[720px] justify-self-center lg:justify-self-end"
+            aria-hidden
           >
-            <Image
-              src={mediaUrl("/images/hero-heading.png")}
-              alt="Growth marketing illustration"
-              width={1000}
-              height={1000}
-              priority
-              className="h-auto w-full select-none"
-            />
+            <div className="relative aspect-square w-full">
+              <AnimatePresence initial={false}>
+                <motion.div
+                  key={widgetIndex}
+                  initial={
+                    reduce ? false : { opacity: 0, scale: 0.94 }
+                  }
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={
+                    reduce
+                      ? undefined
+                      : { opacity: 0, scale: 1.02 }
+                  }
+                  transition={
+                    reduce
+                      ? { duration: 0 }
+                      : { duration: 0.7, ease }
+                  }
+                  className="absolute inset-0"
+                >
+                  <Image
+                    src={HERO_WIDGETS[widgetIndex]}
+                    alt=""
+                    fill
+                    priority={widgetIndex === 0}
+                    sizes="(max-width: 1024px) 90vw, 720px"
+                    className="object-contain object-center drop-shadow-[0_24px_48px_rgba(0,0,0,0.35)] select-none"
+                  />
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </motion.div>
         </div>
       </div>
