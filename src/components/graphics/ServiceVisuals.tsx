@@ -55,6 +55,89 @@ const scenes: Record<
   },
 };
 
+/** Editorial hero widget for /services/websites (forest hero context). */
+export function WebsitesServiceHeroVisual({ icon }: { icon: string }) {
+  const reduce = useReducedMotion();
+  const Glyph = serviceIcons[icon];
+  const scene = scenes.websites;
+
+  return (
+    <motion.div
+      initial={reduce ? false : { opacity: 0.01, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.75, delay: 0.14, ease }}
+      className="relative mx-auto w-full max-w-[520px] lg:max-w-[580px]"
+      aria-hidden
+    >
+      <div className="overflow-hidden ring-1 ring-[color-mix(in_srgb,var(--color-sage)_28%,transparent)]">
+        <div
+          className="flex flex-wrap items-baseline justify-between gap-4 border-b border-[color-mix(in_srgb,var(--color-sage)_22%,transparent)] px-6 py-5 sm:px-8 sm:py-6"
+          style={{
+            background:
+              "color-mix(in srgb, var(--color-mint) 6%, transparent)",
+          }}
+        >
+          <div className="min-w-0">
+            <p className="font-display text-[30px] uppercase leading-[0.9] tracking-[-0.02em] text-white sm:text-[36px]">
+              {scene.label}
+            </p>
+          </div>
+          <div className="flex items-center gap-3 sm:gap-4">
+            <span className="inline-flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-fog">
+              <span
+                className="h-2 w-2 rounded-full bg-neon-active ring-2 ring-[color-mix(in_srgb,var(--color-neon-active)_35%,transparent)]"
+                aria-hidden
+              />
+              Live
+            </span>
+            {Glyph ? (
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full ring-1 ring-[color-mix(in_srgb,var(--color-sage)_35%,transparent)]">
+                <Glyph size={22} weight="duotone" className="text-neon" />
+              </span>
+            ) : null}
+          </div>
+        </div>
+
+        <ol className="list-none divide-y divide-[color-mix(in_srgb,var(--color-sage)_18%,transparent)]">
+          {scene.lines.map((line, i) => (
+            <motion.li
+              key={line}
+              initial={reduce ? false : { opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.2 + i * 0.07, ease }}
+              className="group relative grid grid-cols-[52px_minmax(0,1fr)] items-baseline gap-4 px-6 py-5 sm:grid-cols-[64px_minmax(0,1fr)] sm:gap-5 sm:px-8 sm:py-6"
+            >
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-y-0 left-0 w-[3px] origin-top scale-y-0 bg-neon transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-y-100"
+              />
+              <span className="font-mono text-base tracking-[0.12em] text-neon-active sm:text-lg">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span className="font-display text-[22px] uppercase leading-[0.95] tracking-[-0.015em] text-fog sm:text-[26px] lg:text-[28px]">
+                {line}
+              </span>
+            </motion.li>
+          ))}
+        </ol>
+
+        <div className="grid grid-cols-1 border-t border-[color-mix(in_srgb,var(--color-sage)_22%,transparent)] sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+          <div className="border-b border-[color-mix(in_srgb,var(--color-sage)_18%,transparent)] px-6 py-6 sm:border-b-0 sm:border-r sm:px-8 sm:py-8">
+            <p className="font-display text-[52px] uppercase leading-[0.88] tracking-[-0.03em] text-neon sm:text-[64px] lg:text-[72px]">
+              {scene.metric}
+            </p>
+          </div>
+          <div className="px-6 py-5 sm:max-w-[240px] sm:px-8 sm:py-8">
+            <p className="text-base font-medium leading-snug tracking-[-0.01em] text-fog sm:text-[17px]">
+              {scene.metricLabel}
+            </p>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 /** Page-specific hero graphic for service detail pages. */
 export function ServiceHeroVisual({
   slug,
@@ -85,7 +168,7 @@ export function ServiceHeroVisual({
                 <Glyph size={24} weight="duotone" className="text-forest" />
               ) : null}
             </span>
-            <span className="truncate text-xs font-medium uppercase tracking-[0.14em] text-muted">
+            <span className="truncate text-xs font-medium uppercase tracking-[0.14em] text-soft">
               {scene.label}
             </span>
           </div>
@@ -138,7 +221,7 @@ export function ServiceHeroVisual({
             <p className="font-display text-[32px] uppercase leading-[0.92] tracking-[-0.02em] text-ink sm:text-[40px]">
               {scene.metric}
             </p>
-            <p className="mt-2 text-sm font-medium leading-snug text-muted">
+            <p className="mt-2 text-sm font-medium leading-snug text-soft">
               {scene.metricLabel}
             </p>
           </motion.div>
