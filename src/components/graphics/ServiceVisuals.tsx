@@ -1,234 +1,58 @@
 "use client";
 
+import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import type { ServiceSlug } from "@/data/site-copy";
+import { services } from "@/data/site-copy";
 import { serviceIcons } from "@/components/graphics/serviceIcons";
 import { StickerBurst, StickerOrbit } from "@/components/graphics/BrandStickers";
+import { mediaUrl } from "@/lib/media";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
-const scenes: Record<
-  ServiceSlug,
-  { label: string; lines: string[]; metric: string; metricLabel: string }
-> = {
-  websites: {
-    label: "Live site",
-    lines: ["Clear offer", "Fast load", "Book path"],
-    metric: "24/7",
-    metricLabel: "Closing window",
-  },
-  "app-development": {
-    label: "Native app",
-    lines: ["iOS", "Android", "Ship v1"],
-    metric: "1 job",
-    metricLabel: "Home-screen product",
-  },
-  marketing: {
-    label: "Demand mix",
-    lines: ["Search lift", "Paid tests", "Weekly read"],
-    metric: "MoM",
-    metricLabel: "Compounding traffic",
-  },
-  "sales-growth": {
-    label: "Funnel",
-    lines: ["Visit", "Follow-up", "Booked"],
-    metric: "1 path",
-    metricLabel: "Click to revenue",
-  },
-  "ai-automation": {
-    label: "Automation",
-    lines: ["Qualify", "Route", "Handoff"],
-    metric: "Hrs",
-    metricLabel: "Back each week",
-  },
-  "ai-employees": {
-    label: "AI teammate",
-    lines: ["Train", "Own role", "Escalate"],
-    metric: "24/7",
-    metricLabel: "Coverage on the job",
-  },
-  "custom-crm": {
-    label: "Pipeline",
-    lines: ["Stage", "Owner", "Forecast"],
-    metric: "1 truth",
-    metricLabel: "Shared pipeline",
-  },
-};
+/** Desktop/widgets 1–7 map to services in site-copy order; 8 reserved. */
+const serviceWidgetIndex: Record<ServiceSlug, number> = Object.fromEntries(
+  services.map((service, i) => [service.slug, i + 1]),
+) as Record<ServiceSlug, number>;
 
-/** Editorial hero widget for /services/websites (forest hero context). */
-export function WebsitesServiceHeroVisual({ icon }: { icon: string }) {
+function widgetSrc(slug: ServiceSlug) {
+  return mediaUrl(`/images/services/widgets/${serviceWidgetIndex[slug]}.png`);
+}
+
+/** 3D widget hero for every service detail page. */
+export function ServiceHeroVisual({
+  slug,
+}: {
+  slug: ServiceSlug;
+  icon?: string;
+}) {
   const reduce = useReducedMotion();
-  const Glyph = serviceIcons[icon];
-  const scene = scenes.websites;
 
   return (
     <motion.div
-      initial={reduce ? false : { opacity: 0.01, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={reduce ? false : { opacity: 0.01, y: 20, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.75, delay: 0.14, ease }}
       className="relative mx-auto w-full max-w-[520px] lg:max-w-[580px]"
       aria-hidden
     >
-      <div className="overflow-hidden ring-1 ring-[color-mix(in_srgb,var(--color-sage)_28%,transparent)]">
-        <div
-          className="flex flex-wrap items-baseline justify-between gap-4 border-b border-[color-mix(in_srgb,var(--color-sage)_22%,transparent)] px-6 py-5 sm:px-8 sm:py-6"
-          style={{
-            background:
-              "color-mix(in srgb, var(--color-mint) 6%, transparent)",
-          }}
-        >
-          <div className="min-w-0">
-            <p className="font-display text-[30px] uppercase leading-[0.9] tracking-[-0.02em] text-white sm:text-[36px]">
-              {scene.label}
-            </p>
-          </div>
-          <div className="flex items-center gap-3 sm:gap-4">
-            <span className="inline-flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-fog">
-              <span
-                className="h-2 w-2 rounded-full bg-neon-active ring-2 ring-[color-mix(in_srgb,var(--color-neon-active)_35%,transparent)]"
-                aria-hidden
-              />
-              Live
-            </span>
-            {Glyph ? (
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full ring-1 ring-[color-mix(in_srgb,var(--color-sage)_35%,transparent)]">
-                <Glyph size={22} weight="duotone" className="text-neon" />
-              </span>
-            ) : null}
-          </div>
-        </div>
-
-        <ol className="list-none divide-y divide-[color-mix(in_srgb,var(--color-sage)_18%,transparent)]">
-          {scene.lines.map((line, i) => (
-            <motion.li
-              key={line}
-              initial={reduce ? false : { opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: 0.2 + i * 0.07, ease }}
-              className="group relative grid grid-cols-[52px_minmax(0,1fr)] items-baseline gap-4 px-6 py-5 sm:grid-cols-[64px_minmax(0,1fr)] sm:gap-5 sm:px-8 sm:py-6"
-            >
-              <span
-                aria-hidden
-                className="pointer-events-none absolute inset-y-0 left-0 w-[3px] origin-top scale-y-0 bg-neon transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-y-100"
-              />
-              <span className="font-mono text-base tracking-[0.12em] text-neon-active sm:text-lg">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <span className="font-display text-[22px] uppercase leading-[0.95] tracking-[-0.015em] text-fog sm:text-[26px] lg:text-[28px]">
-                {line}
-              </span>
-            </motion.li>
-          ))}
-        </ol>
-
-        <div className="grid grid-cols-1 border-t border-[color-mix(in_srgb,var(--color-sage)_22%,transparent)] sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-          <div className="border-b border-[color-mix(in_srgb,var(--color-sage)_18%,transparent)] px-6 py-6 sm:border-b-0 sm:border-r sm:px-8 sm:py-8">
-            <p className="font-display text-[52px] uppercase leading-[0.88] tracking-[-0.03em] text-neon sm:text-[64px] lg:text-[72px]">
-              {scene.metric}
-            </p>
-          </div>
-          <div className="px-6 py-5 sm:max-w-[240px] sm:px-8 sm:py-8">
-            <p className="text-base font-medium leading-snug tracking-[-0.01em] text-fog sm:text-[17px]">
-              {scene.metricLabel}
-            </p>
-          </div>
-        </div>
+      <div className="relative aspect-square w-full">
+        <Image
+          src={widgetSrc(slug)}
+          alt=""
+          fill
+          priority={slug === "websites"}
+          sizes="(max-width: 1024px) 90vw, 580px"
+          className="object-contain object-center drop-shadow-[0_24px_48px_rgba(0,0,0,0.35)]"
+        />
       </div>
     </motion.div>
   );
 }
 
-/** Page-specific hero graphic for service detail pages. */
-export function ServiceHeroVisual({
-  slug,
-  icon,
-}: {
-  slug: ServiceSlug;
-  icon: string;
-}) {
-  const reduce = useReducedMotion();
-  const Glyph = serviceIcons[icon];
-  const scene = scenes[slug];
-
-  return (
-    <motion.div
-      initial={reduce ? false : { opacity: 0.01, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.75, delay: 0.14, ease }}
-      className="relative mx-auto w-full max-w-[480px] lg:max-w-[520px]"
-      aria-hidden
-    >
-      <div
-        className="relative overflow-hidden rounded-[24px] bg-white shadow-form-lift ring-1 ring-rule transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 sm:rounded-[28px]"
-      >
-        <header className="flex items-center justify-between gap-4 border-b border-rule px-5 py-4 sm:px-6 sm:py-5">
-          <div className="flex min-w-0 items-center gap-3">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-paper ring-1 ring-rule">
-              {Glyph ? (
-                <Glyph size={24} weight="duotone" className="text-forest" />
-              ) : null}
-            </span>
-            <span className="truncate text-xs font-medium uppercase tracking-[0.14em] text-soft">
-              {scene.label}
-            </span>
-          </div>
-          <span className="inline-flex shrink-0 items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-sage">
-            <span
-              className="h-2 w-2 rounded-full bg-neon-active ring-2 ring-[color-mix(in_srgb,var(--color-neon-active)_35%,transparent)]"
-              aria-hidden
-            />
-            Live
-          </span>
-        </header>
-
-        <ol className="divide-y divide-rule px-5 sm:px-6">
-          {scene.lines.map((line, i) => (
-            <motion.li
-              key={line}
-              initial={reduce ? false : { opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.22 + i * 0.06, ease }}
-              className="flex items-center gap-4 py-4 sm:gap-5 sm:py-[18px]"
-            >
-              <span className="w-7 shrink-0 font-mono text-sm font-medium tracking-[0.06em] text-neon-active">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <span className="text-base font-medium leading-snug tracking-[-0.01em] text-ink sm:text-[17px]">
-                {line}
-              </span>
-            </motion.li>
-          ))}
-        </ol>
-
-        <div className="grid grid-cols-[auto_1fr] border-t border-rule">
-          <motion.div
-            initial={reduce ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.38, ease }}
-            className="flex w-[88px] items-center justify-center border-r border-rule bg-forest sm:w-[100px]"
-          >
-            {Glyph ? (
-              <Glyph size={32} weight="duotone" className="text-neon" />
-            ) : null}
-          </motion.div>
-
-          <motion.div
-            initial={reduce ? false : { opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, delay: 0.42, ease }}
-            className="flex flex-col justify-center bg-paper px-5 py-5 sm:px-6 sm:py-6"
-          >
-            <p className="font-display text-[32px] uppercase leading-[0.92] tracking-[-0.02em] text-ink sm:text-[40px]">
-              {scene.metric}
-            </p>
-            <p className="mt-2 text-sm font-medium leading-snug text-soft">
-              {scene.metricLabel}
-            </p>
-          </motion.div>
-        </div>
-      </div>
-    </motion.div>
-  );
+/** @deprecated Use ServiceHeroVisual — kept for any lingering imports. */
+export function WebsitesServiceHeroVisual(_props: { icon: string }) {
+  return <ServiceHeroVisual slug="websites" />;
 }
 
 /** Capability stack graphic for the services index hero. */

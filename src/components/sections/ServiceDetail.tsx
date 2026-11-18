@@ -24,10 +24,7 @@ import {
 import { services, type Service } from "@/data/site-copy";
 import { btnPrimary, btnGlass } from "@/components/buttons";
 import { serviceIcons } from "@/components/graphics/serviceIcons";
-import {
-  ServiceHeroVisual,
-  WebsitesServiceHeroVisual,
-} from "@/components/graphics/ServiceVisuals";
+import { ServiceHeroVisual } from "@/components/graphics/ServiceVisuals";
 import {
   StickerBurst,
   StickerOrbit,
@@ -171,11 +168,7 @@ export function ServiceDetail({ service }: { service: Service }) {
               </motion.div>
             </div>
 
-            {service.slug === "websites" ? (
-              <WebsitesServiceHeroVisual icon={service.icon} />
-            ) : (
-              <ServiceHeroVisual slug={service.slug} icon={service.icon} />
-            )}
+            <ServiceHeroVisual slug={service.slug} />
           </div>
         </div>
       </section>

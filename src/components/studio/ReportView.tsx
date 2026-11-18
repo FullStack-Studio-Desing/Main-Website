@@ -13,14 +13,14 @@ export function ReportView({ report }: { report: ReportRecord }) {
 
   return (
     <article className="max-w-[720px]">
-      <p className="text-sm font-medium text-muted">{report.period_label}</p>
+      <p className="text-sm font-medium text-muted-foreground">{report.period_label}</p>
       <h1 className="mt-3 font-display text-[36px] uppercase leading-[0.95] tracking-[-0.02em] text-ink sm:text-[48px]">
         {report.title}
       </h1>
       {report.published_at ? (
-        <p className="mt-4 text-sm text-muted">Filed {formatDate(report.published_at)}</p>
+        <p className="mt-4 text-sm text-muted-foreground">Filed {formatDate(report.published_at)}</p>
       ) : (
-        <p className="mt-4 text-sm text-muted">Draft</p>
+        <p className="mt-4 text-sm text-muted-foreground">Draft</p>
       )}
       {report.summary ? (
         <p className="mt-8 whitespace-pre-wrap text-lg leading-relaxed text-body">{report.summary}</p>

@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import { amountToMp, type CheckoutPlan } from "@/server/billing/plans";
+import { mpAccessToken } from "@/server/billing/mp";
 
 const MP_ORDERS = "https://api.mercadopago.com/v1/orders";
 
@@ -28,6 +29,19 @@ type CreateOrderInput = {
   idempotencyKey: string;
 };
 
+export type CreateChargeInput = {
+  amount: number;
+  description: string;
+  externalReference: string;
+  token: string;
+  paymentMethodId: string;
+  email: string;
+  customerId?: string;
+  identificationType?: "RFC" | "CURP" | null;
+  identificationNumber?: string | null;
+  idempotencyKey: string;
+};
+
 const DETAIL_MESSAGES: Record<string, string> = {
   accredited: "Payment confirmed. We will follow up by email within one business day.",
   pending_waiting_payment: "The payment is pending. We will confirm it when Mercado Pago settles it.",
@@ -43,17 +57,42 @@ export function paymentTypeFor(methodId: string): "credit_card" | "debit_card" {
 }
 
 export async function createCardOrder(input: CreateOrderInput): Promise<OrderOutcome> {
-  const accessToken = process.env.MP_ACCESS_TOKEN?.trim();
+  return createCardCharge({
+    amount: input.plan.amount,
+    description: input.plan.reason,
+    externalReference: `fssd_${input.plan.id}_${randomUUID()}`,
+    token: input.token,
+    paymentMethodId: input.paymentMethodId,
+    email: input.email,
+    identificationType: input.identificationType,
+    identificationNumber: input.identificationNumber,
+    idempotencyKey: input.idempotencyKey,
+  });
+}
+
+export async function createCardCharge(input: CreateChargeInput): Promise<OrderOutcome> {
+  const accessToken = mpAccessToken();
   if (!accessToken) {
     return {
       ok: false,
       status: "error",
-      message: "Payments are not configured yet. Add the Mercado Pago test credentials and try again.",
+      message: "Payments are not configured yet. Add the Mercado Pago credentials and try again.",
     };
   }
 
-  const amount = amountToMp(input.plan.amount);
-  const externalReference = `fssd_${input.plan.id}_${randomUUID()}`;
+  if (!Number.isFinite(input.amount) || input.amount <= 0) {
+    return { ok: false, status: "error", message: "Enter a valid charge amount." };
+  }
+
+  const amount = amountToMp(input.amount);
+  const payer: Record<string, unknown> = { email: input.email };
+  if (input.customerId) payer.id = input.customerId;
+  if (input.identificationType && input.identificationNumber) {
+    payer.identification = {
+      type: input.identificationType,
+      number: input.identificationNumber,
+    };
+  }
 
   let response: Response;
   try {
@@ -67,18 +106,12 @@ export async function createCardOrder(input: CreateOrderInput): Promise<OrderOut
       body: JSON.stringify({
         type: "online",
         processing_mode: "automatic",
-        // No currency field exists on POST /v1/orders. Amount is the USD catalog
-        // value (999.00 / 1500.00 / 2500.00) and is not converted to MXN.
+        // No currency field exists on POST /v1/orders. Amount is passed as-is
+        // for the seller account currency (MXN for Mexico accounts).
         total_amount: amount,
-        external_reference: externalReference,
-        description: input.plan.reason,
-        payer: {
-          email: input.email,
-          identification: {
-            type: input.identificationType,
-            number: input.identificationNumber,
-          },
-        },
+        external_reference: input.externalReference,
+        description: input.description,
+        payer,
         transactions: {
           payments: [
             {

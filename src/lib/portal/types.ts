@@ -3,6 +3,16 @@ export type ClientStatus = "active" | "paused" | "archived";
 export type PlanId = "starter" | "growth" | "scale" | "custom";
 export type PaymentStatus = "paid" | "pending" | "failed" | "refunded";
 export type ReportStatus = "draft" | "published";
+export type ProjectStatus =
+  | "planning"
+  | "active"
+  | "paused"
+  | "completed"
+  | "cancelled";
+export type InvoiceStatus = "draft" | "sent" | "paid" | "failed" | "void";
+export type InvoiceBillingType = "one_time" | "recurring";
+export type PaymentMethodStatus = "active" | "removed";
+export type TaxIdType = "RFC" | "CURP";
 
 export type ActionState = {
   error?: string;
@@ -31,6 +41,9 @@ export type ClientRecord = {
   currency: string;
   billing_notes: string | null;
   started_on: string | null;
+  mp_customer_id: string | null;
+  tax_id_type: TaxIdType | null;
+  tax_id_number: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -46,7 +59,51 @@ export type PaymentRecord = {
   method: string | null;
   reference: string | null;
   notes: string | null;
+  invoice_id: string | null;
+  mp_order_id: string | null;
   created_at: string;
+};
+
+export type PaymentMethodRecord = {
+  id: string;
+  client_id: string;
+  mp_customer_id: string;
+  mp_card_id: string;
+  brand: string | null;
+  last_four: string | null;
+  exp_month: number | null;
+  exp_year: number | null;
+  holder_name: string | null;
+  is_default: boolean;
+  status: PaymentMethodStatus;
+  created_at: string;
+  updated_at: string;
+};
+
+export type InvoiceRecord = {
+  id: string;
+  client_id: string;
+  payment_method_id: string | null;
+  payment_id: string | null;
+  number: string;
+  title: string;
+  description: string | null;
+  amount: number;
+  currency: string;
+  billing_type: InvoiceBillingType;
+  status: InvoiceStatus;
+  period_label: string | null;
+  due_on: string | null;
+  next_charge_on: string | null;
+  mp_order_id: string | null;
+  sent_at: string | null;
+  paid_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type InvoiceListItem = InvoiceRecord & {
+  company_name: string;
 };
 
 export type ReportRecord = {
@@ -63,6 +120,29 @@ export type ReportRecord = {
   published_at: string | null;
   created_at: string;
   updated_at: string;
+};
+
+export type ProjectRecord = {
+  id: string;
+  client_id: string;
+  name: string;
+  description: string | null;
+  status: ProjectStatus;
+  started_on: string | null;
+  due_on: string | null;
+  budget: number | null;
+  currency: string;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ProjectListItem = ProjectRecord & {
+  company_name: string;
+};
+
+export type PaymentListItem = PaymentRecord & {
+  company_name: string;
 };
 
 export type PortalLogin = {
@@ -82,5 +162,6 @@ export type DirectoryStats = {
   active: number;
   collected: number;
   reports: number;
+  projects: number;
   monthLabel: string;
 };

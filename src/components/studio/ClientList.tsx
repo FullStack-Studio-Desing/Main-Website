@@ -2,23 +2,35 @@ import Link from "next/link";
 import { formatDate, formatUsd } from "@/lib/portal/format";
 import type { ClientListItem, DirectoryStats } from "@/lib/portal/types";
 import { StatusBadge } from "@/components/studio/ui";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export function ClientStats({ stats }: { stats: DirectoryStats }) {
   const items = [
-    { label: "Active", value: String(stats.active) },
+    { label: "Active clients", value: String(stats.active) },
     { label: `Collected in ${stats.monthLabel}`, value: formatUsd(stats.collected) },
+    { label: "Open projects", value: String(stats.projects) },
     { label: `Reports in ${stats.monthLabel}`, value: String(stats.reports) },
   ];
 
   return (
-    <dl className="mt-8 flex flex-wrap gap-x-12 gap-y-4">
+    <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {items.map((item) => (
-        <div key={item.label}>
-          <dt className="text-sm text-muted">{item.label}</dt>
-          <dd className="mt-1 text-lg font-medium text-ink">{item.value}</dd>
-        </div>
+        <Card key={item.label}>
+          <CardContent className="p-5">
+            <p className="text-sm text-muted-foreground">{item.label}</p>
+            <p className="mt-1 text-lg font-medium text-foreground">{item.value}</p>
+          </CardContent>
+        </Card>
       ))}
-    </dl>
+    </div>
   );
 }
 
@@ -32,36 +44,55 @@ export function ClientList({ clients }: { clients: ClientListItem[] }) {
   }
 
   return (
-    <div className="mt-10 border-t border-rule">
-      {clients.map((client) => (
-        <Link
-          key={client.id}
-          href={`/admin/clients/${client.id}`}
-          className="block border-b border-rule py-5 transition-colors duration-200 hover:bg-white"
-        >
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-lg font-medium text-ink">{client.company_name}</p>
-              <p className="mt-1 text-sm text-muted">
-                {client.contact_name} · {client.plan_name} · {formatUsd(client.monthly_amount)}/mo
-              </p>
-            </div>
-            <StatusBadge status={client.status} />
-          </div>
-          <p className="mt-3 text-sm text-body">
-            {client.latest_payment
-              ? `${formatUsd(client.latest_payment.amount)} · ${
-                  client.latest_payment.status.charAt(0).toUpperCase() +
-                  client.latest_payment.status.slice(1)
-                }${
-                  client.latest_payment.paid_on
-                    ? ` · ${formatDate(client.latest_payment.paid_on)}`
-                    : ""
-                }`
-              : "No payments yet"}
-          </p>
-        </Link>
-      ))}
-    </div>
+    <Card className="mt-10 overflow-hidden">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Client</TableHead>
+            <TableHead className="hidden sm:table-cell">Plan</TableHead>
+            <TableHead className="hidden md:table-cell">Latest payment</TableHead>
+            <TableHead className="text-right">Status</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {clients.map((client) => (
+            <TableRow key={client.id} className="cursor-pointer">
+              <TableCell>
+                <Link href={`/admin/clients/${client.id}`} className="block">
+                  <span className="font-medium text-foreground">{client.company_name}</span>
+                  <span className="mt-1 block text-sm text-muted-foreground">
+                    {client.contact_name}
+                  </span>
+                </Link>
+              </TableCell>
+              <TableCell className="hidden sm:table-cell">
+                <Link href={`/admin/clients/${client.id}`} className="block text-sm">
+                  {client.plan_name} · {formatUsd(client.monthly_amount)}/mo
+                </Link>
+              </TableCell>
+              <TableCell className="hidden md:table-cell">
+                <Link href={`/admin/clients/${client.id}`} className="block text-sm text-muted-foreground">
+                  {client.latest_payment
+                    ? `${formatUsd(client.latest_payment.amount)} · ${
+                        client.latest_payment.status.charAt(0).toUpperCase() +
+                        client.latest_payment.status.slice(1)
+                      }${
+                        client.latest_payment.paid_on
+                          ? ` · ${formatDate(client.latest_payment.paid_on)}`
+                          : ""
+                      }`
+                    : "No payments yet"}
+                </Link>
+              </TableCell>
+              <TableCell className="text-right">
+                <Link href={`/admin/clients/${client.id}`} className="inline-flex justify-end">
+                  <StatusBadge status={client.status} />
+                </Link>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Card>
   );
 }

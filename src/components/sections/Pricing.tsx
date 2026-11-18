@@ -15,7 +15,7 @@ export function Pricing() {
         <h2 className="mx-auto max-w-[800px] text-center font-display text-[36px] uppercase leading-[0.95] tracking-[-0.0143em] text-ink sm:text-[48px] lg:text-[56px] lg:leading-[48px]">
           Flat monthly pricing
         </h2>
-        <p className="mx-auto mt-6 max-w-[640px] text-center text-lg font-medium leading-6 text-muted">
+        <p className="mx-auto mt-6 max-w-[640px] text-center text-lg font-medium leading-6 text-soft">
           No hourly billing, no surprise invoices. Pick the plan that fits
           where your business is now and upgrade when it grows.
         </p>
@@ -56,7 +56,7 @@ export function Pricing() {
                     {plan.price}
                   </span>
                   <span
-                    className={`text-base ${dark ? "text-white/60" : "text-muted"}`}
+                    className={`text-base ${dark ? "text-white/60" : "text-soft"}`}
                   >
                     {plan.period}
                   </span>

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { LogoMark } from "@/components/LogoMark";
 import { Blocked } from "@/components/studio/Blocked";
 import { LoginForm } from "@/components/studio/LoginForm";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { brand } from "@/data/site-copy";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { getSession } from "@/lib/portal/session";
@@ -23,8 +24,8 @@ export default async function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-dvh flex-col bg-paper px-6 py-8">
-      <Link href="/" className="flex items-center gap-2.5 text-ink">
+    <main className="flex min-h-dvh flex-col bg-background px-6 py-8">
+      <Link href="/" className="flex items-center gap-2.5 text-foreground">
         <LogoMark className="h-8 w-8" tone="ink" />
         <span className="text-xl font-bold tracking-tight">
           {brand.shortName}
@@ -33,16 +34,20 @@ export default async function LoginPage() {
       </Link>
       <div className="mx-auto flex w-full max-w-[440px] flex-1 flex-col justify-center py-16">
         {!isSupabaseConfigured() ? <Blocked session={{ kind: "unconfigured" }} /> : null}
-        <p className={`text-sm font-medium text-muted ${isSupabaseConfigured() ? "" : "mt-10"}`}>
-          Client portal
-        </p>
-        <h1 className="mt-3 font-display text-[44px] uppercase leading-none tracking-[-0.02em] text-ink">
-          Sign in
-        </h1>
-        <p className="mt-4 text-base leading-relaxed text-body">
-          Payments, your current plan, and every report we file.
-        </p>
-        <LoginForm />
+        <Card className={!isSupabaseConfigured() ? "mt-10" : undefined}>
+          <CardHeader>
+            <p className="text-sm font-medium text-muted-foreground">Client portal</p>
+            <CardTitle className="font-display text-[44px] uppercase leading-none tracking-[-0.02em]">
+              Sign in
+            </CardTitle>
+            <CardDescription className="text-base text-body">
+              Payments, your current plan, and every report we file.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <LoginForm />
+          </CardContent>
+        </Card>
       </div>
     </main>
   );

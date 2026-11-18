@@ -14,7 +14,7 @@ import {
 type Status = "idle" | "sending" | "sent" | "error";
 
 const inputClasses =
-  "h-12 w-full rounded-md border border-input-edge bg-white px-4 text-base text-ink placeholder:text-muted outline-none transition-colors duration-200 focus:border-leaf";
+  "h-12 w-full rounded-md border border-input-edge bg-white px-4 text-base text-ink placeholder:text-soft outline-none transition-colors duration-200 focus:border-leaf";
 
 type Props = {
   /** Compact layout for hero (slightly tighter padding / fewer rows). */
@@ -90,7 +90,7 @@ export function ContactFormCard({
           <div className="flex flex-col gap-6">
             {showSchedule && (
               <div className="flex flex-col gap-3 border-b border-rule pb-6">
-                <p className="text-sm font-medium uppercase tracking-[0.08em] text-muted">
+                <p className="text-sm font-medium uppercase tracking-[0.08em] text-soft">
                   {contact.bookingPrompt}
                 </p>
                 <p className="text-base leading-relaxed text-body">
@@ -105,7 +105,7 @@ export function ContactFormCard({
             )}
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-              <p className="text-sm font-medium uppercase tracking-[0.08em] text-muted">
+              <p className="text-sm font-medium uppercase tracking-[0.08em] text-soft">
                 {eyeline}
               </p>
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -199,7 +199,7 @@ export function ContactFormCard({
                   required
                   rows={compact ? 3 : 5}
                   placeholder="Tell us about your business and goals"
-                  className="w-full resize-y rounded-md border border-input-edge bg-white px-4 py-3 text-base text-ink placeholder:text-muted outline-none transition-colors duration-200 focus:border-leaf"
+                  className="w-full resize-y rounded-md border border-input-edge bg-white px-4 py-3 text-base text-ink placeholder:text-soft outline-none transition-colors duration-200 focus:border-leaf"
                 />
               </div>
 

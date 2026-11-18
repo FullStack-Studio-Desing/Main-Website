@@ -116,7 +116,7 @@ export function FAQ() {
           Questions we hear{" "}
           <span className="text-neon-active">before the call</span>
         </h2>
-        <p className="mx-auto mt-6 max-w-[520px] text-center text-lg font-medium leading-6 text-muted">
+        <p className="mx-auto mt-6 max-w-[520px] text-center text-lg font-medium leading-6 text-soft">
           Straight answers on timing, plans, spend, and what you need to bring.
         </p>
 

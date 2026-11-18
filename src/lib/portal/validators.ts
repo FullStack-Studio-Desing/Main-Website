@@ -1,9 +1,13 @@
 import { paymentMethods, portalPlans } from "@/lib/portal/plans";
 import type {
   ClientStatus,
+  InvoiceBillingType,
+  InvoiceStatus,
   PaymentStatus,
   PlanId,
+  ProjectStatus,
   ReportStatus,
+  TaxIdType,
 } from "@/lib/portal/types";
 
 const UUID_RE =
@@ -13,6 +17,16 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const clientStatuses: ClientStatus[] = ["active", "paused", "archived"];
 const paymentStatuses: PaymentStatus[] = ["paid", "pending", "failed", "refunded"];
 const reportStatuses: ReportStatus[] = ["draft", "published"];
+const projectStatuses: ProjectStatus[] = [
+  "planning",
+  "active",
+  "paused",
+  "completed",
+  "cancelled",
+];
+const invoiceStatuses: InvoiceStatus[] = ["draft", "sent", "paid", "failed", "void"];
+const invoiceBillingTypes: InvoiceBillingType[] = ["one_time", "recurring"];
+const taxIdTypes: TaxIdType[] = ["RFC", "CURP"];
 
 export function isUuid(value: string) {
   return UUID_RE.test(value);
@@ -41,6 +55,10 @@ export function parseClient(formData: FormData) {
   const notes = text(raw(formData, "billing_notes"), 4000);
   const started = raw(formData, "started_on");
   const amount = Number(raw(formData, "monthly_amount").replace(/[$,]/g, ""));
+  const hasTaxFields = formData.has("tax_id_type") || formData.has("tax_id_number");
+  const taxIdTypeRaw = raw(formData, "tax_id_type");
+  const taxIdType = taxIdTypeRaw ? oneOf(taxIdTypeRaw, taxIdTypes) : null;
+  const taxIdNumber = text(raw(formData, "tax_id_number"), 40).toUpperCase();
 
   if (!company) return { error: "Enter the company name." };
   if (!contact) return { error: "Enter the contact name." };
@@ -53,6 +71,13 @@ export function parseClient(formData: FormData) {
   }
   if (started && !/^\d{4}-\d{2}-\d{2}$/.test(started)) {
     return { error: "Enter a valid start date." };
+  }
+  if (hasTaxFields) {
+    if (taxIdTypeRaw && !taxIdType) return { error: "Choose RFC or CURP." };
+    if (taxIdNumber && !taxIdType) return { error: "Choose RFC or CURP for the tax ID." };
+    if (taxIdType && !validTaxId(taxIdType, taxIdNumber)) {
+      return { error: `Enter a valid ${taxIdType}.` };
+    }
   }
 
   return {
@@ -68,6 +93,12 @@ export function parseClient(formData: FormData) {
       currency: "USD",
       billing_notes: notes || null,
       started_on: started || null,
+      ...(hasTaxFields
+        ? {
+            tax_id_type: taxIdType,
+            tax_id_number: taxIdNumber || null,
+          }
+        : {}),
     },
   };
 }
@@ -146,4 +177,110 @@ export function parseLogin(formData: FormData) {
 
 export function parsePaymentStatus(value: string) {
   return oneOf(value, paymentStatuses);
+}
+
+export function parseProject(formData: FormData) {
+  const name = text(raw(formData, "name"), 140);
+  const description = text(raw(formData, "description"), 4000);
+  const status = oneOf(raw(formData, "status"), projectStatuses);
+  const started = raw(formData, "started_on");
+  const due = raw(formData, "due_on");
+  const notes = text(raw(formData, "notes"), 4000);
+  const budgetRaw = raw(formData, "budget").replace(/[$,]/g, "");
+  const budget = budgetRaw === "" ? null : Number(budgetRaw);
+  const clientId = raw(formData, "client_id");
+
+  if (!name) return { error: "Enter the project name." };
+  if (!status) return { error: "Choose a project status." };
+  if (started && !/^\d{4}-\d{2}-\d{2}$/.test(started)) {
+    return { error: "Enter a valid start date." };
+  }
+  if (due && !/^\d{4}-\d{2}-\d{2}$/.test(due)) {
+    return { error: "Enter a valid due date." };
+  }
+  if (budget !== null && (!Number.isFinite(budget) || budget < 0 || budget > 10_000_000)) {
+    return { error: "Enter a valid budget." };
+  }
+  if (clientId && !isUuid(clientId)) {
+    return { error: "Choose a client for this project." };
+  }
+
+  return {
+    value: {
+      name,
+      description: description || null,
+      status,
+      started_on: started || null,
+      due_on: due || null,
+      budget: budget === null ? null : Math.round(budget * 100) / 100,
+      currency: "USD",
+      notes: notes || null,
+      ...(clientId ? { client_id: clientId } : {}),
+    },
+  };
+}
+
+export function parseProjectStatus(value: string) {
+  return oneOf(value, projectStatuses);
+}
+
+export function parseInvoice(formData: FormData) {
+  const title = text(raw(formData, "title"), 140);
+  const description = text(raw(formData, "description"), 4000);
+  const amount = Number(raw(formData, "amount").replace(/[$,]/g, ""));
+  const billingType = oneOf(raw(formData, "billing_type"), invoiceBillingTypes);
+  const period = text(raw(formData, "period_label"), 80);
+  const dueOn = raw(formData, "due_on");
+  const nextChargeOn = raw(formData, "next_charge_on");
+  const paymentMethodId = raw(formData, "payment_method_id");
+  const clientId = raw(formData, "client_id");
+  const chargeNow = raw(formData, "charge_now") === "1" || raw(formData, "charge_now") === "on";
+  const sendEmail = raw(formData, "send_email") === "1" || raw(formData, "send_email") === "on";
+
+  if (!title) return { error: "Enter an invoice title." };
+  if (!billingType) return { error: "Choose one-time or recurring." };
+  if (!Number.isFinite(amount) || amount <= 0 || amount > 1_000_000) {
+    return { error: "Enter an invoice amount." };
+  }
+  if (dueOn && !/^\d{4}-\d{2}-\d{2}$/.test(dueOn)) {
+    return { error: "Enter a valid due date." };
+  }
+  if (nextChargeOn && !/^\d{4}-\d{2}-\d{2}$/.test(nextChargeOn)) {
+    return { error: "Enter a valid next charge date." };
+  }
+  if (paymentMethodId && !isUuid(paymentMethodId)) {
+    return { error: "Choose a valid payment method." };
+  }
+  if (clientId && !isUuid(clientId)) {
+    return { error: "Choose a client for this invoice." };
+  }
+
+  return {
+    value: {
+      title,
+      description: description || null,
+      amount: Math.round(amount * 100) / 100,
+      currency: "USD",
+      billing_type: billingType,
+      period_label: period || null,
+      due_on: dueOn || null,
+      next_charge_on:
+        billingType === "recurring"
+          ? nextChargeOn || dueOn || null
+          : null,
+      payment_method_id: paymentMethodId || null,
+      ...(clientId ? { client_id: clientId } : {}),
+      charge_now: chargeNow,
+      send_email: sendEmail,
+    },
+  };
+}
+
+export function parseInvoiceStatus(value: string) {
+  return oneOf(value, invoiceStatuses);
+}
+
+function validTaxId(type: TaxIdType, number: string) {
+  if (type === "RFC") return /^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$/.test(number);
+  return /^[A-Z]{4}\d{6}[HM][A-Z]{5}[A-Z0-9]{2}$/.test(number);
 }

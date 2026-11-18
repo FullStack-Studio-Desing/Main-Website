@@ -16,6 +16,7 @@ import {
   parseLogin,
   parsePayment,
   parsePaymentStatus,
+  parseProject,
   parseReport,
 } from "@/lib/portal/validators";
 
@@ -103,6 +104,7 @@ export async function createClientAction(_prev: ActionState, formData: FormData)
   const { data, error } = await supabase.from("clients").insert(parsed.value).select("id").single();
   if (error || !data) return safeDbError(error, "The client could not be saved.");
   revalidatePath("/admin");
+  revalidatePath("/admin/clients");
   redirect(`/admin/clients/${data.id}`);
 }
 
@@ -121,6 +123,7 @@ export async function updateClientAction(
   const { error } = await supabase.from("clients").update(parsed.value).eq("id", clientId);
   if (error) return safeDbError(error, "The client could not be saved.");
   revalidatePath("/admin");
+  revalidatePath("/admin/clients");
   revalidatePath(`/admin/clients/${clientId}`);
   revalidatePath("/portal");
   redirect(`/admin/clients/${clientId}`);
@@ -128,12 +131,15 @@ export async function updateClientAction(
 
 export async function deleteClient(clientId: string) {
   const gate = await adminContext();
-  if ("error" in gate || !isUuid(clientId)) redirect("/admin");
+  if ("error" in gate || !isUuid(clientId)) redirect("/admin/clients");
   const supabase = await createClient();
   const { error } = await supabase.from("clients").delete().eq("id", clientId);
   if (error) logFailure("delete client", error.message);
   revalidatePath("/admin");
-  redirect("/admin");
+  revalidatePath("/admin/clients");
+  revalidatePath("/admin/payments");
+  revalidatePath("/admin/projects");
+  redirect("/admin/clients");
 }
 
 export async function createPayment(
@@ -159,8 +165,19 @@ export async function createPayment(
   if (error) return safeDbError(error, "The payment could not be saved.");
   revalidatePath(`/admin/clients/${clientId}`);
   revalidatePath("/admin");
+  revalidatePath("/admin/clients");
+  revalidatePath("/admin/payments");
   revalidatePath("/portal");
   redirect(`/admin/clients/${clientId}#payments`);
+}
+
+export async function createPaymentGlobal(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const clientId = String(formData.get("client_id") ?? "").trim();
+  if (!isUuid(clientId)) return { error: "Choose a client for this payment." };
+  return createPayment(clientId, _prev, formData);
 }
 
 export async function updatePaymentStatus(clientId: string, formData: FormData) {
@@ -189,6 +206,7 @@ export async function updatePaymentStatus(clientId: string, formData: FormData) 
     .eq("client_id", clientId);
   if (error) logFailure("payment status", error.message);
   revalidatePath(`/admin/clients/${clientId}`);
+  revalidatePath("/admin/payments");
   revalidatePath("/portal");
 }
 
@@ -204,7 +222,92 @@ export async function deletePayment(clientId: string, paymentId: string) {
   if (error) logFailure("delete payment", error.message);
   revalidatePath(`/admin/clients/${clientId}`);
   revalidatePath("/admin");
+  revalidatePath("/admin/clients");
+  revalidatePath("/admin/payments");
   revalidatePath("/portal");
+}
+
+export async function createProject(
+  clientId: string,
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const gate = await adminContext();
+  if ("error" in gate) return gate;
+  if (!isUuid(clientId)) return { error: "That client could not be found." };
+  const parsed = parseProject(formData);
+  if ("error" in parsed) return parsed;
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("projects").insert({
+    ...parsed.value,
+    client_id: clientId,
+  });
+  if (error) return safeDbError(error, "The project could not be saved.");
+  revalidatePath(`/admin/clients/${clientId}`);
+  revalidatePath("/admin");
+  revalidatePath("/admin/projects");
+  redirect(`/admin/clients/${clientId}#projects`);
+}
+
+export async function createProjectGlobal(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const clientId = String(formData.get("client_id") ?? "").trim();
+  if (!isUuid(clientId)) return { error: "Choose a client for this project." };
+  return createProject(clientId, _prev, formData);
+}
+
+export async function updateProject(
+  projectId: string,
+  clientId: string,
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const gate = await adminContext();
+  if ("error" in gate) return gate;
+  if (!isUuid(projectId) || !isUuid(clientId)) {
+    return { error: "That project could not be found." };
+  }
+  const parsed = parseProject(formData);
+  if ("error" in parsed) return parsed;
+
+  const { client_id: _ignored, ...patch } = parsed.value as typeof parsed.value & {
+    client_id?: string;
+  };
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("projects")
+    .update(patch)
+    .eq("id", projectId)
+    .eq("client_id", clientId);
+  if (error) return safeDbError(error, "The project could not be saved.");
+  revalidatePath(`/admin/projects/${projectId}`);
+  revalidatePath(`/admin/clients/${clientId}`);
+  revalidatePath("/admin/projects");
+  return { notice: "Project saved." };
+}
+
+export async function deleteProject(clientId: string, projectId: string) {
+  const gate = await adminContext();
+  if ("error" in gate || !isUuid(clientId) || !isUuid(projectId)) return;
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("projects")
+    .delete()
+    .eq("id", projectId)
+    .eq("client_id", clientId);
+  if (error) logFailure("delete project", error.message);
+  revalidatePath(`/admin/clients/${clientId}`);
+  revalidatePath("/admin");
+  revalidatePath("/admin/projects");
+}
+
+export async function deleteProjectAndLeave(clientId: string, projectId: string) {
+  await deleteProject(clientId, projectId);
+  redirect("/admin/projects");
 }
 
 export async function createReport(

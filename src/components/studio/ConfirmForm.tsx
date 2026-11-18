@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+
 export function ConfirmForm({
   action,
   message,
@@ -16,12 +18,9 @@ export function ConfirmForm({
         if (!window.confirm(message)) event.preventDefault();
       }}
     >
-      <button
-        type="submit"
-        className="text-sm font-medium text-moss underline-offset-4 transition-colors duration-200 hover:text-ink hover:underline"
-      >
+      <Button type="submit" variant="link" className="h-auto p-0 text-moss">
         {label}
-      </button>
+      </Button>
     </form>
   );
 }
