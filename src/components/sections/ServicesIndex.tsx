@@ -83,10 +83,12 @@ export function ServicesIndex() {
 
               <motion.h1
                 {...enter(0.06)}
-                className="font-display text-[42px] uppercase leading-[0.9] tracking-[-0.02em] sm:text-[60px] lg:text-[72px] xl:text-[80px] lg:leading-[0.88]"
+                className="line-clamp-2 font-display text-[36px] uppercase leading-[0.9] tracking-[-0.02em] sm:text-[48px] lg:text-[48px] xl:text-[60px] min-[1440px]:text-[68px] lg:leading-[0.88]"
               >
-                Everything your growth{" "}
-                <span className="text-neon">depends on</span>
+                Everything your{" "}
+                <span className="whitespace-nowrap">
+                  growth <span className="text-neon">depends on</span>
+                </span>
               </motion.h1>
 
               <motion.p
