@@ -305,7 +305,7 @@ export function ServiceDetail({ service }: { service: Service }) {
             </h2>
           </motion.div>
 
-          <ul className="mt-12 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+          <ul className="mt-12 grid grid-cols-1 gap-0 border-t border-rule sm:grid-cols-2">
             {service.page.includes.map((item, i) => {
               const Glyph = includeIcons[i % includeIcons.length];
               return (
@@ -319,12 +319,12 @@ export function ServiceDetail({ service }: { service: Service }) {
                     delay: i * 0.03,
                     ease: easeOut,
                   }}
-                  className="flex items-center gap-4 border-b border-rule px-1 py-4 sm:border-0 sm:rounded-[20px] sm:bg-paper sm:px-5 sm:py-4"
+                  className="flex items-center gap-4 border-b border-rule py-5 sm:gap-5 sm:px-6 sm:py-6 lg:px-7"
                 >
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white ring-1 ring-rule sm:ring-0">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-paper ring-1 ring-rule sm:h-12 sm:w-12">
                     <Glyph size={22} weight="duotone" className="text-ink" />
                   </span>
-                  <span className="text-base font-medium leading-snug text-ink sm:text-lg">
+                  <span className="text-base font-medium leading-snug tracking-[-0.01em] text-ink sm:text-lg">
                     {item}
                   </span>
                 </motion.li>
