@@ -99,12 +99,17 @@ export function CheckoutForm() {
     }
 
     const form = new FormData(event.currentTarget);
+    const email = String(form.get("email") ?? "").trim().toLowerCase();
     const cardNumber = String(form.get("cardNumber") ?? "").replace(/\s+/g, "");
     const holderName = String(form.get("holderName") ?? "").trim();
     const expMonth = String(form.get("expMonth") ?? "").trim();
     const expYear = String(form.get("expYear") ?? "").trim();
     const securityCode = String(form.get("securityCode") ?? "").trim();
 
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("Enter a valid email.");
+      return;
+    }
     if (!cardNumber || !holderName || !expMonth || !expYear || !securityCode) {
       setError("Fill every card field.");
       return;
@@ -130,12 +135,13 @@ export function CheckoutForm() {
         ...TOKEN_PLACEHOLDER_ID,
       });
 
-      // Payer email from MP_PAYER_EMAIL — no RFC for US clients.
+      // Email + card only — no RFC/CURP for US clients.
       const response = await fetch("/api/process-payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           planId: selectedPlan.id,
+          email,
           token: token.id,
           paymentMethodId,
           idempotencyKey: crypto.randomUUID(),
@@ -185,6 +191,9 @@ export function CheckoutForm() {
         </NativeSelect>
       </Field>
 
+      <Field label="Email" className="sm:col-span-2">
+        <Input name="email" type="email" required autoComplete="email" />
+      </Field>
       <Field label="Name on card" className="sm:col-span-2">
         <Input name="holderName" required autoComplete="cc-name" />
       </Field>
