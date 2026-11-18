@@ -20,7 +20,7 @@ const lilita = Lilita_One({
 export const metadata: Metadata = {
   title: "FullStack Studio Design",
   description:
-    "Websites, marketing, sales growth, AI automation, and custom CRMs. One team, one monthly plan, measurable results.",
+    "Websites, native apps, marketing, sales growth, AI automation, AI employees, and custom CRMs. One team, one monthly plan, measurable results.",
 };
 
 export default function RootLayout({

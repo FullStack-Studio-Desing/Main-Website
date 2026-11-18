@@ -27,8 +27,8 @@ export function Services() {
           </h2>
         </div>
         <p className="mt-6 max-w-[520px] text-lg font-medium leading-snug text-sage">
-          Websites, marketing, sales, automation, and CRM, built and run
-          together, not handed between agencies.
+          Websites, apps, marketing, sales, AI employees, automation, and CRM,
+          built and run together, not handed between agencies.
         </p>
 
         <ul className="mt-16 border-t border-white/15 lg:mt-20">

@@ -25,13 +25,13 @@ export const hero = {
     "close deals",
   ] as const,
   subheadline:
-    "Websites, marketing, sales, AI, and CRMs. One team, one monthly plan.",
+    "Websites, apps, marketing, sales, AI, and CRMs. One team, one monthly plan.",
   primaryCta: "See services",
   primaryHref: "/services",
   secondaryCta: "Client results",
   secondaryHref: "/#testimonials",
   highlights: [
-    "One partner across web, marketing, sales, AI, and CRM",
+    "One partner across web, apps, marketing, sales, AI, and CRM",
     "Monthly plans from $999. Start on Starter, upgrade as you grow",
     "Weekly performance reporting on every plan",
   ],
@@ -136,6 +136,69 @@ export const services = [
       ],
       planNote:
         "Website updates and maintenance ship with every plan. Full redesigns and new builds are scoped into Growth and Scale.",
+    },
+  },
+  {
+    slug: "app-development",
+    title: "Native app development",
+    shortLabel: "App development",
+    description:
+      "iOS and Android apps built in-house. Product, design, and engineering that ship something your customers actually use.",
+    icon: "device",
+    category: "Build",
+    page: {
+      headline: "Native apps that",
+      headlineEmphasis: "earn a place on the home screen",
+      intro:
+        "A useful app is a growth channel you own. We design and build native iOS and Android experiences that match your brand, your offer, and how your customers already buy.",
+      body: [
+        "Most business apps fail because they are a website stuffed into a wrapper, or a feature dump with no job to do. We start from the one workflow the app must make faster, clearer, or stickier.",
+        "Design, product, and engineering sit on the same team. That keeps the first release focused, the UX native, and the roadmap tied to revenue instead of vanity feature lists.",
+        "After launch we stay on the build. App Store and Play updates, crash monitoring, and iteration so the product improves with real usage instead of going stale after v1.",
+      ],
+      outcomes: [
+        "Native iOS and Android apps that feel at home on device",
+        "A clear product job, not a feature dump",
+        "Store-ready builds with analytics and crash monitoring",
+        "A roadmap that iterates from real usage after launch",
+      ],
+      includes: [
+        "Product scoping and app information architecture",
+        "UI/UX design for iOS and Android patterns",
+        "Native or cross-platform engineering to fit the brief",
+        "API and backend integration with your existing stack",
+        "App Store and Google Play submission support",
+        "Post-launch updates and iteration on plan",
+      ],
+      howItWorks: [
+        {
+          title: "Define the job",
+          detail:
+            "We lock the primary user job, success metrics, and what v1 must ship versus what can wait.",
+        },
+        {
+          title: "Design and build",
+          detail:
+            "Native-feeling UI, solid engineering, and integrations with the systems you already run.",
+        },
+        {
+          title: "Ship and iterate",
+          detail:
+            "Store launch, monitoring, and a monthly cadence of fixes and improvements from real usage.",
+        },
+      ],
+      faqs: [
+        {
+          q: "Native or cross-platform?",
+          a: "We choose based on the product. When performance, device APIs, or a polished native feel matter most, we go native. When speed to both stores matters more, a shared codebase can win. We will recommend which path fits before you spend.",
+        },
+        {
+          q: "Do you handle App Store and Play submission?",
+          a: "Yes. We prepare builds, assets, and listing copy, then guide you through review. You keep the developer accounts; we do the heavy lifting.",
+        },
+      ],
+      planNote:
+        "Native app builds are scoped as dedicated projects, most often on Growth and Scale, with ongoing updates available on plan.",
     },
   },
   {
@@ -325,6 +388,69 @@ export const services = [
       ],
       planNote:
         "AI automation builds are included on the Scale plan. Growth clients can add scoped automation projects as needed.",
+    },
+  },
+  {
+    slug: "ai-employees",
+    title: "AI employee generation",
+    shortLabel: "AI employees",
+    description:
+      "Custom AI teammates trained on your business. They handle intake, support, and ops work so your humans stay on the close.",
+    icon: "users",
+    category: "Automate",
+    page: {
+      headline: "AI teammates trained",
+      headlineEmphasis: "on how you work",
+      intro:
+        "An AI employee is not a generic chatbot. We build role-specific agents with your voice, your rules, and clear handoffs so they can take real work off your team's plate.",
+      body: [
+        "Generic AI tools dump answers into a chat window and leave your team to clean up. Purpose-built AI employees own a role: intake, first-line support, scheduling, research, or internal ops.",
+        "We train each agent on your offers, policies, and tone, then wire it into the channels and tools you already use. When judgment is needed, a human gets the full context.",
+        "Every AI employee ships with monitoring and a refinement loop. Conversation quality, escalation rate, and outcomes get reviewed so the agent gets sharper each month.",
+      ],
+      outcomes: [
+        "Role-specific AI agents that handle real workload",
+        "Trained on your offers, policies, and brand voice",
+        "Clear handoffs when a human needs to take over",
+        "Measurable hours back and faster response times",
+      ],
+      includes: [
+        "Role definition and success criteria for each AI employee",
+        "Knowledge base and tone training from your materials",
+        "Channel setup (site, inbox, Slack, or ops tools)",
+        "Guardrails, escalation rules, and human handoffs",
+        "Monitoring dashboard for quality and outcomes",
+        "Monthly refinement from real conversation data",
+      ],
+      howItWorks: [
+        {
+          title: "Pick the role",
+          detail:
+            "We choose one high-friction job where an AI teammate can own the first pass without risking the close.",
+        },
+        {
+          title: "Train and wire",
+          detail:
+            "Knowledge, tone, tools, and escalation rules go live with monitoring from day one.",
+        },
+        {
+          title: "Supervise and improve",
+          detail:
+            "We review outcomes monthly, tighten prompts and policies, and expand the role only when quality holds.",
+        },
+      ],
+      faqs: [
+        {
+          q: "How is this different from AI automation?",
+          a: "Automation removes repetitive steps in a workflow. An AI employee owns a role end to end, with judgment-style responses, memory of your business rules, and a clear place in your org chart of work.",
+        },
+        {
+          q: "Will customers know they are talking to AI?",
+          a: "We are transparent by default and match the disclosure style you want. The goal is useful, accurate help with a clean path to a human, not a trick.",
+        },
+      ],
+      planNote:
+        "AI employee builds are included on the Scale plan. Growth clients can add scoped agent projects as needed.",
     },
   },
   {
@@ -529,11 +655,11 @@ export const plans = [
     price: "$2,500",
     period: "/month",
     tagline: "For businesses building a full growth engine.",
-    bestFor: "Operators who need automation, CRM, and a dedicated lead.",
+    bestFor: "Operators who need apps, AI teammates, CRM, and a dedicated lead.",
     features: [
       "Everything in Growth",
-      "AI automation builds",
-      "Custom CRM development",
+      "AI automation and AI employee builds",
+      "Custom CRM and native app projects",
       "Sales funnel design and optimization",
       "Dedicated account manager",
     ],
@@ -627,8 +753,8 @@ export const faq = [
     a: "Week one is the audit: site, traffic, and sales path. Then we ship the highest-leverage fixes, get tracking live, and start your weekly report cadence before the month is out.",
   },
   {
-    q: "Do I need all five services?",
-    a: "No. Plans bundle the work that fits your stage. Starter focuses on SEO, one campaign, and site care. Growth and Scale add deeper marketing, funnels, automation, and CRM as you need them.",
+    q: "Do I need all seven services?",
+    a: "No. Plans bundle the work that fits your stage. Starter focuses on SEO, one campaign, and site care. Growth and Scale add deeper marketing, funnels, apps, AI employees, automation, and CRM as you need them.",
   },
   {
     q: "Is media spend included in the monthly fee?",
@@ -678,9 +804,11 @@ export const footer = {
       label: "Services",
       links: [
         { href: "/services/websites", label: "Websites" },
+        { href: "/services/app-development", label: "App development" },
         { href: "/services/marketing", label: "Marketing & SEO" },
         { href: "/services/sales-growth", label: "Sales growth" },
         { href: "/services/ai-automation", label: "AI automation" },
+        { href: "/services/ai-employees", label: "AI employees" },
         { href: "/services/custom-crm", label: "Custom CRM" },
       ],
     },

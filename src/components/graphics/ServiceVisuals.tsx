@@ -17,6 +17,12 @@ const scenes: Record<
     metric: "24/7",
     metricLabel: "Closing window",
   },
+  "app-development": {
+    label: "Native app",
+    lines: ["iOS", "Android", "Ship v1"],
+    metric: "1 job",
+    metricLabel: "Home-screen product",
+  },
   marketing: {
     label: "Demand mix",
     lines: ["Search lift", "Paid tests", "Weekly read"],
@@ -34,6 +40,12 @@ const scenes: Record<
     lines: ["Qualify", "Route", "Handoff"],
     metric: "Hrs",
     metricLabel: "Back each week",
+  },
+  "ai-employees": {
+    label: "AI teammate",
+    lines: ["Train", "Own role", "Escalate"],
+    metric: "24/7",
+    metricLabel: "Coverage on the job",
   },
   "custom-crm": {
     label: "Pipeline",
