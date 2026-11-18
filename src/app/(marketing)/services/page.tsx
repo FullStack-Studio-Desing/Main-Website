@@ -5,7 +5,7 @@ import { ServicesIndex } from "@/components/sections/ServicesIndex";
 export const metadata: Metadata = {
   title: `Services | ${brand.name}`,
   description:
-    "Websites, marketing, sales growth, AI automation, and custom CRMs. Five capabilities, one team.",
+    "Websites, native apps, marketing, sales growth, AI automation, AI employees, and custom CRMs. Seven capabilities, one team.",
 };
 
 export default function ServicesIndexPage() {

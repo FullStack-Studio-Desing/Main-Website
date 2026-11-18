@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
           </p>
 
           <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #999; font-size: 12px;">
-            FullStack Studio Design. Websites, marketing, sales growth, AI automation, and custom CRMs.
+            FullStack Studio Design. Websites, apps, marketing, sales, AI, and CRMs.
           </div>
         </div>
       `,

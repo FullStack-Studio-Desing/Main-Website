@@ -23,7 +23,7 @@ const easeOut = [0.16, 1, 0.3, 1] as const;
 const pillars = [
   {
     title: "Build",
-    detail: "Sites that sell, not just decorate the brand.",
+    detail: "Sites and native apps that sell, not just decorate.",
   },
   {
     title: "Grow",
@@ -31,7 +31,7 @@ const pillars = [
   },
   {
     title: "Automate",
-    detail: "AI and CRM that remove drag from the close.",
+    detail: "AI teammates, automation, and CRM that remove drag.",
   },
 ];
 
@@ -95,8 +95,8 @@ export function ServicesIndex() {
                 {...enter(0.12)}
                 className="mt-6 max-w-[520px] text-lg font-medium leading-snug text-sage sm:text-xl"
               >
-                Websites, marketing, sales, AI, and CRM, built and run together,
-                no hand-offs between agencies.
+                Websites, apps, marketing, sales, AI employees, and CRM, built
+                and run together, no hand-offs between agencies.
               </motion.p>
 
               <motion.ul
