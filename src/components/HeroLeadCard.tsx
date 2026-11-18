@@ -701,7 +701,7 @@ export function HeroLeadCard() {
           });
           setOpen((v) => !v);
         }}
-        className={`pointer-events-auto fixed bottom-5 right-5 z-[60] inline-flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-neon text-forest shadow-[0_12px_32px_rgba(18,35,20,0.35)] transition-transform hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neon sm:bottom-6 sm:right-6 ${
+        className={`pointer-events-auto fixed bottom-5 right-5 z-[60] inline-flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-white text-forest shadow-[0_12px_32px_rgba(18,35,20,0.22)] ring-1 ring-rule transition-[transform,box-shadow,ring-color] duration-200 hover:scale-105 hover:shadow-[0_14px_36px_rgba(18,35,20,0.28)] hover:ring-black/15 hover:text-ink active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sage sm:bottom-6 sm:right-6 ${
           open ? "max-sm:hidden" : ""
         }`}
         aria-label={open ? "Close chat" : `Chat with ${agent.name}`}
