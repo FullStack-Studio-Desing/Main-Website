@@ -9,8 +9,8 @@ export const dynamic = "force-dynamic";
 
 /**
  * Card form: POST { planId, token, paymentMethodId } plus optional payer
- * email / RFC|CURP. Amount comes from the server catalog. If payer fields
- * are omitted, MP_PAYER_* env vars are used.
+ * email. Amount comes from the server catalog. If email is omitted,
+ * MP_PAYER_EMAIL is used. RFC/CURP are optional (US payers skip them).
  */
 const UUID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;

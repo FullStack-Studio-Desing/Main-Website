@@ -1,7 +1,8 @@
 export type ServerPayer = {
   email: string;
-  identificationType: "RFC" | "CURP";
-  identificationNumber: string;
+  /** Optional — US payers have no RFC/CURP; omit for email-only charges. */
+  identificationType?: "RFC" | "CURP";
+  identificationNumber?: string;
 };
 
 type PayerResult =
@@ -11,6 +12,7 @@ type PayerResult =
 /**
  * Prefer payer fields from the request (test / checkout form). Fall back to
  * MP_PAYER_* env vars for the marketing form that only collects card data.
+ * Identification is optional (US clients do not use RFC/CURP).
  */
 export function resolvePayer(input?: {
   email?: unknown;
@@ -24,9 +26,9 @@ export function resolvePayer(input?: {
 }
 
 /**
- * Orders API still expects payer email, and a Mexico seller usually also
- * needs RFC or CURP. The future card form does not collect these, so they
- * live in server config until a trusted customer record exists.
+ * Marketing/card checkout only needs a payer email. RFC/CURP are optional
+ * and skipped for US clients. Email lives in MP_PAYER_EMAIL until a real
+ * customer record exists.
  */
 export function readServerPayer(): PayerResult {
   return normalizePayer(
@@ -37,9 +39,6 @@ export function readServerPayer(): PayerResult {
     },
     {
       email: "Set MP_PAYER_EMAIL before charging. The card form does not collect email.",
-      identificationType: "Set MP_PAYER_ID_TYPE to RFC or CURP. The card form does not collect it.",
-      identificationNumber:
-        "Set MP_PAYER_ID_NUMBER to a valid RFC or CURP. The card form does not collect it.",
     }
   );
 }
@@ -63,13 +62,11 @@ function normalizePayer(
   },
   messages?: {
     email: string;
-    identificationType: string;
-    identificationNumber: string;
   }
 ): PayerResult {
   const email =
     typeof input?.email === "string" ? input.email.trim().toLowerCase() : "";
-  const identificationType =
+  const identificationTypeRaw =
     typeof input?.identificationType === "string"
       ? input.identificationType.trim().toUpperCase()
       : "";
@@ -84,22 +81,32 @@ function normalizePayer(
       message: messages?.email ?? "Enter a valid payer email.",
     };
   }
-  if (identificationType !== "RFC" && identificationType !== "CURP") {
+
+  // No ID → email-only payer (US clients).
+  if (!identificationTypeRaw && !identificationNumber) {
+    return { ok: true, payer: { email } };
+  }
+
+  if (identificationTypeRaw !== "RFC" && identificationTypeRaw !== "CURP") {
     return {
       ok: false,
-      message: messages?.identificationType ?? "Choose RFC or CURP.",
+      message: "If you send an ID, use RFC or CURP — or omit it for US payers.",
     };
   }
-  if (!validDocument(identificationType, identificationNumber)) {
+  if (!validDocument(identificationTypeRaw, identificationNumber)) {
     return {
       ok: false,
-      message: messages?.identificationNumber ?? "Enter a valid RFC or CURP.",
+      message: "Enter a valid RFC or CURP, or omit ID fields for US payers.",
     };
   }
 
   return {
     ok: true,
-    payer: { email, identificationType, identificationNumber },
+    payer: {
+      email,
+      identificationType: identificationTypeRaw,
+      identificationNumber,
+    },
   };
 }
 
