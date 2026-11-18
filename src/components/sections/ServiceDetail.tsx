@@ -54,53 +54,6 @@ const includeIcons: Icon[] = [
   CheckCircle,
 ];
 
-function ServiceRail({
-  currentSlug,
-  tone = "dark",
-}: {
-  currentSlug: string;
-  tone?: "dark" | "light";
-}) {
-  const dark = tone === "dark";
-
-  return (
-    <nav
-      aria-label="Browse capabilities"
-      className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-    >
-      <Link
-        href="/services"
-        className={`shrink-0 rounded-full px-3.5 py-2 text-sm font-medium transition-colors duration-150 active:scale-[0.97] ${
-          dark
-            ? "bg-white/10 text-fog ring-1 ring-white/10 hover:bg-white/15 hover:text-white"
-            : "bg-white text-muted ring-1 ring-rule hover:text-ink"
-        }`}
-      >
-        Overview
-      </Link>
-      {services.map((item) => {
-        const active = item.slug === currentSlug;
-        return (
-          <Link
-            key={item.slug}
-            href={`/services/${item.slug}`}
-            aria-current={active ? "page" : undefined}
-            className={`shrink-0 rounded-full px-3.5 py-2 text-sm font-medium transition-colors duration-150 active:scale-[0.97] ${
-              active
-                ? "bg-neon text-ink"
-                : dark
-                  ? "bg-white/10 text-fog ring-1 ring-white/10 hover:bg-white/15 hover:text-white"
-                  : "bg-white text-muted ring-1 ring-rule hover:text-ink"
-            }`}
-          >
-            {item.shortLabel}
-          </Link>
-        );
-      })}
-    </nav>
-  );
-}
-
 export function ServiceDetail({ service }: { service: Service }) {
   const reduce = useReducedMotion();
   const faqId = useId();
@@ -157,13 +110,6 @@ export function ServiceDetail({ service }: { service: Service }) {
         />
 
         <div className="relative mx-auto max-w-[1536px] px-6 pb-16 pt-32 sm:px-10 lg:pb-24 lg:pt-36">
-          <motion.div {...enter(0)} className="mb-10 max-w-full">
-            <p className="mb-3 text-xs font-medium uppercase tracking-[0.14em] text-sage">
-              Capabilities
-            </p>
-            <ServiceRail currentSlug={service.slug} tone="dark" />
-          </motion.div>
-
           <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
             <div className="relative z-10 max-w-[720px]">
               <motion.div {...enter(0.05)}>
@@ -308,7 +254,7 @@ export function ServiceDetail({ service }: { service: Service }) {
               <h2 className="font-display text-[36px] uppercase leading-[0.95] tracking-[-0.0143em] text-ink sm:text-[48px] lg:text-[56px] lg:leading-[48px]">
                 How we deliver it
               </h2>
-              <p className="mt-5 max-w-[520px] text-lg font-medium leading-snug text-muted">
+              <p className="mt-5 max-w-[520px] text-lg font-medium leading-snug text-soft">
                 Clear stages, visible progress, no mystery retainers.
               </p>
             </motion.div>
@@ -378,7 +324,7 @@ export function ServiceDetail({ service }: { service: Service }) {
               <h2 className="font-display text-[36px] uppercase leading-[0.95] tracking-[-0.0143em] text-ink sm:text-[48px] lg:leading-[48px]">
                 What&apos;s in the work
               </h2>
-              <p className="mt-5 text-lg font-medium leading-snug text-muted">
+              <p className="mt-5 text-lg font-medium leading-snug text-soft">
                 Scoped deliverables, not a vague retainer.
               </p>
 
@@ -532,13 +478,9 @@ export function ServiceDetail({ service }: { service: Service }) {
             <h2 className="font-display text-[36px] uppercase leading-[0.95] tracking-[-0.0143em] text-ink sm:text-[48px] lg:text-[56px] lg:leading-[48px]">
               Keep building the stack
             </h2>
-            <p className="mt-5 text-lg font-medium leading-snug text-muted">
+            <p className="mt-5 text-lg font-medium leading-snug text-soft">
               Jump to another capability, or return to the full overview.
             </p>
-          </motion.div>
-
-          <motion.div {...inView(0.06)} className="mt-8">
-            <ServiceRail currentSlug={service.slug} tone="light" />
           </motion.div>
 
           <ul className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-12 lg:grid-cols-4">
@@ -563,7 +505,7 @@ export function ServiceDetail({ service }: { service: Service }) {
                     <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white ring-1 ring-rule transition-transform duration-200 group-hover:scale-[1.04]">
                       <Glyph size={26} weight="duotone" className="text-ink" />
                     </span>
-                    <span className="mt-5 text-xs font-medium uppercase tracking-[0.1em] text-muted">
+                    <span className="mt-5 text-xs font-medium uppercase tracking-[0.1em] text-soft">
                       {item.category}
                     </span>
                     <span className="mt-2 font-display text-[24px] uppercase leading-[0.95] tracking-[-0.01em] text-ink transition-colors duration-200 group-hover:text-moss sm:text-[28px]">
