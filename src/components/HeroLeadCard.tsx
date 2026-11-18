@@ -16,6 +16,7 @@ import {
 import { brand, contact, hero } from "@/data/site-copy";
 import { btnInverse } from "@/components/buttons";
 import { GoogleSchedulingButton } from "@/components/GoogleSchedulingButton";
+import { mediaUrl } from "@/lib/media";
 
 type Status = "idle" | "sending" | "sent" | "error";
 type Step = "name" | "email" | "phone" | "note" | "done";
@@ -33,14 +34,14 @@ type ChatAgent = {
 };
 
 const AGENTS: ChatAgent[] = [
-  { name: "Alex", initials: "AX", photo: "/images/agents/male.png" },
-  { name: "Jordan", initials: "JD", photo: "/images/agents/male.png" },
-  { name: "Sam", initials: "SM", photo: "/images/agents/male.png" },
-  { name: "Chris", initials: "CH", photo: "/images/agents/male.png" },
-  { name: "Mia", initials: "MA", photo: "/images/agents/female.png" },
-  { name: "Sofia", initials: "SF", photo: "/images/agents/female.png" },
-  { name: "Emma", initials: "EM", photo: "/images/agents/female.png" },
-  { name: "Olivia", initials: "OL", photo: "/images/agents/female.png" },
+  { name: "Alex", initials: "AX", photo: mediaUrl("/images/agents/male.png") },
+  { name: "Jordan", initials: "JD", photo: mediaUrl("/images/agents/male.png") },
+  { name: "Sam", initials: "SM", photo: mediaUrl("/images/agents/male.png") },
+  { name: "Chris", initials: "CH", photo: mediaUrl("/images/agents/male.png") },
+  { name: "Mia", initials: "MA", photo: mediaUrl("/images/agents/female.png") },
+  { name: "Sofia", initials: "SF", photo: mediaUrl("/images/agents/female.png") },
+  { name: "Emma", initials: "EM", photo: mediaUrl("/images/agents/female.png") },
+  { name: "Olivia", initials: "OL", photo: mediaUrl("/images/agents/female.png") },
 ];
 
 const STEPS: Step[] = ["name", "email", "phone", "note"];
