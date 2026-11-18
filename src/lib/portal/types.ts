@@ -13,6 +13,7 @@ export type InvoiceStatus = "draft" | "sent" | "paid" | "failed" | "void";
 export type InvoiceBillingType = "one_time" | "recurring";
 export type PaymentMethodStatus = "active" | "removed";
 export type TaxIdType = "RFC" | "CURP";
+export type ClientContactKind = "email" | "phone";
 
 export type ActionState = {
   error?: string;
@@ -26,6 +27,23 @@ export type Profile = {
   full_name: string | null;
   role: Role;
   client_id: string | null;
+};
+
+export type ClientContact = {
+  id: string;
+  kind: ClientContactKind;
+  value: string;
+  label: string | null;
+  sort_order: number;
+};
+
+export type ClientPerson = {
+  id: string;
+  name: string;
+  email: string | null;
+  phone: string | null;
+  role: string;
+  sort_order: number;
 };
 
 export type ClientRecord = {
@@ -44,6 +62,8 @@ export type ClientRecord = {
   mp_customer_id: string | null;
   tax_id_type: TaxIdType | null;
   tax_id_number: string | null;
+  contacts: ClientContact[];
+  people: ClientPerson[];
   created_at: string;
   updated_at: string;
 };

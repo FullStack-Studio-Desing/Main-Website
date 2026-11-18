@@ -52,7 +52,7 @@ function Directory({ stats }: { stats: DirectoryStats }) {
         title="Clients"
         lede="Create and manage companies, plans, portal logins, payments, and projects."
         action={
-          <Button asChild variant="brand">
+          <Button asChild>
             <Link href="/admin/clients/new">Add client</Link>
           </Button>
         }

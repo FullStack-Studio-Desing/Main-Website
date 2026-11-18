@@ -1,18 +1,18 @@
 import Link from "next/link";
-import { btnInverse } from "@/components/buttons";
+import { Button } from "@/components/ui/button";
 
 export default function PortalNotFound() {
   return (
-    <div>
-      <h1 className="font-display text-[36px] uppercase leading-[0.95] text-ink sm:text-[48px]">
+    <div className="py-8">
+      <h1 className="text-3xl font-bold tracking-tight text-foreground">
         That report is not available
       </h1>
-      <p className="mt-4 max-w-[42ch] text-base leading-relaxed text-body">
+      <p className="mt-2 max-w-md text-sm text-muted-foreground">
         It may still be a draft, or it belongs to another company.
       </p>
-      <Link href="/portal" className={`${btnInverse} mt-8`}>
-        Back to your plan
-      </Link>
+      <Button asChild className="mt-6">
+        <Link href="/portal">Back to your plan</Link>
+      </Button>
     </div>
   );
 }

@@ -195,7 +195,7 @@ export function PaymentMethodForm({
         />
       </Field>
       <div className="sm:col-span-2">
-        <Button type="submit" variant="brand" disabled={busy || !ready}>
+        <Button type="submit" disabled={busy || !ready}>
           {busy ? "Saving…" : "Save card on file"}
         </Button>
       </div>

@@ -1,5 +1,6 @@
 import { paymentMethods, portalPlans } from "@/lib/portal/plans";
 import type {
+  ClientContactKind,
   ClientStatus,
   InvoiceBillingType,
   InvoiceStatus,
@@ -27,6 +28,17 @@ const projectStatuses: ProjectStatus[] = [
 const invoiceStatuses: InvoiceStatus[] = ["draft", "sent", "paid", "failed", "void"];
 const invoiceBillingTypes: InvoiceBillingType[] = ["one_time", "recurring"];
 const taxIdTypes: TaxIdType[] = ["RFC", "CURP"];
+const contactKinds: ClientContactKind[] = ["email", "phone"];
+const personRoles = [
+  "Owner",
+  "Billing",
+  "Marketing",
+  "Technical",
+  "Operations",
+  "Other",
+] as const;
+
+export const clientPersonRoles = personRoles;
 
 export function isUuid(value: string) {
   return UUID_RE.test(value);
@@ -44,11 +56,83 @@ function oneOf<T extends string>(value: string, allowed: readonly T[]): T | null
   return allowed.includes(value as T) ? (value as T) : null;
 }
 
+function all(formData: FormData, key: string) {
+  return formData.getAll(key).map((value) => String(value ?? "").trim());
+}
+
+export function parseClientContacts(formData: FormData) {
+  const kinds = all(formData, "contact_kind");
+  const values = all(formData, "contact_value");
+  const labels = all(formData, "contact_label");
+  const count = Math.max(kinds.length, values.length, labels.length);
+  const contacts: {
+    kind: ClientContactKind;
+    value: string;
+    label: string | null;
+    sort_order: number;
+  }[] = [];
+
+  for (let i = 0; i < count; i += 1) {
+    const kindRaw = kinds[i] ?? "";
+    const value = text(values[i] ?? "", 120);
+    const label = text(labels[i] ?? "", 80);
+    if (!value && !label) continue;
+    const kind = oneOf(kindRaw, contactKinds);
+    if (!kind) return { error: "Choose email or phone for each contact." };
+    if (!value) return { error: "Enter a value for each contact method." };
+    if (kind === "email" && !EMAIL_RE.test(value.toLowerCase())) {
+      return { error: "Enter a valid contact email." };
+    }
+    contacts.push({
+      kind,
+      value: kind === "email" ? value.toLowerCase() : value,
+      label: label || null,
+      sort_order: contacts.length,
+    });
+  }
+
+  return { value: contacts };
+}
+
+export function parseClientPeople(formData: FormData) {
+  const names = all(formData, "person_name");
+  const emails = all(formData, "person_email");
+  const phones = all(formData, "person_phone");
+  const roles = all(formData, "person_role");
+  const count = Math.max(names.length, emails.length, phones.length, roles.length);
+  const people: {
+    name: string;
+    email: string | null;
+    phone: string | null;
+    role: string;
+    sort_order: number;
+  }[] = [];
+
+  for (let i = 0; i < count; i += 1) {
+    const name = text(names[i] ?? "", 120);
+    const emailRaw = (emails[i] ?? "").toLowerCase();
+    const phone = text(phones[i] ?? "", 40);
+    const role = text(roles[i] ?? "", 80);
+    if (!name && !emailRaw && !phone && !role) continue;
+    if (!name) return { error: "Enter a name for each person." };
+    if (!role) return { error: "Enter a role for each person." };
+    if (emailRaw && !EMAIL_RE.test(emailRaw)) {
+      return { error: "Enter a valid email for each person." };
+    }
+    people.push({
+      name,
+      email: emailRaw || null,
+      phone: phone || null,
+      role,
+      sort_order: people.length,
+    });
+  }
+
+  return { value: people };
+}
+
 export function parseClient(formData: FormData) {
   const company = text(raw(formData, "company_name"), 120);
-  const contact = text(raw(formData, "contact_name"), 120);
-  const email = raw(formData, "email").toLowerCase();
-  const phone = text(raw(formData, "phone"), 40);
   const status = oneOf(raw(formData, "status"), clientStatuses);
   const planId = oneOf(raw(formData, "plan_id"), portalPlans.map((plan) => plan.id));
   const planName = text(raw(formData, "plan_name"), 80);
@@ -59,10 +143,13 @@ export function parseClient(formData: FormData) {
   const taxIdTypeRaw = raw(formData, "tax_id_type");
   const taxIdType = taxIdTypeRaw ? oneOf(taxIdTypeRaw, taxIdTypes) : null;
   const taxIdNumber = text(raw(formData, "tax_id_number"), 40).toUpperCase();
+  const contacts = parseClientContacts(formData);
+  if ("error" in contacts) return { error: contacts.error };
+  const people = parseClientPeople(formData);
+  if ("error" in people) return { error: people.error };
 
   if (!company) return { error: "Enter the company name." };
-  if (!contact) return { error: "Enter the contact name." };
-  if (!EMAIL_RE.test(email)) return { error: "Enter a valid email." };
+  if (people.value.length === 0) return { error: "Add at least one person." };
   if (!status) return { error: "Choose a status." };
   if (!planId) return { error: "Choose a plan." };
   if (!planName) return { error: "Enter the plan name clients will see." };
@@ -80,12 +167,26 @@ export function parseClient(formData: FormData) {
     }
   }
 
+  const primary = people.value[0];
+  const primaryEmail =
+    primary.email ||
+    contacts.value.find((contact) => contact.kind === "email")?.value ||
+    "";
+  const primaryPhone =
+    primary.phone ||
+    contacts.value.find((contact) => contact.kind === "phone")?.value ||
+    null;
+
+  if (!EMAIL_RE.test(primaryEmail)) {
+    return { error: "Add an email on a person or as a contact method." };
+  }
+
   return {
     value: {
       company_name: company,
-      contact_name: contact,
-      email,
-      phone: phone || null,
+      contact_name: primary.name,
+      email: primaryEmail,
+      phone: primaryPhone,
       status,
       plan_id: planId as PlanId,
       plan_name: planName,
@@ -100,6 +201,8 @@ export function parseClient(formData: FormData) {
           }
         : {}),
     },
+    contacts: contacts.value,
+    people: people.value,
   };
 }
 

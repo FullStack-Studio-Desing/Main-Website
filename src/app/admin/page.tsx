@@ -90,7 +90,7 @@ function Overview({
         lede="Clients, payments, and projects in one place."
         action={
           <div className="flex flex-wrap gap-3">
-            <Button asChild variant="brand">
+            <Button asChild>
               <Link href="/admin/clients/new">Add client</Link>
             </Button>
             <Button asChild variant="outline">
@@ -172,11 +172,9 @@ function Overview({
         </Card>
       </div>
 
-      <div className="mt-14">
-        <div className="flex items-end justify-between gap-4">
-          <h2 className="font-display text-[28px] uppercase leading-none tracking-[-0.02em]">
-            Clients
-          </h2>
+      <div className="mt-10">
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-xl font-semibold tracking-tight">Clients</h2>
           <Button asChild variant="link" className="h-auto p-0">
             <Link href="/admin/clients">View all</Link>
           </Button>

@@ -18,7 +18,7 @@ export function ConfirmForm({
         if (!window.confirm(message)) event.preventDefault();
       }}
     >
-      <Button type="submit" variant="link" className="h-auto p-0 text-moss">
+      <Button type="submit" variant="ghost" size="sm" className="h-auto px-0 text-destructive hover:text-destructive">
         {label}
       </Button>
     </form>

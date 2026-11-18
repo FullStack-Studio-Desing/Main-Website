@@ -23,16 +23,58 @@ export function StudioShell({
   children: ReactNode;
 }) {
   return (
-    <div className="flex h-dvh overflow-hidden bg-background text-foreground">
-      <aside className="hidden h-full w-[260px] shrink-0 flex-col justify-between bg-primary px-6 py-8 text-primary-foreground lg:flex">
-        <div>
+    <div className="studio-app flex h-dvh overflow-hidden bg-background text-foreground">
+      <aside className="hidden h-full w-64 shrink-0 flex-col border-r border-border bg-muted/40 lg:flex">
+        <div className="flex h-14 items-center border-b border-border px-6">
           <BrandLockup href={homeHref} />
-          {preview ? (
-            <p className="mt-5 text-xs font-medium uppercase tracking-[0.16em] text-neon">
-              Preview
-            </p>
-          ) : null}
-          <nav className="mt-10 flex flex-col gap-1">
+        </div>
+        <div className="flex flex-1 flex-col justify-between px-3 py-4">
+          <div>
+            {preview ? (
+              <p className="mb-3 px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Preview
+              </p>
+            ) : null}
+            <nav className="flex flex-col gap-1">
+              {nav.map((item) => {
+                const active =
+                  item.href === "/admin" || item.href === "/portal"
+                    ? pathname === item.href
+                    : pathname === item.href || pathname.startsWith(`${item.href}/`);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                      active
+                        ? "bg-accent text-accent-foreground"
+                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    )}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+          <AccountFooter email={email} preview={preview} />
+        </div>
+      </aside>
+
+      <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
+        <header className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 lg:hidden">
+          <div className="flex h-14 items-center justify-between gap-3 px-4">
+            <BrandLockup href={homeHref} compact />
+            {preview ? null : (
+              <form action={signOut}>
+                <Button type="submit" variant="ghost" size="sm">
+                  Sign out
+                </Button>
+              </form>
+            )}
+          </div>
+          <nav className="flex gap-1 overflow-x-auto border-t border-border px-2 py-2">
             {nav.map((item) => {
               const active =
                 item.href === "/admin" || item.href === "/portal"
@@ -43,10 +85,10 @@ export function StudioShell({
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                    "shrink-0 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
                     active
-                      ? "bg-white/10 text-white"
-                      : "text-white/70 hover:bg-white/5 hover:text-white"
+                      ? "bg-accent text-accent-foreground"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                   )}
                 >
                   {item.label}
@@ -54,29 +96,8 @@ export function StudioShell({
               );
             })}
           </nav>
-        </div>
-        <AccountFooter email={email} preview={preview} />
-      </aside>
-
-      <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
-        <div className="sticky top-0 z-20 flex items-center justify-between gap-4 bg-primary px-5 py-4 text-primary-foreground lg:hidden">
-          <BrandLockup href={homeHref} compact />
-          <div className="flex items-center gap-3">
-            {nav.map((item) => (
-              <Link key={item.href} href={item.href} className="text-sm font-medium text-white/85">
-                {item.label}
-              </Link>
-            ))}
-            {preview ? null : (
-              <form action={signOut}>
-                <Button type="submit" variant="ghost" size="sm" className="text-white/70 hover:bg-white/10 hover:text-white">
-                  Sign out
-                </Button>
-              </form>
-            )}
-          </div>
-        </div>
-        <div className="mx-auto w-full max-w-5xl flex-1 px-5 py-8 sm:px-10 sm:py-12">
+        </header>
+        <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-8 sm:py-10">
           {children}
         </div>
       </div>
@@ -86,11 +107,10 @@ export function StudioShell({
 
 function BrandLockup({ href, compact = false }: { href: string; compact?: boolean }) {
   return (
-    <Link href={href} className="flex items-center gap-2.5 text-white">
-      <LogoMark className={compact ? "h-7 w-7" : "h-8 w-8"} tone="neon" />
-      <span className={`font-bold tracking-tight ${compact ? "text-lg" : "text-xl"}`}>
+    <Link href={href} className="flex items-center gap-2.5 text-foreground">
+      <LogoMark className={compact ? "h-6 w-6" : "h-7 w-7"} tone="ink" />
+      <span className={cn("font-semibold tracking-tight", compact ? "text-base" : "text-lg")}>
         {compact ? "Studio" : brand.shortName}
-        <span className="text-neon">.</span>
       </span>
     </Link>
   );
@@ -98,21 +118,18 @@ function BrandLockup({ href, compact = false }: { href: string; compact?: boolea
 
 function AccountFooter({ email, preview }: { email?: string; preview: boolean }) {
   return (
-    <div>
-      {email ? <p className="break-all text-xs leading-relaxed text-white/50">{email}</p> : null}
-      <Separator className="my-4 bg-white/10" />
+    <div className="px-3">
+      {email ? (
+        <p className="break-all text-xs leading-relaxed text-muted-foreground">{email}</p>
+      ) : null}
+      <Separator className="my-3" />
       {preview ? (
-        <Button asChild variant="link" className="h-auto p-0 text-white/70 hover:text-neon">
+        <Button asChild variant="link" className="h-auto px-0 text-muted-foreground">
           <Link href="/">View site</Link>
         </Button>
       ) : (
         <form action={signOut}>
-          <Button
-            type="submit"
-            variant="ghost"
-            size="sm"
-            className="h-auto px-0 text-white/70 hover:bg-transparent hover:text-neon"
-          >
+          <Button type="submit" variant="ghost" size="sm" className="h-8 w-full justify-start px-2">
             Sign out
           </Button>
         </form>

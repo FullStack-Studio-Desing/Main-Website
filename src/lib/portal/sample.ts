@@ -28,6 +28,40 @@ const northwind: ClientRecord = {
   mp_customer_id: null,
   tax_id_type: null,
   tax_id_number: null,
+  contacts: [
+    {
+      id: "sample-northwind-email",
+      kind: "email",
+      value: "hello@northwind.example",
+      label: "General",
+      sort_order: 0,
+    },
+    {
+      id: "sample-northwind-phone",
+      kind: "phone",
+      value: "(415) 555-0100",
+      label: "Office",
+      sort_order: 1,
+    },
+  ],
+  people: [
+    {
+      id: "sample-northwind-lena",
+      name: "Lena Ortiz",
+      email: "lena@northwind.example",
+      phone: "(415) 555-0148",
+      role: "Owner",
+      sort_order: 0,
+    },
+    {
+      id: "sample-northwind-mark",
+      name: "Mark Chen",
+      email: "mark@northwind.example",
+      phone: null,
+      role: "Billing",
+      sort_order: 1,
+    },
+  ],
   created_at: "2026-09-01T15:00:00.000Z",
   updated_at: "2026-11-10T15:00:00.000Z",
 };
@@ -48,6 +82,25 @@ const bright: ClientRecord = {
   mp_customer_id: null,
   tax_id_type: null,
   tax_id_number: null,
+  contacts: [
+    {
+      id: "sample-bright-email",
+      kind: "email",
+      value: "jon@brightparcel.example",
+      label: null,
+      sort_order: 0,
+    },
+  ],
+  people: [
+    {
+      id: "sample-bright-jon",
+      name: "Jon Hale",
+      email: "jon@brightparcel.example",
+      phone: null,
+      role: "Owner",
+      sort_order: 0,
+    },
+  ],
   created_at: "2026-07-15T15:00:00.000Z",
   updated_at: "2026-10-01T15:00:00.000Z",
 };
@@ -276,6 +329,7 @@ export function samplePortal() {
   return {
     client: northwind,
     payments,
+    projects: projects.filter((project) => project.client_id === northwind.id),
     reports: reports.filter((report) => report.status === "published"),
     invoices,
     paymentMethods,

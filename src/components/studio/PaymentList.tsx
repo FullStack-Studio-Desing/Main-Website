@@ -19,14 +19,14 @@ import {
 export function PaymentList({ payments }: { payments: PaymentListItem[] }) {
   if (payments.length === 0) {
     return (
-      <p className="mt-12 max-w-[46ch] text-base leading-relaxed text-body">
+      <p className="mt-8 max-w-md text-sm text-muted-foreground">
         No payments yet. Add one from a client page or use the form below.
       </p>
     );
   }
 
   return (
-    <Card className="mt-10 overflow-hidden">
+    <Card className="mt-6 overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>

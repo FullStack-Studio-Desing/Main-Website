@@ -5,8 +5,10 @@ import type {
   InvoiceRecord,
   PaymentMethodRecord,
   PaymentRecord,
+  ProjectRecord,
   ReportRecord,
 } from "@/lib/portal/types";
+import { PortalProjects } from "@/components/studio/ProjectList";
 import { InvoiceList } from "@/components/studio/InvoiceList";
 import { PaymentMethodForm } from "@/components/studio/PaymentMethodForm";
 import { PaymentMethodList } from "@/components/studio/PaymentMethodList";
@@ -19,12 +21,14 @@ export function PortalHome({
   payments,
   reports,
   invoices,
+  projects,
   paymentMethods,
 }: {
   client: ClientRecord;
   payments: PaymentRecord[];
   reports: ReportRecord[];
   invoices: InvoiceRecord[];
+  projects: ProjectRecord[];
   paymentMethods: PaymentMethodRecord[];
 }) {
   return (
@@ -35,25 +39,29 @@ export function PortalHome({
         lede={`${client.plan_name} · ${formatUsd(client.monthly_amount)} a month`}
       />
 
-      <Card className="mt-10 border-0 bg-forest text-white shadow-none">
-        <CardContent className="p-8 sm:p-10">
-          <p className="text-sm text-white/60">Current plan</p>
-          <h2 className="mt-3 font-display text-[40px] uppercase leading-[0.95] tracking-[-0.02em] sm:text-[56px]">
-            {client.plan_name}
-          </h2>
-          <p className="mt-5 flex items-baseline gap-2">
-            <span className="font-display text-[32px] leading-none text-neon">
-              {formatUsd(client.monthly_amount)}
-            </span>
-            <span className="text-base text-white/60">/ month</span>
+      <Card className="mt-8">
+        <CardContent className="p-6">
+          <p className="text-sm text-muted-foreground">Current plan</p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight">{client.plan_name}</h2>
+          <p className="mt-3 text-3xl font-semibold tracking-tight">
+            {formatUsd(client.monthly_amount)}
+            <span className="ml-1 text-sm font-normal text-muted-foreground">/ month</span>
           </p>
-          <p className="mt-4 text-sm text-white/70">
+          <p className="mt-2 text-sm text-muted-foreground">
             {client.started_on ? `Started ${formatDate(client.started_on)}` : "Start date not set"}
             {" · "}
             {client.status === "active" ? "Active" : client.status === "paused" ? "Paused" : "Archived"}
           </p>
         </CardContent>
       </Card>
+
+      <Section
+        id="projects"
+        title="Projects & plan"
+        lede="Every active project and the plan that covers it."
+      >
+        <PortalProjects client={client} projects={projects} />
+      </Section>
 
       <Section
         id="billing"
@@ -73,7 +81,7 @@ export function PortalHome({
 
       <Section id="payments" title="Payments" lede="Each charge the studio has recorded for this plan.">
         {payments.length === 0 ? (
-          <p className="text-base text-body">No payments recorded yet.</p>
+          <p className="text-sm text-muted-foreground">No payments recorded yet.</p>
         ) : (
           <Card>
             <CardContent className="divide-y divide-border p-0">
@@ -93,7 +101,7 @@ export function PortalHome({
                       {payment.reference ? ` · ${payment.reference}` : ""}
                     </p>
                     {payment.notes ? (
-                      <p className="mt-2 text-sm leading-relaxed text-body">{payment.notes}</p>
+                      <p className="mt-2 text-sm text-muted-foreground">{payment.notes}</p>
                     ) : null}
                   </div>
                   <StatusBadge status={payment.status} />
@@ -106,7 +114,7 @@ export function PortalHome({
 
       <Section id="reports" title="Reports" lede="Weekly reads on what the plan earned and what happens next.">
         {reports.length === 0 ? (
-          <p className="text-base text-body">No reports yet. The first one will show up here.</p>
+          <p className="text-sm text-muted-foreground">No reports yet. The first one will show up here.</p>
         ) : (
           <Card>
             <CardContent className="divide-y divide-border p-0">
@@ -123,7 +131,7 @@ export function PortalHome({
                       {report.published_at ? ` · ${formatDate(report.published_at)}` : ""}
                     </span>
                   </span>
-                  <Button asChild variant="link" className="h-auto p-0 text-moss">
+                  <Button asChild variant="link" className="h-auto p-0">
                     <span>Read</span>
                   </Button>
                 </Link>
