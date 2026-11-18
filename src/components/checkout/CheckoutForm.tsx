@@ -20,6 +20,15 @@ declare global {
   }
 }
 
+/**
+ * MP.js (MX account) still wants an ID to mint a card token.
+ * Never shown to the payer — US clients are charged with email only.
+ */
+const TOKEN_PLACEHOLDER_ID = {
+  identificationType: "RFC",
+  identificationNumber: "XAXX010101000",
+};
+
 function loadMpSdk() {
   return new Promise<void>((resolve, reject) => {
     if (window.MercadoPago) {
@@ -95,13 +104,6 @@ export function CheckoutForm() {
     const expMonth = String(form.get("expMonth") ?? "").trim();
     const expYear = String(form.get("expYear") ?? "").trim();
     const securityCode = String(form.get("securityCode") ?? "").trim();
-    const email = String(form.get("email") ?? "").trim();
-    const identificationType = String(form.get("identificationType") ?? "").trim() as
-      | "RFC"
-      | "CURP";
-    const identificationNumber = String(form.get("identificationNumber") ?? "")
-      .trim()
-      .toUpperCase();
 
     if (!cardNumber || !holderName || !expMonth || !expYear || !securityCode) {
       setError("Fill every card field.");
@@ -125,10 +127,10 @@ export function CheckoutForm() {
         cardExpirationMonth: expMonth,
         cardExpirationYear: expYear.length === 2 ? `20${expYear}` : expYear,
         securityCode,
-        identificationType,
-        identificationNumber,
+        ...TOKEN_PLACEHOLDER_ID,
       });
 
+      // Payer email from MP_PAYER_EMAIL — no RFC for US clients.
       const response = await fetch("/api/process-payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -136,9 +138,6 @@ export function CheckoutForm() {
           planId: selectedPlan.id,
           token: token.id,
           paymentMethodId,
-          email,
-          identificationType,
-          identificationNumber,
           idempotencyKey: crypto.randomUUID(),
         }),
       });
@@ -184,19 +183,6 @@ export function CheckoutForm() {
             </option>
           ))}
         </NativeSelect>
-      </Field>
-
-      <Field label="Payer email" className="sm:col-span-2">
-        <Input name="email" type="email" required autoComplete="email" />
-      </Field>
-      <Field label="ID type">
-        <NativeSelect name="identificationType" defaultValue="RFC">
-          <option value="RFC">RFC</option>
-          <option value="CURP">CURP</option>
-        </NativeSelect>
-      </Field>
-      <Field label="RFC / CURP">
-        <Input name="identificationNumber" required autoComplete="off" placeholder="XAXX010101000" />
       </Field>
 
       <Field label="Name on card" className="sm:col-span-2">

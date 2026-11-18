@@ -24,8 +24,8 @@ type CreateOrderInput = {
   token: string;
   paymentMethodId: string;
   email: string;
-  identificationType: "RFC" | "CURP";
-  identificationNumber: string;
+  identificationType?: "RFC" | "CURP";
+  identificationNumber?: string;
   idempotencyKey: string;
 };
 
