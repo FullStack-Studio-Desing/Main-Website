@@ -11,7 +11,7 @@ export function PaymentMethodList({
   methods: PaymentMethodRecord[];
 }) {
   if (methods.length === 0) {
-    return <p className="text-base text-body">No card on file yet.</p>;
+    return <p className="text-sm text-muted-foreground">No card on file yet.</p>;
   }
 
   return (

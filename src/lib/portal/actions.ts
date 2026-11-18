@@ -94,6 +94,66 @@ export async function signOut() {
   redirect("/login");
 }
 
+async function replaceClientRelations(
+  clientId: string,
+  contacts: {
+    kind: "email" | "phone";
+    value: string;
+    label: string | null;
+    sort_order: number;
+  }[],
+  people: {
+    name: string;
+    email: string | null;
+    phone: string | null;
+    role: string;
+    sort_order: number;
+  }[],
+): Promise<ActionState> {
+  const supabase = await createClient();
+  const { error: wipeContacts } = await supabase
+    .from("client_contacts")
+    .delete()
+    .eq("client_id", clientId);
+  if (wipeContacts && !isSchemaError(wipeContacts)) {
+    return safeDbError(wipeContacts, "The client contacts could not be saved.");
+  }
+
+  const { error: wipePeople } = await supabase
+    .from("client_people")
+    .delete()
+    .eq("client_id", clientId);
+  if (wipePeople && !isSchemaError(wipePeople)) {
+    return safeDbError(wipePeople, "The client people could not be saved.");
+  }
+
+  if (contacts.length > 0) {
+    const { error } = await supabase.from("client_contacts").insert(
+      contacts.map((contact) => ({ ...contact, client_id: clientId })),
+    );
+    if (error) {
+      if (isSchemaError(error)) {
+        return { error: "Run the client contacts SQL migration, then try again." };
+      }
+      return safeDbError(error, "The client contacts could not be saved.");
+    }
+  }
+
+  if (people.length > 0) {
+    const { error } = await supabase.from("client_people").insert(
+      people.map((person) => ({ ...person, client_id: clientId })),
+    );
+    if (error) {
+      if (isSchemaError(error)) {
+        return { error: "Run the client contacts SQL migration, then try again." };
+      }
+      return safeDbError(error, "The client people could not be saved.");
+    }
+  }
+
+  return null;
+}
+
 export async function createClientAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const gate = await adminContext();
   if ("error" in gate) return gate;
@@ -103,6 +163,10 @@ export async function createClientAction(_prev: ActionState, formData: FormData)
   const supabase = await createClient();
   const { data, error } = await supabase.from("clients").insert(parsed.value).select("id").single();
   if (error || !data) return safeDbError(error, "The client could not be saved.");
+
+  const related = await replaceClientRelations(data.id, parsed.contacts, parsed.people);
+  if (related?.error) return related;
+
   revalidatePath("/admin");
   revalidatePath("/admin/clients");
   redirect(`/admin/clients/${data.id}`);
@@ -122,6 +186,10 @@ export async function updateClientAction(
   const supabase = await createClient();
   const { error } = await supabase.from("clients").update(parsed.value).eq("id", clientId);
   if (error) return safeDbError(error, "The client could not be saved.");
+
+  const related = await replaceClientRelations(clientId, parsed.contacts, parsed.people);
+  if (related?.error) return related;
+
   revalidatePath("/admin");
   revalidatePath("/admin/clients");
   revalidatePath(`/admin/clients/${clientId}`);

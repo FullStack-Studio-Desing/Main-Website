@@ -30,7 +30,7 @@ export default async function NewClientPage() {
           <PageIntro
             eyebrow="Studio"
             title="Add a client"
-            lede="The company record comes first. You create their portal login on the next screen."
+            lede="Add the company, contact methods, and people. You create their portal login on the next screen."
           />
         </div>
         <ClientForm action={createClientAction} submitLabel="Save client" />

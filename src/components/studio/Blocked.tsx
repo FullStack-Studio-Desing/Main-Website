@@ -97,7 +97,7 @@ export function QueryError({ reason }: { reason: "schema" | "auth" | "error" }) 
       </Alert>
     );
   }
-  return <p className="text-sm leading-relaxed text-body">The portal could not load this page.</p>;
+  return <p className="text-sm text-muted-foreground">The portal could not load this page.</p>;
 }
 
 export function PreviewNote() {

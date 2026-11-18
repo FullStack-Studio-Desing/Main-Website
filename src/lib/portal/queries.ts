@@ -3,7 +3,10 @@ import { createClient } from "@/lib/supabase/server";
 import { isAuthKeyError, isSchemaError } from "@/lib/portal/errors";
 import { asNumber, currentMonthKey, currentMonthLabel } from "@/lib/portal/format";
 import type {
+  ClientContact,
+  ClientContactKind,
   ClientListItem,
+  ClientPerson,
   ClientRecord,
   DirectoryStats,
   InvoiceBillingType,
@@ -135,6 +138,23 @@ type ProjectRow = {
   updated_at: string;
 };
 
+type ClientContactRow = {
+  id: string;
+  kind: string;
+  value: string;
+  label: string | null;
+  sort_order: number;
+};
+
+type ClientPersonRow = {
+  id: string;
+  name: string;
+  email: string | null;
+  phone: string | null;
+  role: string;
+  sort_order: number;
+};
+
 function failed(error: { code?: string; message?: string }): QueryResult<never> {
   console.error("[portal]", error.code ?? "", error.message ?? "query failed");
   if (isSchemaError(error)) return { ok: false, reason: "schema" };
@@ -142,7 +162,68 @@ function failed(error: { code?: string; message?: string }): QueryResult<never> 
   return { ok: false, reason: "error" };
 }
 
-function mapClient(row: ClientRow): ClientRecord {
+function mapContact(row: ClientContactRow): ClientContact {
+  return {
+    id: row.id,
+    kind: row.kind as ClientContactKind,
+    value: row.value,
+    label: row.label,
+    sort_order: row.sort_order,
+  };
+}
+
+function mapPerson(row: ClientPersonRow): ClientPerson {
+  return {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    phone: row.phone,
+    role: row.role,
+    sort_order: row.sort_order,
+  };
+}
+
+function fallbackContacts(row: ClientRow): ClientContact[] {
+  const contacts: ClientContact[] = [];
+  if (row.email) {
+    contacts.push({
+      id: `${row.id}-email`,
+      kind: "email",
+      value: row.email,
+      label: null,
+      sort_order: 0,
+    });
+  }
+  if (row.phone) {
+    contacts.push({
+      id: `${row.id}-phone`,
+      kind: "phone",
+      value: row.phone,
+      label: null,
+      sort_order: contacts.length,
+    });
+  }
+  return contacts;
+}
+
+function fallbackPeople(row: ClientRow): ClientPerson[] {
+  return [
+    {
+      id: `${row.id}-person`,
+      name: row.contact_name,
+      email: row.email,
+      phone: row.phone,
+      role: "Owner",
+      sort_order: 0,
+    },
+  ];
+}
+
+function mapClient(
+  row: ClientRow,
+  contacts: ClientContact[] = [],
+  people: ClientPerson[] = [],
+): ClientRecord {
   return {
     id: row.id,
     company_name: row.company_name,
@@ -159,8 +240,48 @@ function mapClient(row: ClientRow): ClientRecord {
     mp_customer_id: row.mp_customer_id ?? null,
     tax_id_type: (row.tax_id_type as TaxIdType | null | undefined) ?? null,
     tax_id_number: row.tax_id_number ?? null,
+    contacts,
+    people,
     created_at: row.created_at,
     updated_at: row.updated_at,
+  };
+}
+
+async function loadClientRelations(clientId: string, row: ClientRow) {
+  const supabase = await createClient();
+  const [contactsRes, peopleRes] = await Promise.all([
+    supabase
+      .from("client_contacts")
+      .select("id, kind, value, label, sort_order")
+      .eq("client_id", clientId)
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("client_people")
+      .select("id, name, email, phone, role, sort_order")
+      .eq("client_id", clientId)
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: true }),
+  ]);
+
+  const contactsMissing = Boolean(contactsRes.error && isSchemaError(contactsRes.error));
+  const peopleMissing = Boolean(peopleRes.error && isSchemaError(peopleRes.error));
+  if (contactsRes.error && !contactsMissing) return failed(contactsRes.error);
+  if (peopleRes.error && !peopleMissing) return failed(peopleRes.error);
+
+  const contacts = contactsMissing
+    ? fallbackContacts(row)
+    : ((contactsRes.data ?? []) as ClientContactRow[]).map(mapContact);
+  const people = peopleMissing
+    ? fallbackPeople(row)
+    : ((peopleRes.data ?? []) as ClientPersonRow[]).map(mapPerson);
+
+  return {
+    ok: true as const,
+    data: {
+      contacts: contacts.length > 0 ? contacts : fallbackContacts(row),
+      people: people.length > 0 ? people : fallbackPeople(row),
+    },
   };
 }
 
@@ -529,10 +650,14 @@ export async function getClientBundle(id: string): Promise<
   if (loginRes.error) return failed(loginRes.error);
   if (!clientRes.data) return { ok: true, data: null };
 
+  const clientRow = clientRes.data as ClientRow;
+  const relations = await loadClientRelations(id, clientRow);
+  if (!relations.ok) return relations;
+
   return {
     ok: true,
     data: {
-      client: mapClient(clientRes.data as ClientRow),
+      client: mapClient(clientRow, relations.data.contacts, relations.data.people),
       payments: ((paymentsRes.data ?? []) as PaymentRow[]).map(mapPayment),
       projects: projectsMissing
         ? []
@@ -576,16 +701,22 @@ export async function getPortalHome(clientId: string): Promise<
   QueryResult<{
     client: ClientRecord;
     payments: PaymentRecord[];
+    projects: ProjectRecord[];
     reports: ReportRecord[];
     invoices: InvoiceRecord[];
     paymentMethods: PaymentMethodRecord[];
   } | null>
 > {
   const supabase = await createClient();
-  const [clientRes, paymentsRes, reportsRes, invoicesRes, methodsRes] = await Promise.all([
+  const [clientRes, paymentsRes, projectsRes, reportsRes, invoicesRes, methodsRes] = await Promise.all([
     supabase.from("clients").select("*").eq("id", clientId).maybeSingle(),
     supabase
       .from("payments")
+      .select("*")
+      .eq("client_id", clientId)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("projects")
       .select("*")
       .eq("client_id", clientId)
       .order("created_at", { ascending: false }),
@@ -612,6 +743,8 @@ export async function getPortalHome(clientId: string): Promise<
 
   if (clientRes.error) return failed(clientRes.error);
   if (paymentsRes.error) return failed(paymentsRes.error);
+  const projectsMissing = Boolean(projectsRes.error && isSchemaError(projectsRes.error));
+  if (projectsRes.error && !projectsMissing) return failed(projectsRes.error);
   if (reportsRes.error) return failed(reportsRes.error);
   const invoicesMissing = Boolean(invoicesRes.error && isSchemaError(invoicesRes.error));
   if (invoicesRes.error && !invoicesMissing) return failed(invoicesRes.error);
@@ -624,6 +757,9 @@ export async function getPortalHome(clientId: string): Promise<
     data: {
       client: mapClient(clientRes.data as ClientRow),
       payments: ((paymentsRes.data ?? []) as PaymentRow[]).map(mapPayment),
+      projects: projectsMissing
+        ? []
+        : ((projectsRes.data ?? []) as ProjectRow[]).map(mapProject),
       reports: ((reportsRes.data ?? []) as ReportRow[]).map(mapReport),
       invoices: invoicesMissing
         ? []

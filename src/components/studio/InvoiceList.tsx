@@ -22,7 +22,7 @@ function InvoiceActions({
           await chargeInvoice(clientId, invoice.id, formData);
         }}
       >
-        <Button type="submit" size="sm" variant="brand">
+        <Button type="submit" size="sm">
           Charge card
         </Button>
       </form>
@@ -48,7 +48,7 @@ export function InvoiceList({
   adminActions?: boolean;
 }) {
   if (invoices.length === 0) {
-    return <p className="text-base text-body">No invoices yet.</p>;
+    return <p className="text-sm text-muted-foreground">No invoices yet.</p>;
   }
 
   return (

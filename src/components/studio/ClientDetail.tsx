@@ -61,30 +61,28 @@ export function ClientDetail({
           title={client.company_name}
           lede={[client.email, client.phone].filter(Boolean).join(" · ")}
           action={
-            <Button asChild variant="brand">
+            <Button asChild>
               <Link href={`/admin/clients/${client.id}/edit`}>Edit client</Link>
             </Button>
           }
         />
       </div>
 
-      <div className="mt-10 grid items-start gap-6 lg:grid-cols-[1.35fr_0.85fr]">
-        <Card className="border-0 bg-forest text-white shadow-none">
-          <CardContent className="p-8 sm:p-10">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-sm text-white/60">Current plan</p>
-              <StatusBadge status={client.status} />
+      <div className="mt-8 grid items-start gap-4 lg:grid-cols-[1.35fr_0.85fr]">
+        <Card>
+          <CardHeader className="flex-row items-start justify-between space-y-0">
+            <div className="space-y-1.5">
+              <CardDescription>Current plan</CardDescription>
+              <CardTitle className="text-2xl">{client.plan_name}</CardTitle>
             </div>
-            <h2 className="mt-4 font-display text-[40px] uppercase leading-[0.95] tracking-[-0.02em] sm:text-[52px]">
-              {client.plan_name}
-            </h2>
-            <p className="mt-5 flex items-baseline gap-2">
-              <span className="font-display text-[32px] leading-none text-neon">
-                {formatUsd(client.monthly_amount)}
-              </span>
-              <span className="text-base text-white/60">/ month</span>
+            <StatusBadge status={client.status} />
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-semibold tracking-tight">
+              {formatUsd(client.monthly_amount)}
+              <span className="ml-1 text-sm font-normal text-muted-foreground">/ month</span>
             </p>
-            <p className="mt-4 text-sm text-white/70">
+            <p className="mt-2 text-sm text-muted-foreground">
               {client.started_on ? `Started ${formatDate(client.started_on)}` : "Start date not set"}
             </p>
           </CardContent>
@@ -105,6 +103,57 @@ export function ClientDetail({
               login={login}
               defaultEmail={client.email}
             />
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="mt-4 grid items-start gap-4 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Contact methods</CardTitle>
+            <CardDescription>Company emails and phones.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {(client.contacts ?? []).length === 0 ? (
+              <p className="text-sm text-muted-foreground">No contact methods yet.</p>
+            ) : (
+              (client.contacts ?? []).map((contact) => (
+                <div key={contact.id} className="flex items-baseline justify-between gap-3 text-sm">
+                  <div>
+                    <p className="font-medium">{contact.value}</p>
+                    <p className="text-muted-foreground">
+                      {[contact.kind === "email" ? "Email" : "Phone", contact.label]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">People</CardTitle>
+            <CardDescription>Named contacts at this company.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {(client.people ?? []).length === 0 ? (
+              <p className="text-sm text-muted-foreground">No people yet.</p>
+            ) : (
+              (client.people ?? []).map((person) => (
+                <div key={person.id} className="text-sm">
+                  <p className="font-medium">
+                    {person.name}
+                    <span className="ml-2 font-normal text-muted-foreground">{person.role}</span>
+                  </p>
+                  <p className="text-muted-foreground">
+                    {[person.email, person.phone].filter(Boolean).join(" · ") || "No email or phone"}
+                  </p>
+                </div>
+              ))
+            )}
           </CardContent>
         </Card>
       </div>
@@ -154,7 +203,7 @@ export function ClientDetail({
         lede="Manual payment records plus Mercado Pago charges from invoices."
       >
         {payments.length === 0 ? (
-          <p className="text-base text-body">No payments yet.</p>
+          <p className="text-sm text-muted-foreground">No payments yet.</p>
         ) : (
           <Card>
             <CardContent className="divide-y divide-border p-0">
@@ -174,7 +223,7 @@ export function ClientDetail({
                       {payment.reference ? ` · ${payment.reference}` : ""}
                     </p>
                     {payment.notes ? (
-                      <p className="mt-2 text-sm leading-relaxed text-body">{payment.notes}</p>
+                      <p className="mt-2 text-sm text-muted-foreground">{payment.notes}</p>
                     ) : null}
                   </div>
                   <div className="flex items-center gap-4">
@@ -209,7 +258,7 @@ export function ClientDetail({
         lede="Published reports show up in the client portal. Drafts stay here."
       >
         {reports.length === 0 ? (
-          <p className="text-base text-body">No reports yet.</p>
+          <p className="text-sm text-muted-foreground">No reports yet.</p>
         ) : (
           <Card>
             <CardContent className="divide-y divide-border p-0">

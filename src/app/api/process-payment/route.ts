@@ -2,16 +2,15 @@ import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { notifyPaidOrder } from "@/server/billing/notify";
 import { createCardOrder } from "@/server/billing/orders";
-import { readServerPayer } from "@/server/billing/payer";
+import { resolvePayer } from "@/server/billing/payer";
 import { formatUsd, getCheckoutPlan } from "@/server/billing/plans";
 
 export const dynamic = "force-dynamic";
 
 /**
- * Later card form: mount secure fields for card number, expiration, and
- * security code only, then POST { planId, token, paymentMethodId }.
- * The USD amount comes from the server catalog. Email and RFC/CURP come
- * from MP_PAYER_* env vars, not from the browser.
+ * Card form: POST { planId, token, paymentMethodId } plus optional payer
+ * email / RFC|CURP. Amount comes from the server catalog. If payer fields
+ * are omitted, MP_PAYER_* env vars are used.
  */
 const UUID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -51,9 +50,13 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const payer = readServerPayer();
+  const payer = resolvePayer({
+    email: record.email,
+    identificationType: record.identificationType,
+    identificationNumber: record.identificationNumber,
+  });
   if (!payer.ok) {
-    return NextResponse.json({ ok: false, status: "error", message: payer.message }, { status: 500 });
+    return NextResponse.json({ ok: false, status: "error", message: payer.message }, { status: 400 });
   }
 
   const idempotencyKey =

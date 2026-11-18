@@ -24,23 +24,18 @@ export default async function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-dvh flex-col bg-background px-6 py-8">
+    <main className="studio-app flex min-h-dvh flex-col bg-background px-6 py-8 text-foreground">
       <Link href="/" className="flex items-center gap-2.5 text-foreground">
-        <LogoMark className="h-8 w-8" tone="ink" />
-        <span className="text-xl font-bold tracking-tight">
-          {brand.shortName}
-          <span className="text-leaf">.</span>
-        </span>
+        <LogoMark className="h-7 w-7" tone="ink" />
+        <span className="text-lg font-semibold tracking-tight">{brand.shortName}</span>
       </Link>
-      <div className="mx-auto flex w-full max-w-[440px] flex-1 flex-col justify-center py-16">
+      <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center py-16">
         {!isSupabaseConfigured() ? <Blocked session={{ kind: "unconfigured" }} /> : null}
-        <Card className={!isSupabaseConfigured() ? "mt-10" : undefined}>
+        <Card className={!isSupabaseConfigured() ? "mt-8" : undefined}>
           <CardHeader>
-            <p className="text-sm font-medium text-muted-foreground">Client portal</p>
-            <CardTitle className="font-display text-[44px] uppercase leading-none tracking-[-0.02em]">
-              Sign in
-            </CardTitle>
-            <CardDescription className="text-base text-body">
+            <CardDescription>Client portal</CardDescription>
+            <CardTitle className="text-2xl">Sign in</CardTitle>
+            <CardDescription>
               Payments, your current plan, and every report we file.
             </CardDescription>
           </CardHeader>

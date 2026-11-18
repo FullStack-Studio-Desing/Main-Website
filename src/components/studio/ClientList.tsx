@@ -21,12 +21,14 @@ export function ClientStats({ stats }: { stats: DirectoryStats }) {
   ];
 
   return (
-    <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {items.map((item) => (
         <Card key={item.label}>
-          <CardContent className="p-5">
+          <CardContent className="p-6">
             <p className="text-sm text-muted-foreground">{item.label}</p>
-            <p className="mt-1 text-lg font-medium text-foreground">{item.value}</p>
+            <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
+              {item.value}
+            </p>
           </CardContent>
         </Card>
       ))}
@@ -37,14 +39,14 @@ export function ClientStats({ stats }: { stats: DirectoryStats }) {
 export function ClientList({ clients }: { clients: ClientListItem[] }) {
   if (clients.length === 0) {
     return (
-      <p className="mt-12 max-w-[46ch] text-base leading-relaxed text-body">
+      <p className="mt-8 max-w-md text-sm text-muted-foreground">
         No clients yet. Add the first company, then create their portal login from the client page.
       </p>
     );
   }
 
   return (
-    <Card className="mt-10 overflow-hidden">
+    <Card className="mt-6 overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
