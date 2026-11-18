@@ -147,29 +147,35 @@ export function ServicesIndex() {
         </div>
       </section>
 
-      <section className="bg-paper py-16 lg:py-20">
-        <div className="mx-auto grid max-w-[1536px] grid-cols-1 gap-0 border-y border-rule px-6 sm:px-10 lg:grid-cols-3">
+      <section className="bg-paper" aria-label="Build, grow, automate">
+        <ol className="mx-auto max-w-[1536px] list-none border-y border-rule px-0">
           {pillars.map((pillar, i) => (
-            <motion.div
+            <motion.li
               key={pillar.title}
-              initial={reduce ? false : { opacity: 0, y: 16 }}
+              initial={reduce ? false : { opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.5 }}
-              transition={{ duration: 0.45, delay: i * 0.06, ease: easeOut }}
-              className="border-b border-rule py-8 lg:border-b-0 lg:border-r lg:px-8 lg:py-10 lg:first:pl-0 lg:last:border-r-0 lg:last:pr-0"
+              viewport={{ once: true, amount: 0.45 }}
+              transition={{ duration: 0.55, delay: i * 0.07, ease: easeOut }}
+              className="group relative border-b border-rule last:border-b-0"
             >
-              <p className="font-mono text-sm tracking-[0.08em] text-neon-active">
-                {String(i + 1).padStart(2, "0")}
-              </p>
-              <h2 className="mt-3 font-display text-[28px] uppercase leading-[0.95] tracking-[-0.01em] text-ink sm:text-[32px]">
-                {pillar.title}
-              </h2>
-              <p className="mt-3 max-w-[320px] text-base leading-relaxed text-body">
-                {pillar.detail}
-              </p>
-            </motion.div>
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-y-0 left-0 w-[3px] origin-top scale-y-0 bg-neon transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-y-100"
+              />
+              <div className="grid grid-cols-1 gap-3 px-6 py-10 sm:px-10 sm:py-12 md:grid-cols-[64px_auto_minmax(0,1fr)] md:items-baseline md:gap-6 lg:grid-cols-[80px_auto_minmax(0,1fr)] lg:gap-10 lg:px-10 lg:py-14">
+                <p className="font-mono text-sm tracking-[0.12em] text-neon-active md:text-base">
+                  {String(i + 1).padStart(2, "0")}
+                </p>
+                <h2 className="font-display text-[40px] uppercase leading-[0.88] tracking-[-0.02em] text-ink transition-colors duration-300 group-hover:text-moss sm:text-[48px] lg:text-[64px] lg:leading-[0.85]">
+                  {pillar.title}
+                </h2>
+                <p className="max-w-[420px] text-base font-medium leading-snug text-body sm:text-lg md:max-w-[380px] md:justify-self-end md:text-right lg:max-w-[440px] lg:text-[19px] lg:leading-snug">
+                  {pillar.detail}
+                </p>
+              </div>
+            </motion.li>
           ))}
-        </div>
+        </ol>
       </section>
 
       <section className="bg-white py-16 lg:py-24">
