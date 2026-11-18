@@ -23,8 +23,8 @@ export default function CheckoutPage() {
             <CardDescription>Mercado Pago · test only</CardDescription>
             <CardTitle className="text-2xl">Card payment</CardTitle>
             <CardDescription>
-              Uses your test Public Key / Access Token. Pay with a Mercado Pago test card
-              and a test buyer account when prompted.
+              Email + card only (no RFC). Uses your test Public Key / Access Token and a
+              Mercado Pago test card.
             </CardDescription>
           </CardHeader>
           <CardContent>

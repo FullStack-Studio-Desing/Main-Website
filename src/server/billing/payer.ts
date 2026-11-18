@@ -26,9 +26,8 @@ export function resolvePayer(input?: {
 }
 
 /**
- * Marketing/card checkout only needs a payer email. RFC/CURP are optional
- * and skipped for US clients. Email lives in MP_PAYER_EMAIL until a real
- * customer record exists.
+ * Fallback when the request omits email (legacy / server-only callers).
+ * Prefer collecting email on the checkout form. RFC/CURP stay optional.
  */
 export function readServerPayer(): PayerResult {
   return normalizePayer(
@@ -38,7 +37,7 @@ export function readServerPayer(): PayerResult {
       identificationNumber: process.env.MP_PAYER_ID_NUMBER,
     },
     {
-      email: "Set MP_PAYER_EMAIL before charging. The card form does not collect email.",
+      email: "Enter a payer email (or set MP_PAYER_EMAIL).",
     }
   );
 }
