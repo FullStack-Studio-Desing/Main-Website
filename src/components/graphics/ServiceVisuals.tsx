@@ -10,9 +10,9 @@ import { mediaUrl } from "@/lib/media";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
-/** Desktop/widgets 1–7 map to services in site-copy order; 8 reserved. */
+/** Desktop/widgets 2–8 map to services in site-copy order; skip #1. */
 const serviceWidgetIndex: Record<ServiceSlug, number> = Object.fromEntries(
-  services.map((service, i) => [service.slug, i + 1]),
+  services.map((service, i) => [service.slug, i + 2]),
 ) as Record<ServiceSlug, number>;
 
 function widgetSrc(slug: ServiceSlug) {
