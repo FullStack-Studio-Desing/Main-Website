@@ -24,6 +24,28 @@
   --color-rule: #d9deca;
   --color-fog: #dcdfe3;
   --color-input-edge: #dde1e7;
+
+  /* shadcn tokens — brand-mapped (admin / portal) */
+  --background: 75 33% 94%; /* paper */
+  --foreground: 128 24% 20%; /* ink */
+  --card: 0 0% 100%;
+  --card-foreground: 128 24% 20%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 128 24% 20%;
+  --primary: 128 36% 10%; /* forest */
+  --primary-foreground: 75 33% 94%;
+  --secondary: 90 40% 92%; /* mint-ish */
+  --secondary-foreground: 128 24% 20%;
+  --muted: 75 20% 90%;
+  --muted-foreground: 70 7% 48%; /* brand muted */
+  --accent: 90 40% 92%;
+  --accent-foreground: 128 24% 20%;
+  --destructive: 0 72% 45%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 75 18% 83%; /* rule */
+  --input: 220 14% 89%; /* input-edge */
+  --ring: 100 84% 59%; /* neon */
+  --radius: 0.5rem;
 }
 
 @layer base {
@@ -32,6 +54,10 @@
   ::before,
   ::after {
     --tw-ring-color: rgb(217 222 202 / 0.9);
+  }
+
+  * {
+    @apply border-border;
   }
 
   html {

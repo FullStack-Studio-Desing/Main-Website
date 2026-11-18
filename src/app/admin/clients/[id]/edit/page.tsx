@@ -57,7 +57,7 @@ export default async function EditClientPage({ params }: Props) {
           <div className="mt-12 border-t border-rule pt-8">
             <ConfirmForm
               action={deleteClient.bind(null, client.id)}
-              message={`Delete ${client.company_name} and all of their payments and reports? This cannot be undone.`}
+              message={`Delete ${client.company_name} and all of their projects, payments, and reports? This cannot be undone.`}
               label="Delete client"
             />
           </div>

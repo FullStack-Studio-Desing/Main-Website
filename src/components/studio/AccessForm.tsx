@@ -3,7 +3,8 @@
 import { useActionState } from "react";
 import type { ActionState, PortalLogin } from "@/lib/portal/types";
 import { SubmitButton } from "@/components/studio/SubmitButton";
-import { Alert, Field, fieldClass } from "@/components/studio/ui";
+import { Alert, Field } from "@/components/studio/ui";
+import { Input } from "@/components/ui/input";
 
 export function AccessForm({
   action,
@@ -21,37 +22,33 @@ export function AccessForm({
       {state?.error ? <Alert tone="error">{state.error}</Alert> : null}
       {state?.notice ? <Alert tone="notice">{state.notice}</Alert> : null}
       {state?.password ? (
-        <p className="select-all break-all rounded-md bg-white px-3 py-3 font-mono text-sm text-ink">
+        <p className="select-all break-all rounded-md border border-border bg-muted px-3 py-3 font-mono text-sm text-foreground">
           {state.password}
         </p>
       ) : null}
       <Field label="Login email">
-        <input
+        <Input
           name="email"
           type="email"
           required
           readOnly={Boolean(login)}
           defaultValue={login?.email ?? defaultEmail}
-          className={fieldClass}
         />
       </Field>
       <Field
         label="Password"
         hint={login ? "Leave this blank to generate a new one." : "Leave this blank to generate a temporary password."}
       >
-        <input
+        <Input
           name="password"
           type="text"
           autoComplete="off"
           autoCapitalize="off"
           spellCheck={false}
           maxLength={72}
-          className={fieldClass}
         />
       </Field>
-      <SubmitButton pendingLabel="Saving">
-        {login ? "Update password" : "Create login"}
-      </SubmitButton>
+      <SubmitButton pendingLabel="Saving">{login ? "Update password" : "Create login"}</SubmitButton>
     </form>
   );
 }

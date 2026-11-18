@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
-import { Inter, Lilita_One } from "next/font/google";
+import { Lilita_One, Geist } from "next/font/google";
 import "./globals.css";
+import { cn } from "@/lib/utils";
 
 /* Aeonik substitute per the brand guide */
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-sans",
-});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 /* Ozik substitute: heavy condensed display, used uppercase only */
 const lilita = Lilita_One({
@@ -29,10 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${inter.variable} ${lilita.variable}`}
-    >
+    <html lang="en" className={cn(lilita.variable, "font-sans", geist.variable)}>
       <body className="antialiased">{children}</body>
     </html>
   );

@@ -1,8 +1,11 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { LogoMark } from "@/components/LogoMark";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { brand } from "@/data/site-copy";
 import { signOut } from "@/lib/portal/actions";
+import { cn } from "@/lib/utils";
 
 export function StudioShell({
   homeHref,
@@ -20,8 +23,8 @@ export function StudioShell({
   children: ReactNode;
 }) {
   return (
-    <div className="flex h-dvh overflow-hidden bg-paper text-body">
-      <aside className="hidden h-full w-[260px] shrink-0 flex-col justify-between bg-forest px-6 py-8 lg:flex">
+    <div className="flex h-dvh overflow-hidden bg-background text-foreground">
+      <aside className="hidden h-full w-[260px] shrink-0 flex-col justify-between bg-primary px-6 py-8 text-primary-foreground lg:flex">
         <div>
           <BrandLockup href={homeHref} />
           {preview ? (
@@ -32,14 +35,19 @@ export function StudioShell({
           <nav className="mt-10 flex flex-col gap-1">
             {nav.map((item) => {
               const active =
-                pathname === item.href || pathname.startsWith(`${item.href}/`);
+                item.href === "/admin" || item.href === "/portal"
+                  ? pathname === item.href
+                  : pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`rounded-action px-3 py-2 text-base font-medium transition-colors duration-200 ${
-                    active ? "bg-white/10 text-white" : "text-white/70 hover:text-white"
-                  }`}
+                  className={cn(
+                    "rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                    active
+                      ? "bg-white/10 text-white"
+                      : "text-white/70 hover:bg-white/5 hover:text-white"
+                  )}
                 >
                   {item.label}
                 </Link>
@@ -51,9 +59,9 @@ export function StudioShell({
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
-        <div className="sticky top-0 z-20 flex items-center justify-between gap-4 bg-forest px-5 py-4 text-white lg:hidden">
+        <div className="sticky top-0 z-20 flex items-center justify-between gap-4 bg-primary px-5 py-4 text-primary-foreground lg:hidden">
           <BrandLockup href={homeHref} compact />
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {nav.map((item) => (
               <Link key={item.href} href={item.href} className="text-sm font-medium text-white/85">
                 {item.label}
@@ -61,9 +69,9 @@ export function StudioShell({
             ))}
             {preview ? null : (
               <form action={signOut}>
-                <button type="submit" className="text-sm font-medium text-white/70">
+                <Button type="submit" variant="ghost" size="sm" className="text-white/70 hover:bg-white/10 hover:text-white">
                   Sign out
-                </button>
+                </Button>
               </form>
             )}
           </div>
@@ -92,21 +100,21 @@ function AccountFooter({ email, preview }: { email?: string; preview: boolean })
   return (
     <div>
       {email ? <p className="break-all text-xs leading-relaxed text-white/50">{email}</p> : null}
+      <Separator className="my-4 bg-white/10" />
       {preview ? (
-        <Link
-          href="/"
-          className="mt-4 inline-block text-sm font-medium text-white/70 transition-colors duration-200 hover:text-neon"
-        >
-          View site
-        </Link>
+        <Button asChild variant="link" className="h-auto p-0 text-white/70 hover:text-neon">
+          <Link href="/">View site</Link>
+        </Button>
       ) : (
-        <form action={signOut} className="mt-4">
-          <button
+        <form action={signOut}>
+          <Button
             type="submit"
-            className="text-sm font-medium text-white/70 transition-colors duration-200 hover:text-neon"
+            variant="ghost"
+            size="sm"
+            className="h-auto px-0 text-white/70 hover:bg-transparent hover:text-neon"
           >
             Sign out
-          </button>
+          </Button>
         </form>
       )}
     </div>

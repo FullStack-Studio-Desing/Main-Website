@@ -1,7 +1,10 @@
 import type {
   ClientRecord,
+  InvoiceRecord,
+  PaymentMethodRecord,
   PaymentRecord,
   PortalLogin,
+  ProjectRecord,
   ReportRecord,
 } from "@/lib/portal/types";
 
@@ -22,6 +25,9 @@ const northwind: ClientRecord = {
   currency: "USD",
   billing_notes: "Media spend is billed by the ad platforms. Strategy call on the first Tuesday.",
   started_on: "2026-09-01",
+  mp_customer_id: null,
+  tax_id_type: null,
+  tax_id_number: null,
   created_at: "2026-09-01T15:00:00.000Z",
   updated_at: "2026-11-10T15:00:00.000Z",
 };
@@ -39,6 +45,9 @@ const bright: ClientRecord = {
   currency: "USD",
   billing_notes: null,
   started_on: "2026-07-15",
+  mp_customer_id: null,
+  tax_id_type: null,
+  tax_id_number: null,
   created_at: "2026-07-15T15:00:00.000Z",
   updated_at: "2026-10-01T15:00:00.000Z",
 };
@@ -55,6 +64,8 @@ const payments: PaymentRecord[] = [
     method: "Card",
     reference: null,
     notes: "Invoice sent Nov 1.",
+    invoice_id: null,
+    mp_order_id: null,
     created_at: "2026-11-01T15:00:00.000Z",
   },
   {
@@ -68,7 +79,66 @@ const payments: PaymentRecord[] = [
     method: "Card",
     reference: "MP-10442",
     notes: null,
+    invoice_id: null,
+    mp_order_id: null,
     created_at: "2026-10-02T15:00:00.000Z",
+  },
+];
+
+const invoices: InvoiceRecord[] = [
+  {
+    id: "sample-invoice-nov",
+    client_id: northwind.id,
+    payment_method_id: null,
+    payment_id: null,
+    number: "INV-20261101-SAMPLE",
+    title: "November retainer",
+    description: null,
+    amount: 1500,
+    currency: "USD",
+    billing_type: "recurring",
+    status: "sent",
+    period_label: "November 2026",
+    due_on: "2026-11-05",
+    next_charge_on: "2026-12-01",
+    mp_order_id: null,
+    sent_at: "2026-11-01T15:00:00.000Z",
+    paid_at: null,
+    created_at: "2026-11-01T15:00:00.000Z",
+    updated_at: "2026-11-01T15:00:00.000Z",
+  },
+];
+
+const paymentMethods: PaymentMethodRecord[] = [];
+
+const projects: ProjectRecord[] = [
+  {
+    id: "sample-project-site",
+    client_id: northwind.id,
+    name: "Website rebuild",
+    description: "Marketing site + lead forms for the repair funnel.",
+    status: "active",
+    started_on: "2026-09-15",
+    due_on: "2026-12-01",
+    budget: 12000,
+    currency: "USD",
+    notes: "Phase 2 is the booking flow.",
+    created_at: "2026-09-15T15:00:00.000Z",
+    updated_at: "2026-11-10T15:00:00.000Z",
+  },
+  {
+    id: "sample-project-ads",
+    client_id: northwind.id,
+    name: "Paid search retainer",
+    description: "Ongoing Google Ads management.",
+    status: "planning",
+    started_on: "2026-11-01",
+    due_on: null,
+    budget: 1500,
+    currency: "USD",
+    notes: null,
+    created_at: "2026-11-01T15:00:00.000Z",
+    updated_at: "2026-11-01T15:00:00.000Z",
   },
 ];
 
@@ -146,9 +216,33 @@ export function sampleDirectory() {
       active: 1,
       collected: 1500,
       reports: 2,
+      projects: 2,
       monthLabel: "November",
     },
   };
+}
+
+export function samplePayments() {
+  return payments.map((payment) => ({
+    ...payment,
+    company_name:
+      payment.client_id === northwind.id ? northwind.company_name : bright.company_name,
+  }));
+}
+
+export function sampleProjects() {
+  return projects.map((project) => ({
+    ...project,
+    company_name:
+      project.client_id === northwind.id ? northwind.company_name : bright.company_name,
+  }));
+}
+
+export function sampleClientOptions() {
+  return [
+    { id: northwind.id, company_name: northwind.company_name },
+    { id: bright.id, company_name: bright.company_name },
+  ];
 }
 
 export function sampleBundle(id: string) {
@@ -157,9 +251,25 @@ export function sampleBundle(id: string) {
   return {
     client,
     payments: payments.filter((payment) => payment.client_id === client.id),
+    projects: projects.filter((project) => project.client_id === client.id),
     reports: reports.filter((report) => report.client_id === client.id),
+    invoices: invoices.filter((invoice) => invoice.client_id === client.id),
+    paymentMethods,
     login: client.id === northwind.id ? login : null,
   };
+}
+
+export function sampleInvoices() {
+  return invoices.map((invoice) => ({
+    ...invoice,
+    company_name: northwind.company_name,
+  }));
+}
+
+export function sampleProject(id: string) {
+  const project = projects.find((item) => item.id === id);
+  if (!project) return null;
+  return { project, client: northwind };
 }
 
 export function samplePortal() {
@@ -167,6 +277,8 @@ export function samplePortal() {
     client: northwind,
     payments,
     reports: reports.filter((report) => report.status === "published"),
+    invoices,
+    paymentMethods,
   };
 }
 

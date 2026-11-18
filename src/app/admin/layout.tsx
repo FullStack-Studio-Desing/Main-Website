@@ -4,11 +4,19 @@ import { StudioShell } from "@/components/studio/shell";
 import { requireAdmin } from "@/lib/portal/session";
 
 export const metadata: Metadata = {
-  title: "Clients · FullStack Studio",
+  title: "CRM · FullStack Studio",
   robots: { index: false, follow: false },
 };
 
 export const dynamic = "force-dynamic";
+
+const nav = [
+  { href: "/admin", label: "Overview" },
+  { href: "/admin/clients", label: "Clients" },
+  { href: "/admin/invoices", label: "Invoices" },
+  { href: "/admin/payments", label: "Payments" },
+  { href: "/admin/projects", label: "Projects" },
+];
 
 export default async function AdminLayout({
   children,
@@ -24,7 +32,7 @@ export default async function AdminLayout({
       pathname={pathname}
       email={session.kind === "ready" ? session.email : undefined}
       preview={session.kind === "unconfigured"}
-      nav={[{ href: "/admin", label: "Clients" }]}
+      nav={nav}
     >
       {children}
     </StudioShell>

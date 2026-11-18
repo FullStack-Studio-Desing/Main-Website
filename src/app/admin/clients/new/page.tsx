@@ -25,7 +25,7 @@ export default async function NewClientPage() {
         </>
       ) : null}
       <div className={session.kind === "unconfigured" ? "mt-12" : undefined}>
-        <BackLink href="/admin">← Clients</BackLink>
+        <BackLink href="/admin/clients">← Clients</BackLink>
         <div className="mt-6">
           <PageIntro
             eyebrow="Studio"

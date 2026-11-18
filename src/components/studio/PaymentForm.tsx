@@ -4,7 +4,11 @@ import { useActionState } from "react";
 import { paymentMethods } from "@/lib/portal/plans";
 import type { ActionState, PaymentStatus } from "@/lib/portal/types";
 import { SubmitButton } from "@/components/studio/SubmitButton";
-import { Alert, Field, areaClass, fieldClass } from "@/components/studio/ui";
+import { Alert, Field } from "@/components/studio/ui";
+import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
+import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 
 const statuses: { value: PaymentStatus; label: string }[] = [
   { value: "paid", label: "Paid" },
@@ -21,50 +25,46 @@ export function PaymentForm({
   const [state, formAction] = useActionState(action, null);
 
   return (
-    <form action={formAction} className="mt-8 grid gap-5 border-t border-rule pt-8 sm:grid-cols-2">
+    <form action={formAction} className="mt-8 grid gap-5 sm:grid-cols-2">
+      <Separator className="sm:col-span-2" />
       {state?.error ? (
         <div className="sm:col-span-2">
           <Alert tone="error">{state.error}</Alert>
         </div>
       ) : null}
       <Field label="Amount">
-        <input name="amount" type="number" min={0.01} step="0.01" required className={fieldClass} />
+        <Input name="amount" type="number" min={0.01} step="0.01" required />
       </Field>
       <Field label="Status">
-        <select name="status" defaultValue="paid" className={fieldClass}>
+        <NativeSelect name="status" defaultValue="paid">
           {statuses.map((status) => (
             <option key={status.value} value={status.value}>
               {status.label}
             </option>
           ))}
-        </select>
+        </NativeSelect>
       </Field>
       <Field label="Date" hint="Paid payments without a date use today.">
-        <input name="paid_on" type="date" className={fieldClass} />
+        <Input name="paid_on" type="date" />
       </Field>
       <Field label="Period">
-        <input
-          name="period_label"
-          maxLength={80}
-          placeholder="November 2026"
-          className={fieldClass}
-        />
+        <Input name="period_label" maxLength={80} placeholder="November 2026" />
       </Field>
       <Field label="Method">
-        <select name="method" defaultValue="Card" className={fieldClass}>
+        <NativeSelect name="method" defaultValue="Card">
           <option value="">Not specified</option>
           {paymentMethods.map((method) => (
             <option key={method} value={method}>
               {method}
             </option>
           ))}
-        </select>
+        </NativeSelect>
       </Field>
       <Field label="Reference">
-        <input name="reference" maxLength={120} placeholder="Receipt or payment id" className={fieldClass} />
+        <Input name="reference" maxLength={120} placeholder="Receipt or payment id" />
       </Field>
       <Field label="Notes" hint="The client sees this." className="sm:col-span-2">
-        <textarea name="notes" maxLength={4000} className={areaClass} />
+        <Textarea name="notes" maxLength={4000} />
       </Field>
       <div className="sm:col-span-2">
         <SubmitButton pendingLabel="Saving">Add payment</SubmitButton>

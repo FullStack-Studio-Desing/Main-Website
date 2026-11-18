@@ -4,7 +4,10 @@ import { useActionState, useState } from "react";
 import type { ActionState, ClientRecord, ClientStatus, PlanId } from "@/lib/portal/types";
 import { portalPlans } from "@/lib/portal/plans";
 import { SubmitButton } from "@/components/studio/SubmitButton";
-import { Alert, Field, areaClass, fieldClass } from "@/components/studio/ui";
+import { Alert, Field } from "@/components/studio/ui";
+import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
+import { Textarea } from "@/components/ui/textarea";
 
 const statuses: { value: ClientStatus; label: string }[] = [
   { value: "active", label: "Active" },
@@ -42,57 +45,31 @@ export function ClientForm({
         </div>
       ) : null}
       <Field label="Company">
-        <input
-          name="company_name"
-          required
-          maxLength={120}
-          defaultValue={client?.company_name ?? ""}
-          className={fieldClass}
-        />
+        <Input name="company_name" required maxLength={120} defaultValue={client?.company_name ?? ""} />
       </Field>
       <Field label="Contact name">
-        <input
-          name="contact_name"
-          required
-          maxLength={120}
-          defaultValue={client?.contact_name ?? ""}
-          className={fieldClass}
-        />
+        <Input name="contact_name" required maxLength={120} defaultValue={client?.contact_name ?? ""} />
       </Field>
       <Field label="Email">
-        <input
-          name="email"
-          type="email"
-          required
-          autoComplete="off"
-          defaultValue={client?.email ?? ""}
-          className={fieldClass}
-        />
+        <Input name="email" type="email" required autoComplete="off" defaultValue={client?.email ?? ""} />
       </Field>
       <Field label="Phone">
-        <input
-          name="phone"
-          maxLength={40}
-          autoComplete="off"
-          defaultValue={client?.phone ?? ""}
-          className={fieldClass}
-        />
+        <Input name="phone" maxLength={40} autoComplete="off" defaultValue={client?.phone ?? ""} />
       </Field>
       <Field label="Status">
-        <select name="status" defaultValue={client?.status ?? "active"} className={fieldClass}>
+        <NativeSelect name="status" defaultValue={client?.status ?? "active"}>
           {statuses.map((status) => (
             <option key={status.value} value={status.value}>
               {status.label}
             </option>
           ))}
-        </select>
+        </NativeSelect>
       </Field>
       <Field label="Plan">
-        <select
+        <NativeSelect
           name="plan_id"
           value={planId}
           onChange={(event) => onPlan(event.target.value as PlanId)}
-          className={fieldClass}
         >
           {portalPlans.map((plan) => (
             <option key={plan.id} value={plan.id}>
@@ -100,20 +77,19 @@ export function ClientForm({
               {plan.amount > 0 ? ` · $${plan.amount.toLocaleString("en-US")}` : ""}
             </option>
           ))}
-        </select>
+        </NativeSelect>
       </Field>
       <Field label="Plan name" hint="This is the name the client sees on their plan.">
-        <input
+        <Input
           name="plan_name"
           required
           maxLength={80}
           value={planName}
           onChange={(event) => setPlanName(event.target.value)}
-          className={fieldClass}
         />
       </Field>
       <Field label="Monthly amount">
-        <input
+        <Input
           name="monthly_amount"
           type="number"
           min={0}
@@ -121,28 +97,28 @@ export function ClientForm({
           required
           value={amount}
           onChange={(event) => setAmount(event.target.value)}
-          className={fieldClass}
         />
       </Field>
       <Field label="Started">
-        <input
-          name="started_on"
-          type="date"
-          defaultValue={client?.started_on ?? ""}
-          className={fieldClass}
+        <Input name="started_on" type="date" defaultValue={client?.started_on ?? ""} />
+      </Field>
+      <Field label="Tax ID type" hint="Used for Mercado Pago card-on-file charges.">
+        <NativeSelect name="tax_id_type" defaultValue={client?.tax_id_type ?? ""}>
+          <option value="">Not set</option>
+          <option value="RFC">RFC</option>
+          <option value="CURP">CURP</option>
+        </NativeSelect>
+      </Field>
+      <Field label="RFC / CURP">
+        <Input
+          name="tax_id_number"
+          maxLength={40}
+          defaultValue={client?.tax_id_number ?? ""}
+          autoComplete="off"
         />
       </Field>
-      <Field
-        label="Notes"
-        hint="Only the studio sees this."
-        className="sm:col-span-2"
-      >
-        <textarea
-          name="billing_notes"
-          maxLength={4000}
-          defaultValue={client?.billing_notes ?? ""}
-          className={areaClass}
-        />
+      <Field label="Notes" hint="Only the studio sees this." className="sm:col-span-2">
+        <Textarea name="billing_notes" maxLength={4000} defaultValue={client?.billing_notes ?? ""} />
       </Field>
       <div className="sm:col-span-2">
         <SubmitButton pendingLabel="Saving">{submitLabel}</SubmitButton>

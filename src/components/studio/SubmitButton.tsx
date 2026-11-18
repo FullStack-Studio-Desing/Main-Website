@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormStatus } from "react-dom";
-import { btnInverse } from "@/components/buttons";
+import { Button } from "@/components/ui/button";
 
 export function SubmitButton({
   children,
@@ -14,12 +14,8 @@ export function SubmitButton({
 }) {
   const { pending } = useFormStatus();
   return (
-    <button
-      type="submit"
-      disabled={pending}
-      className={`${btnInverse} disabled:opacity-60 ${className ?? ""}`}
-    >
+    <Button type="submit" variant="brand" disabled={pending} className={className}>
       {pending ? pendingLabel : children}
-    </button>
+    </Button>
   );
 }

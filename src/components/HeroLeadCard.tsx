@@ -508,7 +508,7 @@ export function HeroLeadCard() {
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-white hover:text-ink"
+            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-soft transition-colors hover:bg-white hover:text-ink"
             aria-label="Close chat"
           >
             <X size={18} weight="bold" />
@@ -543,9 +543,9 @@ export function HeroLeadCard() {
             <div className="flex max-w-[88%] items-end gap-2">
               <AgentAvatar agent={agent} size="sm" />
               <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-md bg-paper px-3.5 py-3">
-                <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-muted" />
-                <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-muted [animation-delay:180ms]" />
-                <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-muted [animation-delay:360ms]" />
+                <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-soft" />
+                <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-soft [animation-delay:180ms]" />
+                <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-soft [animation-delay:360ms]" />
               </div>
             </div>
           )}
@@ -590,7 +590,7 @@ export function HeroLeadCard() {
                     }
                   }}
                   placeholder={placeholder}
-                  className="max-h-24 min-h-[48px] flex-1 resize-none rounded-2xl border border-input-edge bg-paper px-4 py-3 text-base text-ink placeholder:text-muted outline-none transition-colors focus:border-leaf disabled:opacity-60"
+                  className="max-h-24 min-h-[48px] flex-1 resize-none rounded-2xl border border-input-edge bg-paper px-4 py-3 text-base text-ink placeholder:text-soft outline-none transition-colors focus:border-leaf disabled:opacity-60"
                 />
               ) : (
                 <input
@@ -609,7 +609,7 @@ export function HeroLeadCard() {
                           : "off"
                   }
                   placeholder={placeholder}
-                  className="h-12 flex-1 rounded-full border border-input-edge bg-paper px-4 text-base text-ink placeholder:text-muted outline-none transition-colors focus:border-leaf disabled:opacity-60"
+                  className="h-12 flex-1 rounded-full border border-input-edge bg-paper px-4 text-base text-ink placeholder:text-soft outline-none transition-colors focus:border-leaf disabled:opacity-60"
                 />
               )}
 
@@ -641,7 +641,7 @@ export function HeroLeadCard() {
                 </button>
               )}
             </div>
-            <p className="mt-2 px-1 text-center text-xs text-muted">
+            <p className="mt-2 px-1 text-center text-xs text-soft">
               {copy.trust}
             </p>
           </form>
@@ -673,9 +673,9 @@ export function HeroLeadCard() {
             ))}
           {typing && messages.filter((m) => m.from === "agent").length === 0 && (
             <div className="pointer-events-none flex items-center gap-1.5 rounded-2xl rounded-br-md bg-white px-3.5 py-3 shadow-[0_8px_28px_rgba(18,35,20,0.18)] ring-1 ring-black/5">
-              <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-muted" />
-              <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-muted [animation-delay:180ms]" />
-              <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-muted [animation-delay:360ms]" />
+              <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-soft" />
+              <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-soft [animation-delay:180ms]" />
+              <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-soft [animation-delay:360ms]" />
             </div>
           )}
         </div>

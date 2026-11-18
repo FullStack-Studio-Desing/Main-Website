@@ -194,7 +194,7 @@ export function ServicesIndex() {
             <h2 className="mt-5 font-display text-[36px] uppercase leading-[0.95] tracking-[-0.0143em] text-ink sm:text-[48px] lg:text-[56px] lg:leading-[48px]">
               Pick the capability that moves the needle first
             </h2>
-            <p className="mt-5 max-w-[520px] text-lg font-medium leading-snug text-muted">
+            <p className="mt-5 max-w-[520px] text-lg font-medium leading-snug text-soft">
               Every page below is a full offer. Start where revenue is leaking,
               then stack the rest.
             </p>
@@ -235,7 +235,7 @@ export function ServicesIndex() {
                         <span className="text-lg tracking-[0.14em] text-neon-active sm:text-xl">
                           {String(i + 1).padStart(2, "0")}
                         </span>
-                        <span className="text-sm tracking-[0.12em] text-muted lg:mt-1">
+                        <span className="text-sm tracking-[0.12em] text-soft lg:mt-1">
                           / {indexTotal}
                         </span>
                       </div>
@@ -249,7 +249,7 @@ export function ServicesIndex() {
                               className="text-ink"
                             />
                           </span>
-                          <span className="text-xs font-medium uppercase tracking-[0.12em] text-muted sm:text-sm">
+                          <span className="text-xs font-medium uppercase tracking-[0.12em] text-soft sm:text-sm">
                             {service.category}
                           </span>
                         </div>

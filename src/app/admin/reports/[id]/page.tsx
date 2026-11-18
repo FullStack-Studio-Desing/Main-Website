@@ -50,7 +50,7 @@ export default async function EditReportPage({ params }: Props) {
       ) : null}
       <div className={session.kind === "unconfigured" ? "mt-12" : undefined}>
         <BackLink href={`/admin/clients/${client.id}`}>← {client.company_name}</BackLink>
-        <p className="mt-6 text-sm font-medium text-muted">Edit report</p>
+        <p className="mt-6 text-sm font-medium text-muted-foreground">Edit report</p>
         <div className="mt-6">
           <ReportForm
             key={report.updated_at}
@@ -69,7 +69,7 @@ export default async function EditReportPage({ params }: Props) {
           </div>
         ) : null}
         <div className="mt-16 border-t border-rule pt-12">
-          <p className="text-sm font-medium text-muted">
+          <p className="text-sm font-medium text-muted-foreground">
             {report.status === "published"
               ? "Saved version. This is what the client sees."
               : "Saved version. Clients cannot see this draft."}

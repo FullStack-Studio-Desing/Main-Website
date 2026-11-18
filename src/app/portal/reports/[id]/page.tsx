@@ -29,7 +29,7 @@ export default async function PortalReportPage({ params }: Props) {
           <PreviewNote />
           <div className="mt-12">
             <BackLink href="/portal">← Your plan</BackLink>
-            <p className="mt-6 text-sm font-medium text-muted">{sample.client.company_name}</p>
+            <p className="mt-6 text-sm font-medium text-muted-foreground">{sample.client.company_name}</p>
             <div className="mt-4">
               <ReportView report={sample.report} />
             </div>
@@ -49,7 +49,7 @@ export default async function PortalReportPage({ params }: Props) {
   return (
     <>
       <BackLink href="/portal">← Your plan</BackLink>
-      <p className="mt-6 text-sm font-medium text-muted">{result.data.client.company_name}</p>
+      <p className="mt-6 text-sm font-medium text-muted-foreground">{result.data.client.company_name}</p>
       <div className="mt-4">
         <ReportView report={result.data.report} />
       </div>
