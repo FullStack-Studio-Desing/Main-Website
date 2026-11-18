@@ -69,7 +69,7 @@ export function ServiceHeroVisual({
         tone="neon"
       />
 
-      <div className="relative overflow-hidden rounded-[28px] bg-white/5 p-5 ring-1 ring-white/12 backdrop-blur-xl sm:rounded-[32px] sm:p-6">
+      <div className="relative overflow-hidden rounded-[28px] bg-white/5 p-5 ring-1 ring-white/10 backdrop-blur-xl sm:rounded-[32px] sm:p-6">
         <div
           className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full opacity-50 blur-3xl"
           style={{
@@ -79,7 +79,7 @@ export function ServiceHeroVisual({
         />
 
         <div className="relative flex items-center justify-between gap-3">
-          <span className="inline-flex items-center gap-2 rounded-full bg-neon/15 px-3 py-1.5 text-xs font-medium uppercase tracking-[0.1em] text-neon ring-1 ring-neon/30">
+          <span className="inline-flex items-center gap-2 rounded-full bg-neon/15 px-3 py-1.5 text-xs font-medium uppercase tracking-[0.1em] text-neon ring-1 ring-[color-mix(in_srgb,var(--color-neon)_30%,transparent)]">
             {Glyph ? <Glyph size={14} weight="duotone" /> : null}
             {scene.label}
           </span>
@@ -96,7 +96,7 @@ export function ServiceHeroVisual({
                 initial={reduce ? false : { opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.45, delay: 0.28 + i * 0.07, ease }}
-                className="flex items-center gap-3 rounded-2xl bg-white/8 px-3.5 py-3 ring-1 ring-white/10"
+                className="flex items-center gap-3 rounded-2xl bg-white/10 px-3.5 py-3 ring-1 ring-white/10"
               >
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-neon/20 font-mono text-xs text-neon">
                   {String(i + 1).padStart(2, "0")}
@@ -116,7 +116,7 @@ export function ServiceHeroVisual({
                 "radial-gradient(circle at 30% 20%, #3e5b43 0%, #122314 62%)",
             }}
           >
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-neon/15 ring-1 ring-neon/35">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-neon/15 ring-1 ring-[color-mix(in_srgb,var(--color-neon)_35%,transparent)]">
               {Glyph ? (
                 <Glyph size={28} weight="duotone" className="text-neon" />
               ) : null}
@@ -176,10 +176,10 @@ export function ServicesIndexVisual({
               initial={reduce ? false : { opacity: 0, x: 18 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.22 + i * 0.06, ease }}
-              className="flex items-center gap-4 rounded-[22px] bg-white/8 px-4 py-3.5 ring-1 ring-white/12 backdrop-blur-md"
+              className="flex items-center gap-4 rounded-[22px] bg-white/10 px-4 py-3.5 ring-1 ring-white/10 backdrop-blur-md"
               style={{ marginLeft: `${(i % 3) * 12}px` }}
             >
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-neon/15 ring-1 ring-neon/30">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-neon/15 ring-1 ring-[color-mix(in_srgb,var(--color-neon)_30%,transparent)]">
                 {Glyph ? (
                   <Glyph size={26} weight="duotone" className="text-neon" />
                 ) : null}

@@ -72,7 +72,7 @@ function ServiceRail({
         href="/services"
         className={`shrink-0 rounded-full px-3.5 py-2 text-sm font-medium transition-colors duration-150 active:scale-[0.97] ${
           dark
-            ? "bg-white/10 text-fog ring-1 ring-white/15 hover:bg-white/15 hover:text-white"
+            ? "bg-white/10 text-fog ring-1 ring-white/10 hover:bg-white/15 hover:text-white"
             : "bg-white text-muted ring-1 ring-rule hover:text-ink"
         }`}
       >
@@ -89,7 +89,7 @@ function ServiceRail({
               active
                 ? "bg-neon text-ink"
                 : dark
-                  ? "bg-white/10 text-fog ring-1 ring-white/15 hover:bg-white/15 hover:text-white"
+                  ? "bg-white/10 text-fog ring-1 ring-white/10 hover:bg-white/15 hover:text-white"
                   : "bg-white text-muted ring-1 ring-rule hover:text-ink"
             }`}
           >
@@ -558,7 +558,7 @@ export function ServiceDetail({ service }: { service: Service }) {
                 >
                   <Link
                     href={`/services/${item.slug}`}
-                    className="group flex h-full flex-col rounded-[24px] bg-paper p-6 ring-1 ring-rule transition-all duration-200 hover:ring-moss/35 active:scale-[0.98]"
+                    className="group flex h-full flex-col rounded-[24px] bg-paper p-6 ring-1 ring-rule transition-all duration-200 hover:ring-[color-mix(in_srgb,var(--color-moss)_35%,transparent)] active:scale-[0.98]"
                   >
                     <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white ring-1 ring-rule transition-transform duration-200 group-hover:scale-[1.04]">
                       <Glyph size={26} weight="duotone" className="text-ink" />

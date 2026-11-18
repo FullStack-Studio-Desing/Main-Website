@@ -214,7 +214,7 @@ export function ServicesIndex() {
                 >
                   <Link
                     href={`/services/${service.slug}`}
-                    className={`group grid grid-cols-1 overflow-hidden rounded-[28px] bg-paper ring-1 ring-rule transition-all duration-200 hover:ring-moss/30 active:scale-[0.995] sm:rounded-[32px] lg:grid-cols-[1.15fr_0.85fr] ${
+                    className={`group grid grid-cols-1 overflow-hidden rounded-[28px] bg-paper ring-1 ring-rule transition-all duration-200 hover:ring-[color-mix(in_srgb,var(--color-moss)_30%,transparent)] active:scale-[0.995] sm:rounded-[32px] lg:grid-cols-[1.15fr_0.85fr] ${
                       flip ? "lg:[&>*:first-child]:order-2" : ""
                     }`}
                   >

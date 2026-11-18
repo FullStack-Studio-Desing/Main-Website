@@ -27,6 +27,13 @@
 }
 
 @layer base {
+  /* Brand ring default — never Tailwind's blue-500 when a ring-* color fails */
+  *,
+  ::before,
+  ::after {
+    --tw-ring-color: rgb(217 222 202 / 0.9);
+  }
+
   html {
     scroll-behavior: smooth;
   }
