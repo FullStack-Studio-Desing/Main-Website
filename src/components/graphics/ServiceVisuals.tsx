@@ -123,10 +123,6 @@ export function ServiceHeroVisual({
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.38, ease }}
             className="flex w-[88px] items-center justify-center border-r border-rule bg-forest sm:w-[100px]"
-            style={{
-              background:
-                "radial-gradient(ellipse 120% 90% at 30% 20%, rgba(62,91,67,0.95) 0%, #122314 72%)",
-            }}
           >
             {Glyph ? (
               <Glyph size={32} weight="duotone" className="text-neon" />

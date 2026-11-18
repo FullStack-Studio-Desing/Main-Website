@@ -287,21 +287,15 @@ export function ServicesIndex() {
                         </span>
                       </div>
 
-                      <div
-                        className="relative flex min-h-[200px] flex-col overflow-hidden rounded-[24px] bg-forest px-6 py-7 text-white ring-1 ring-[color-mix(in_srgb,var(--color-moss)_25%,transparent)] sm:min-h-[220px] sm:rounded-[28px] sm:px-8 sm:py-9 lg:min-h-0 lg:self-stretch"
-                        style={{
-                          background:
-                            "radial-gradient(ellipse 85% 75% at 72% 18%, rgba(62,91,67,0.92) 0%, #122314 72%)",
-                        }}
-                      >
+                      <div className="relative flex min-h-[200px] flex-col overflow-hidden rounded-[24px] bg-forest px-6 py-7 text-white ring-1 ring-[color-mix(in_srgb,var(--color-moss)_25%,transparent)] sm:min-h-[220px] sm:rounded-[28px] sm:px-8 sm:py-9 lg:min-h-0 lg:self-stretch">
                         <StickerBurst
                           className="pointer-events-none absolute right-5 top-5 h-7 w-7 opacity-70 sm:right-6 sm:top-6 sm:h-8 sm:w-8"
                           tone="neon"
                         />
                         <div className="relative mt-auto">
-                          <p className="max-w-[320px] font-sans text-[20px] italic leading-snug text-fog sm:text-[24px] lg:text-[22px] xl:text-[26px]">
+                          <p className="max-w-[320px] font-sans text-[20px] font-medium leading-snug text-fog sm:text-[24px] lg:text-[22px] xl:text-[26px]">
                             {service.page.headline}{" "}
-                            <span className="text-neon not-italic">
+                            <span className="text-neon">
                               {service.page.headlineEmphasis}
                             </span>
                           </p>
