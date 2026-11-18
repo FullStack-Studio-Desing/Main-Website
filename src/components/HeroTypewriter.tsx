@@ -64,11 +64,25 @@ export function HeroTypewriter({ phrases, className }: Props) {
   }
 
   return (
-    <span className={className}>
+    <span className={`inline-grid ${className ?? ""}`}>
       <span className="sr-only" aria-live="polite" aria-atomic="true">
         {announced}
       </span>
-      <span aria-hidden="true">
+      {/* Invisible copies of every phrase lock the cell to the max size */}
+      {list.map((p) => (
+        <span
+          key={p}
+          className="invisible col-start-1 row-start-1 whitespace-pre-wrap"
+          aria-hidden="true"
+        >
+          {p}
+          <span className="ml-[0.06em] inline-block h-[0.82em] w-[0.08em]" />
+        </span>
+      ))}
+      <span
+        className="col-start-1 row-start-1 whitespace-pre-wrap"
+        aria-hidden="true"
+      >
         {visible}
         <span className="hero-type-caret ml-[0.06em] inline-block h-[0.82em] w-[0.08em] translate-y-[0.06em] bg-neon align-baseline" />
       </span>

@@ -46,6 +46,8 @@ const AGENTS: ChatAgent[] = [
 const STEPS: Step[] = ["name", "email", "phone", "note"];
 
 const CHAT_DING_SRC = "/sounds/apple_ding.mp3";
+/** Soft enough not to jump-scare; still audible over page ambience. */
+const CHAT_DING_VOLUME = 0.28;
 let chatDing: HTMLAudioElement | null = null;
 
 function getChatDing(): HTMLAudioElement | null {
@@ -53,7 +55,7 @@ function getChatDing(): HTMLAudioElement | null {
   if (!chatDing) {
     chatDing = new Audio(CHAT_DING_SRC);
     chatDing.preload = "auto";
-    chatDing.volume = 1;
+    chatDing.volume = CHAT_DING_VOLUME;
   }
   return chatDing;
 }
@@ -67,7 +69,7 @@ async function unlockChatAudio(playDing = false): Promise<boolean> {
   if (!audio) return false;
   try {
     audio.currentTime = 0;
-    audio.volume = 1;
+    audio.volume = CHAT_DING_VOLUME;
     await audio.play();
     if (!playDing) {
       audio.pause();
@@ -87,7 +89,7 @@ async function playChatSound(): Promise<boolean> {
     if (!audio) return false;
     audio.pause();
     audio.currentTime = 0;
-    audio.volume = 1;
+    audio.volume = CHAT_DING_VOLUME;
     await audio.play();
     return true;
   } catch {
@@ -149,7 +151,7 @@ export function HeroLeadCard() {
   const chat = copy.chat;
 
   const [open, setOpen] = useState(false);
-  /** Mobile-only: feed teaser bubbles beside FAB without opening the sheet */
+  /** Teaser bubbles beside FAB without opening the panel */
   const [preview, setPreview] = useState(false);
   const [started, setStarted] = useState(false);
   const [agent] = useState(() => pickAgent());
@@ -185,13 +187,9 @@ export function HeroLeadCard() {
     ]);
   }
 
-  // Desktop: auto-open panel. Mobile: tease with bubbles — never auto-open.
+  // Tease with bubbles on all viewports — never auto-open the panel.
   useEffect(() => {
-    const desktop = window.matchMedia("(min-width: 640px)");
-    const id = window.setTimeout(() => {
-      if (desktop.matches) setOpen(true);
-      else setPreview(true);
-    }, 1800);
+    const id = window.setTimeout(() => setPreview(true), 1800);
     return () => window.clearTimeout(id);
   }, []);
 
@@ -272,7 +270,7 @@ export function HeroLeadCard() {
     };
   }, [messages, live, audioReady]);
 
-  // Initial greeting (+ city) — when panel opens (desktop) or mobile preview starts
+  // Initial greeting (+ city) — when preview starts or panel opens
   useEffect(() => {
     if (!live || started) return;
 
@@ -649,10 +647,10 @@ export function HeroLeadCard() {
         )}
       </div>
 
-      {/* Mobile teaser bubbles — notification stack beside FAB (closed only) */}
+      {/* Teaser bubbles — notification stack beside FAB (closed only) */}
       {!open && (
         <div
-          className="pointer-events-none fixed bottom-[5.75rem] right-5 z-[61] flex w-[min(16.5rem,calc(100vw-5.5rem))] flex-col items-end gap-2 sm:hidden"
+          className="pointer-events-none fixed bottom-[5.75rem] right-5 z-[61] flex w-[min(16.5rem,calc(100vw-5.5rem))] flex-col items-end gap-2 sm:bottom-[6.5rem] sm:right-6"
           aria-live="polite"
           aria-atomic="false"
         >
@@ -664,23 +662,19 @@ export function HeroLeadCard() {
                 key={m.id}
                 type="button"
                 onClick={() => setOpen(true)}
-                className="pointer-events-auto flex max-w-full items-end gap-2 text-left transition-transform active:scale-[0.98]"
+                className="pointer-events-auto max-w-full text-left transition-transform active:scale-[0.98]"
               >
                 <span className="sr-only">Open chat: </span>
-                <AgentAvatar agent={agent} size="sm" />
-                <span className="rounded-2xl rounded-br-md bg-white px-3.5 py-2.5 text-[13px] leading-snug text-body shadow-[0_8px_28px_rgba(18,35,20,0.18)] ring-1 ring-black/5">
+                <span className="block rounded-2xl rounded-br-md bg-white px-3.5 py-2.5 text-[13px] leading-snug text-body shadow-[0_8px_28px_rgba(18,35,20,0.18)] ring-1 ring-black/5">
                   {m.text}
                 </span>
               </button>
             ))}
           {typing && messages.filter((m) => m.from === "agent").length === 0 && (
-            <div className="pointer-events-none flex items-end gap-2">
-              <AgentAvatar agent={agent} size="sm" />
-              <div className="flex items-center gap-1.5 rounded-2xl rounded-br-md bg-white px-3.5 py-3 shadow-[0_8px_28px_rgba(18,35,20,0.18)] ring-1 ring-black/5">
-                <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-muted" />
-                <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-muted [animation-delay:180ms]" />
-                <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-muted [animation-delay:360ms]" />
-              </div>
+            <div className="pointer-events-none flex items-center gap-1.5 rounded-2xl rounded-br-md bg-white px-3.5 py-3 shadow-[0_8px_28px_rgba(18,35,20,0.18)] ring-1 ring-black/5">
+              <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-muted" />
+              <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-muted [animation-delay:180ms]" />
+              <span className="h-1.5 w-1.5 animate-chat-dot rounded-full bg-muted [animation-delay:360ms]" />
             </div>
           )}
         </div>
