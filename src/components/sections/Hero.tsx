@@ -7,7 +7,6 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { CheckCircle } from "@phosphor-icons/react";
 import { hero } from "@/data/site-copy";
 import { btnPrimary, btnGlass } from "@/components/buttons";
-import { HeroLeadCard } from "@/components/HeroLeadCard";
 import { HeroTypewriter } from "@/components/HeroTypewriter";
 import { TechMarquee } from "@/components/graphics/TechMarquee";
 import { mediaUrl } from "@/lib/media";
@@ -43,7 +42,7 @@ export function Hero() {
         };
 
   return (
-    <section className="relative min-h-[100dvh] overflow-hidden rounded-b-[32px] bg-forest text-white md:rounded-b-none">
+    <section className="relative min-h-[100dvh] overflow-hidden bg-forest text-white">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
@@ -165,8 +164,6 @@ export function Hero() {
           </motion.div>
         </div>
       </div>
-
-      <HeroLeadCard />
     </section>
   );
 }

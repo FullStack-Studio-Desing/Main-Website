@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Lilita_One, Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
@@ -18,6 +18,11 @@ export const metadata: Metadata = {
   title: "FullStack Studio Design",
   description:
     "Websites, native apps, marketing, sales growth, AI automation, AI employees, and custom CRMs. One team, one monthly plan, measurable results.",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#122314",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

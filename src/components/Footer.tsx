@@ -4,7 +4,7 @@ import { LogoMark } from "@/components/LogoMark";
 
 export function Footer() {
   return (
-    <footer className="w-full bg-black text-white">
+    <footer className="w-full bg-black pb-[env(safe-area-inset-bottom)] text-white">
       <div className="mx-auto w-full max-w-[1536px] px-6 pb-16 pt-20 sm:px-10">
         <Link
           href="/"
