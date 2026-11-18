@@ -48,10 +48,10 @@ export function Header() {
   }
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 lg:pt-4">
+    <header className="fixed inset-x-0 top-0 z-40 bg-forest pt-[env(safe-area-inset-top)] lg:bg-transparent lg:pt-4">
       <div
         className={`mx-auto flex h-16 max-w-[1536px] items-center justify-between px-6 py-3 transition-colors duration-300 sm:px-10 lg:h-20 lg:rounded-capsule ${
-          solid ? "bg-forest" : "bg-transparent"
+          solid ? "bg-forest" : "bg-forest lg:bg-transparent"
         }`}
       >
         <Link
