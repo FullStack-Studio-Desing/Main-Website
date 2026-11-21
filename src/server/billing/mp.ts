@@ -48,6 +48,15 @@ export function mpErrorMessage(payload: Record<string, unknown> | null, fallback
   if (!payload) return fallback;
   if (typeof payload.message === "string" && payload.message.trim()) return payload.message;
   if (typeof payload.error === "string" && payload.error.trim()) return payload.error;
+  // Orders API: { errors: [{ code, message }] }
+  const errors = payload.errors;
+  if (Array.isArray(errors) && errors[0] && typeof errors[0] === "object") {
+    const first = errors[0] as { message?: unknown };
+    if (typeof first.message === "string" && first.message.trim()) {
+      const text = first.message.trim();
+      return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+  }
   const cause = payload.cause;
   if (Array.isArray(cause) && cause[0] && typeof cause[0] === "object") {
     const first = cause[0] as { description?: unknown; code?: unknown };

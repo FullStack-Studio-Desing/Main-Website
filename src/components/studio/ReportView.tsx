@@ -1,5 +1,7 @@
 import { formatDate } from "@/lib/portal/format";
 import type { ReportRecord } from "@/lib/portal/types";
+import { StatusBadge } from "@/components/studio/ui";
+import { Separator } from "@/components/ui/separator";
 
 const sections = [
   { key: "traffic", title: "Traffic and lead quality" },
@@ -14,18 +16,20 @@ export function ReportView({ report }: { report: ReportRecord }) {
   return (
     <article className="max-w-2xl">
       <p className="text-sm text-muted-foreground">{report.period_label}</p>
-      <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">{report.title}</h1>
-      {report.published_at ? (
-        <p className="mt-2 text-sm text-muted-foreground">Filed {formatDate(report.published_at)}</p>
-      ) : (
-        <p className="mt-2 text-sm text-muted-foreground">Draft</p>
-      )}
+      <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+        {report.title}
+      </h1>
+      <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
+        <StatusBadge status={report.status} />
+        {report.published_at ? <span>Filed {formatDate(report.published_at)}</span> : null}
+      </div>
       {report.summary ? (
         <p className="mt-6 whitespace-pre-wrap text-base leading-relaxed text-muted-foreground">
           {report.summary}
         </p>
       ) : null}
-      <div className="mt-10 space-y-8">
+      {written.length > 0 ? <Separator className="my-8" /> : null}
+      <div className="space-y-8">
         {written.map((section) => (
           <section key={section.key}>
             <h2 className="text-lg font-semibold tracking-tight text-foreground">{section.title}</h2>

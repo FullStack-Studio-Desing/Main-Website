@@ -87,7 +87,7 @@ export function ReportForm({
           ))}
         </NativeSelect>
       </Field>
-      <div>
+      <div className="flex justify-end">
         <SubmitButton pendingLabel="Saving">{submitLabel}</SubmitButton>
       </div>
     </form>

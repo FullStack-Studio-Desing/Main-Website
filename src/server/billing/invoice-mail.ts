@@ -18,6 +18,9 @@ export async function sendInvoiceEmail(input: {
   amount: number;
   billingType: "one_time" | "recurring";
   portalUrl: string;
+  /** Public /pay/<token> link. When set and not charged, the email leads with a Pay button. */
+  payUrl?: string | null;
+  dueOn?: string | null;
   charged: boolean;
 }): Promise<{ ok: true } | { ok: false; message: string }> {
   const apiKey = process.env.RESEND_API_KEY?.trim();
@@ -27,7 +30,7 @@ export async function sendInvoiceEmail(input: {
     return { ok: false, message: "Add RESEND_API_KEY before sending invoices by email." };
   }
 
-  const amountLabel = formatUsd(input.amount);
+  const amountLabel = `${formatUsd(input.amount)} USD`;
   const kind = input.billingType === "recurring" ? "Recurring" : "One-time";
   const subject = input.charged
     ? `Payment received · ${input.invoiceNumber}`
@@ -35,9 +38,19 @@ export async function sendInvoiceEmail(input: {
   const headline = input.charged
     ? "We charged the card on file."
     : "Your invoice is ready.";
+  const payUrl = !input.charged && input.payUrl ? input.payUrl : null;
   const bodyLine = input.charged
     ? `${amountLabel} was charged to the payment method on file for ${escapeHtml(input.companyName)}.`
-    : `Open your portal to review invoice ${escapeHtml(input.invoiceNumber)} and keep a card on file for future charges.`;
+    : payUrl
+      ? `Review invoice ${escapeHtml(input.invoiceNumber)} and pay securely by card. No login needed.`
+      : `Open your portal to review invoice ${escapeHtml(input.invoiceNumber)} and keep a card on file for future charges.`;
+  const dueLine = input.dueOn && !input.charged ? `Due ${escapeHtml(input.dueOn)}` : "";
+  const button = payUrl
+    ? `
+        <p style="margin:0 0 18px;">
+          <a href="${escapeHtml(payUrl)}" style="display:inline-block;background:#122314;color:#ffffff;text-decoration:none;font-weight:600;padding:12px 22px;border-radius:999px;">Pay invoice · ${amountLabel}</a>
+        </p>`
+    : "";
 
   const resend = new Resend(apiKey);
   const { error } = await resend.emails.send({
@@ -51,7 +64,8 @@ export async function sendInvoiceEmail(input: {
         <p style="margin:0 0 12px;">
           ${escapeHtml(input.invoiceNumber)} · ${kind} · ${amountLabel}
         </p>
-        <p style="margin:0 0 18px;">${bodyLine}</p>
+        ${dueLine ? `<p style="margin:0 0 12px;">${dueLine}</p>` : ""}
+        <p style="margin:0 0 18px;">${bodyLine}</p>${button}
         <p style="margin:0;">
           <a href="${escapeHtml(input.portalUrl)}" style="color:#1f6b4a;">Open client portal</a>
         </p>
@@ -61,9 +75,13 @@ export async function sendInvoiceEmail(input: {
       headline,
       input.title,
       `${input.invoiceNumber} · ${kind} · ${amountLabel}`,
+      dueLine,
       bodyLine.replace(/<[^>]+>/g, ""),
-      input.portalUrl,
-    ].join("\n"),
+      payUrl ? `Pay invoice: ${payUrl}` : "",
+      `Client portal: ${input.portalUrl}`,
+    ]
+      .filter(Boolean)
+      .join("\n"),
   });
 
   if (error) {

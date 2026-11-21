@@ -26,9 +26,8 @@ export default async function NewClientPage() {
       ) : null}
       <div className={session.kind === "unconfigured" ? "mt-12" : undefined}>
         <BackLink href="/admin/clients">← Clients</BackLink>
-        <div className="mt-6">
+        <div className="mt-4">
           <PageIntro
-            eyebrow="Studio"
             title="Add a client"
             lede="Add the company, contact methods, and people. You create their portal login on the next screen."
           />

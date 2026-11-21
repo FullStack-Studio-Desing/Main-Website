@@ -7,7 +7,6 @@ import { SubmitButton } from "@/components/studio/SubmitButton";
 import { Alert, Field } from "@/components/studio/ui";
 import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
-import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 
 const statuses: { value: PaymentStatus; label: string }[] = [
@@ -17,20 +16,34 @@ const statuses: { value: PaymentStatus; label: string }[] = [
   { value: "refunded", label: "Refunded" },
 ];
 
+/** Manual payment record. Pass `clients` to add a client picker (global payments page). */
 export function PaymentForm({
   action,
+  clients,
 }: {
   action: (prev: ActionState, formData: FormData) => Promise<ActionState>;
+  clients?: { id: string; company_name: string }[];
 }) {
   const [state, formAction] = useActionState(action, null);
 
   return (
-    <form action={formAction} className="mt-8 grid gap-5 sm:grid-cols-2">
-      <Separator className="sm:col-span-2" />
+    <form action={formAction} className="grid gap-4 sm:grid-cols-2">
       {state?.error ? (
         <div className="sm:col-span-2">
           <Alert tone="error">{state.error}</Alert>
         </div>
+      ) : null}
+      {clients ? (
+        <Field label="Client" className="sm:col-span-2">
+          <NativeSelect name="client_id" required defaultValue="">
+            <option value="">Select a client</option>
+            {clients.map((client) => (
+              <option key={client.id} value={client.id}>
+                {client.company_name}
+              </option>
+            ))}
+          </NativeSelect>
+        </Field>
       ) : null}
       <Field label="Amount">
         <Input name="amount" type="number" min={0.01} step="0.01" required />
@@ -66,8 +79,8 @@ export function PaymentForm({
       <Field label="Notes" hint="The client sees this." className="sm:col-span-2">
         <Textarea name="notes" maxLength={4000} />
       </Field>
-      <div className="sm:col-span-2">
-        <SubmitButton pendingLabel="Saving">Add payment</SubmitButton>
+      <div className="flex justify-end sm:col-span-2">
+        <SubmitButton pendingLabel="Saving">Record payment</SubmitButton>
       </div>
     </form>
   );

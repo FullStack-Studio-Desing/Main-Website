@@ -67,6 +67,41 @@ function siteOrigin() {
   );
 }
 
+function payUrlFor(token: unknown) {
+  return typeof token === "string" && /^[a-f0-9]{32,64}$/.test(token)
+    ? `${siteOrigin()}/pay/${token}`
+    : null;
+}
+
+function revalidateInvoicePaths(clientId: string, invoiceId?: string) {
+  revalidatePath(`/admin/clients/${clientId}`);
+  revalidatePath("/admin/invoices");
+  if (invoiceId) revalidatePath(`/admin/invoices/${invoiceId}`);
+  revalidatePath("/admin/payments");
+  revalidatePath("/portal");
+}
+
+/** Optional project link, parsed here so validators.ts stays untouched. */
+async function resolveProjectId(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  clientId: string,
+  formData: FormData,
+): Promise<{ value: string | null } | { error: string }> {
+  const raw = String(formData.get("project_id") ?? "").trim();
+  if (!raw) return { value: null };
+  if (!isUuid(raw)) return { error: "Choose a valid project." };
+  const project = await supabase
+    .from("projects")
+    .select("id")
+    .eq("id", raw)
+    .eq("client_id", clientId)
+    .maybeSingle();
+  if (project.error || !project.data) {
+    return { error: "That project does not belong to this client." };
+  }
+  return { value: raw };
+}
+
 async function loadDefaultPaymentMethod(clientId: string, preferredId?: string | null) {
   const supabase = await createClient();
   if (preferredId && isUuid(preferredId)) {
@@ -98,6 +133,8 @@ async function chargeSavedMethod(input: {
   externalReference: string;
   paymentMethodId?: string | null;
   periodLabel?: string | null;
+  invoiceId?: string | null;
+  projectId?: string | null;
 }) {
   if (!mpConfigured()) {
     return {
@@ -167,6 +204,11 @@ async function chargeSavedMethod(input: {
       reference: outcome.id || null,
       notes: outcome.message,
       mp_order_id: outcome.id || null,
+      charge_currency: outcome.charge?.currency ?? null,
+      charge_amount: outcome.charge?.amount ?? null,
+      fx_rate: outcome.charge?.rate ?? null,
+      ...(input.invoiceId ? { invoice_id: input.invoiceId } : {}),
+      ...(input.projectId ? { project_id: input.projectId } : {}),
     })
     .select("id")
     .single();
@@ -210,6 +252,9 @@ export async function createInvoice(
   if (clientRes.error) return safeDbError(clientRes.error, "The invoice could not be saved.");
   if (!clientRes.data) return { error: "That client could not be found." };
 
+  const project = await resolveProjectId(supabase, clientId, formData);
+  if ("error" in project) return project;
+
   const number = nextInvoiceNumber();
   const insert = await supabase
     .from("invoices")
@@ -226,9 +271,10 @@ export async function createInvoice(
       period_label: parsed.value.period_label,
       due_on: parsed.value.due_on,
       next_charge_on: parsed.value.next_charge_on,
+      ...(project.value ? { project_id: project.value } : {}),
       created_by: gate.userId,
     })
-    .select("id")
+    .select("id, public_token")
     .single();
 
   if (insert.error || !insert.data) {
@@ -236,6 +282,7 @@ export async function createInvoice(
   }
 
   const invoiceId = insert.data.id as string;
+  const payUrl = payUrlFor(insert.data.public_token);
   let notice = `Invoice ${number} saved as a draft.`;
 
   if (parsed.value.charge_now) {
@@ -246,6 +293,8 @@ export async function createInvoice(
       externalReference: `invoice_${invoiceId}`,
       paymentMethodId: parsed.value.payment_method_id,
       periodLabel: parsed.value.period_label,
+      invoiceId,
+      projectId: project.value,
     });
 
     if (!charged.ok) {
@@ -292,6 +341,8 @@ export async function createInvoice(
         amount: parsed.value.amount,
         billingType: parsed.value.billing_type,
         portalUrl: `${siteOrigin()}/portal`,
+        payUrl,
+        dueOn: parsed.value.due_on,
         charged: charged.status === "processed",
       });
     }
@@ -304,6 +355,8 @@ export async function createInvoice(
       amount: parsed.value.amount,
       billingType: parsed.value.billing_type,
       portalUrl: `${siteOrigin()}/portal`,
+      payUrl,
+      dueOn: parsed.value.due_on,
       charged: false,
     });
     await supabase
@@ -318,11 +371,8 @@ export async function createInvoice(
       : `Invoice ${number} marked sent, but email failed: ${mailed.message}`;
   }
 
-  revalidatePath(`/admin/clients/${clientId}`);
-  revalidatePath("/admin/invoices");
-  revalidatePath("/admin/payments");
-  revalidatePath("/portal");
-  redirect(`/admin/clients/${clientId}#invoices`);
+  revalidateInvoicePaths(clientId, invoiceId);
+  redirect(`/admin/invoices/${invoiceId}?notice=${encodeURIComponent(notice)}`);
 }
 
 export async function createInvoiceGlobal(
@@ -362,6 +412,8 @@ export async function chargeInvoice(
     externalReference: `invoice_${invoiceId}`,
     paymentMethodId: invoiceRes.data.payment_method_id,
     periodLabel: invoiceRes.data.period_label,
+    invoiceId,
+    projectId: (invoiceRes.data.project_id as string | null | undefined) ?? null,
   });
 
   if (!charged.ok) {
@@ -369,8 +421,7 @@ export async function chargeInvoice(
       .from("invoices")
       .update({ status: "failed", mp_order_id: charged.orderId ?? null })
       .eq("id", invoiceId);
-    revalidatePath(`/admin/clients/${clientId}`);
-    revalidatePath("/admin/invoices");
+    revalidateInvoicePaths(clientId, invoiceId);
     return { error: charged.message };
   }
 
@@ -390,10 +441,7 @@ export async function chargeInvoice(
     await supabase.from("payments").update({ invoice_id: invoiceId }).eq("id", charged.paymentId);
   }
 
-  revalidatePath(`/admin/clients/${clientId}`);
-  revalidatePath("/admin/invoices");
-  revalidatePath("/admin/payments");
-  revalidatePath("/portal");
+  revalidateInvoicePaths(clientId, invoiceId);
   return {
     notice:
       charged.status === "processed"
@@ -412,9 +460,167 @@ export async function voidInvoice(clientId: string, invoiceId: string, _formData
     .eq("id", invoiceId)
     .eq("client_id", clientId)
     .neq("status", "paid");
-  revalidatePath(`/admin/clients/${clientId}`);
-  revalidatePath("/admin/invoices");
-  revalidatePath("/portal");
+  revalidateInvoicePaths(clientId, invoiceId);
+}
+
+/** Mark a draft as sent (or resend an open invoice) and email the pay link. */
+export async function sendInvoice(
+  clientId: string,
+  invoiceId: string,
+  _formData?: FormData,
+): Promise<ActionState> {
+  const gate = await adminGate();
+  if ("error" in gate) return gate;
+  if (!isUuid(clientId) || !isUuid(invoiceId)) return { error: "That invoice could not be found." };
+
+  const supabase = await createClient();
+  const [invoiceRes, clientRes] = await Promise.all([
+    supabase.from("invoices").select("*").eq("id", invoiceId).eq("client_id", clientId).maybeSingle(),
+    supabase.from("clients").select("email, company_name").eq("id", clientId).maybeSingle(),
+  ]);
+  if (invoiceRes.error) return safeDbError(invoiceRes.error, "The invoice could not be sent.");
+  if (!invoiceRes.data || !clientRes.data) return { error: "That invoice could not be found." };
+  const invoice = invoiceRes.data;
+  if (invoice.status === "paid") return { error: "This invoice is already paid." };
+  if (invoice.status === "void") return { error: "This invoice was voided." };
+
+  if (invoice.status === "draft" || !invoice.sent_at) {
+    const updated = await supabase
+      .from("invoices")
+      .update({
+        status: invoice.status === "draft" ? "sent" : invoice.status,
+        sent_at: invoice.sent_at ?? new Date().toISOString(),
+      })
+      .eq("id", invoiceId);
+    if (updated.error) return safeDbError(updated.error, "The invoice could not be sent.");
+  }
+
+  const mailed = await sendInvoiceEmail({
+    to: clientRes.data.email,
+    companyName: clientRes.data.company_name,
+    invoiceNumber: invoice.number,
+    title: invoice.title,
+    amount: Number(invoice.amount),
+    billingType: invoice.billing_type,
+    portalUrl: `${siteOrigin()}/portal`,
+    payUrl: payUrlFor(invoice.public_token),
+    dueOn: invoice.due_on,
+    charged: false,
+  });
+
+  revalidateInvoicePaths(clientId, invoiceId);
+  return mailed.ok
+    ? { notice: `Invoice ${invoice.number} emailed to ${clientRes.data.email}.` }
+    : { error: `Invoice marked sent, but email failed: ${mailed.message}` };
+}
+
+const MANUAL_METHODS = ["Bank transfer", "Zelle", "Cash", "Check", "Wire", "Other"] as const;
+
+/** Record an off-platform payment (bank transfer, Zelle, cash) and close the invoice. */
+export async function markInvoicePaidManually(
+  clientId: string,
+  invoiceId: string,
+  method: string,
+  reference: string,
+  paidOn?: string,
+): Promise<ActionState> {
+  const gate = await adminGate();
+  if ("error" in gate) return gate;
+  if (!isUuid(clientId) || !isUuid(invoiceId)) return { error: "That invoice could not be found." };
+
+  const methodLabel = method.trim().slice(0, 40);
+  if (!methodLabel) return { error: "Choose how the client paid." };
+  const referenceLabel = reference.trim().slice(0, 120) || null;
+  const paidDate = paidOn && /^\d{4}-\d{2}-\d{2}$/.test(paidOn) ? paidOn : todayISO();
+
+  const supabase = await createClient();
+  const invoiceRes = await supabase
+    .from("invoices")
+    .select("*")
+    .eq("id", invoiceId)
+    .eq("client_id", clientId)
+    .maybeSingle();
+  if (invoiceRes.error) return safeDbError(invoiceRes.error, "The payment could not be recorded.");
+  if (!invoiceRes.data) return { error: "That invoice could not be found." };
+  const invoice = invoiceRes.data;
+  if (invoice.status === "paid") return { notice: "This invoice is already paid." };
+  if (invoice.status === "void") return { error: "This invoice was voided." };
+
+  const inserted = await supabase
+    .from("payments")
+    .insert({
+      client_id: clientId,
+      invoice_id: invoiceId,
+      ...(invoice.project_id ? { project_id: invoice.project_id } : {}),
+      amount: Number(invoice.amount),
+      currency: invoice.currency ?? "USD",
+      status: "paid",
+      paid_on: paidDate,
+      period_label: invoice.period_label ?? null,
+      method: methodLabel,
+      reference: referenceLabel,
+      notes: `Recorded manually for ${invoice.number}.`,
+    })
+    .select("id")
+    .single();
+  if (inserted.error || !inserted.data) {
+    return safeDbError(inserted.error, "The payment could not be recorded.");
+  }
+
+  const updated = await supabase
+    .from("invoices")
+    .update({
+      status: "paid",
+      paid_at: new Date(`${paidDate}T12:00:00Z`).toISOString(),
+      sent_at: invoice.sent_at ?? new Date().toISOString(),
+      payment_id: inserted.data.id,
+    })
+    .eq("id", invoiceId);
+  if (updated.error) return safeDbError(updated.error, "Payment saved, but the invoice was not updated.");
+
+  revalidateInvoicePaths(clientId, invoiceId);
+  return { notice: `Invoice ${invoice.number} marked paid (${methodLabel}).` };
+}
+
+/** Form wrapper for the "Mark paid" dialog. */
+export async function markInvoicePaidManuallyForm(
+  clientId: string,
+  invoiceId: string,
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const method = String(formData.get("method") ?? "").trim();
+  const other = String(formData.get("method_other") ?? "").trim();
+  const label = method === "Other" ? other || "Other" : method;
+  if (!(MANUAL_METHODS as readonly string[]).includes(method)) {
+    return { error: "Choose how the client paid." };
+  }
+  return markInvoicePaidManually(
+    clientId,
+    invoiceId,
+    label,
+    String(formData.get("reference") ?? ""),
+    String(formData.get("paid_on") ?? ""),
+  );
+}
+
+/** Void that reports back, for the invoice detail page. */
+export async function voidInvoiceWithResult(clientId: string, invoiceId: string): Promise<ActionState> {
+  const gate = await adminGate();
+  if ("error" in gate) return gate;
+  if (!isUuid(clientId) || !isUuid(invoiceId)) return { error: "That invoice could not be found." };
+  const supabase = await createClient();
+  const updated = await supabase
+    .from("invoices")
+    .update({ status: "void" })
+    .eq("id", invoiceId)
+    .eq("client_id", clientId)
+    .neq("status", "paid")
+    .select("id");
+  if (updated.error) return safeDbError(updated.error, "The invoice could not be voided.");
+  revalidateInvoicePaths(clientId, invoiceId);
+  if (!updated.data?.length) return { error: "Paid invoices cannot be voided." };
+  return { notice: "Invoice voided. The pay link no longer accepts payments." };
 }
 
 export async function removePaymentMethod(

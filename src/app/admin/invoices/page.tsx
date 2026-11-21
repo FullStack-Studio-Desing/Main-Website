@@ -4,6 +4,7 @@ import { InvoiceForm } from "@/components/studio/InvoiceForm";
 import { InvoiceList } from "@/components/studio/InvoiceList";
 import { PageIntro, Section } from "@/components/studio/ui";
 import { createInvoiceGlobal } from "@/lib/portal/billing-actions";
+import { listProjectOptions } from "@/lib/portal/invoice-queries";
 import { listClientOptions, listInvoices } from "@/lib/portal/queries";
 import { sampleClientOptions, sampleInvoices, showPreview } from "@/lib/portal/sample";
 import { requireAdmin } from "@/lib/portal/session";
@@ -37,7 +38,11 @@ export default async function InvoicesPage() {
     return <Blocked session={session} />;
   }
 
-  const [invoices, clients] = await Promise.all([listInvoices(), listClientOptions()]);
+  const [invoices, clients, projects] = await Promise.all([
+    listInvoices(),
+    listClientOptions(),
+    listProjectOptions(),
+  ]);
   if (!invoices.ok) return <QueryError reason={invoices.reason} />;
   if (!clients.ok) return <QueryError reason={clients.reason} />;
 
@@ -46,15 +51,16 @@ export default async function InvoicesPage() {
       <PageIntro
         eyebrow="CRM"
         title="Invoices"
-        lede="Create one-time or recurring invoices and charge the card on file."
+        lede="Every invoice gets a private pay link the client can open without logging in."
       />
       <Section title="All invoices" lede="Newest first across every client.">
         <InvoiceList invoices={invoices.data} showCompany />
       </Section>
-      <Section title="New invoice" lede="Email the client, charge now, or both.">
+      <Section title="New invoice" lede="Email the pay link, charge the card on file now, or both.">
         <InvoiceForm
           action={createInvoiceGlobal}
           clients={clients.data.length ? clients.data : sampleClientOptions()}
+          projects={projects}
         />
       </Section>
     </>

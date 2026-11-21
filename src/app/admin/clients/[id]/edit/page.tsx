@@ -5,6 +5,7 @@ import { Blocked, PreviewNote, QueryError } from "@/components/studio/Blocked";
 import { ClientForm } from "@/components/studio/ClientForm";
 import { ConfirmForm } from "@/components/studio/ConfirmForm";
 import { BackLink, PageIntro } from "@/components/studio/ui";
+import { Card } from "@/components/ui/card";
 import { getClientBundle } from "@/lib/portal/queries";
 import { sampleBundle, showPreview } from "@/lib/portal/sample";
 import { requireAdmin } from "@/lib/portal/session";
@@ -45,8 +46,8 @@ export default async function EditClientPage({ params }: Props) {
       ) : null}
       <div className={session.kind === "unconfigured" ? "mt-12" : undefined}>
         <BackLink href={`/admin/clients/${client.id}`}>← {client.company_name}</BackLink>
-        <div className="mt-6">
-          <PageIntro eyebrow="Studio" title="Edit client" />
+        <div className="mt-4">
+          <PageIntro eyebrow={client.company_name} title="Edit client" />
         </div>
         <ClientForm
           action={updateClientAction.bind(null, client.id)}
@@ -54,13 +55,19 @@ export default async function EditClientPage({ params }: Props) {
           submitLabel="Save changes"
         />
         {isUuid(client.id) ? (
-          <div className="mt-12 border-t border-rule pt-8">
+          <Card className="mt-6 flex flex-col gap-4 border-destructive/40 p-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-1">
+              <p className="font-semibold">Delete client</p>
+              <p className="text-sm text-muted-foreground">
+                Removes the company and all of their projects, payments, and reports.
+              </p>
+            </div>
             <ConfirmForm
               action={deleteClient.bind(null, client.id)}
               message={`Delete ${client.company_name} and all of their projects, payments, and reports? This cannot be undone.`}
               label="Delete client"
             />
-          </div>
+          </Card>
         ) : null}
       </div>
     </>

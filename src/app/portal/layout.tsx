@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { StudioShell } from "@/components/studio/shell";
+import { Toaster } from "@/components/ui/sonner";
 import { requireClient } from "@/lib/portal/session";
 
 export const metadata: Metadata = {
@@ -24,9 +25,10 @@ export default async function PortalLayout({
       pathname={pathname}
       email={session.kind === "ready" ? session.email : undefined}
       preview={session.kind === "unconfigured"}
-      nav={[{ href: "/portal", label: "Overview" }]}
+      nav={[{ href: "/portal", label: "Overview", icon: "dashboard" }]}
     >
       {children}
+      <Toaster theme="light" position="top-right" />
     </StudioShell>
   );
 }

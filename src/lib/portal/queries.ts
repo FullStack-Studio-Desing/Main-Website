@@ -66,6 +66,10 @@ type PaymentRow = {
   notes: string | null;
   invoice_id?: string | null;
   mp_order_id?: string | null;
+  refunded_amount?: number | string | null;
+  charge_currency?: string | null;
+  charge_amount?: number | string | null;
+  fx_rate?: number | string | null;
   created_at: string;
 };
 
@@ -299,6 +303,10 @@ function mapPayment(row: PaymentRow): PaymentRecord {
     notes: row.notes,
     invoice_id: row.invoice_id ?? null,
     mp_order_id: row.mp_order_id ?? null,
+    refunded_amount: asNumber(row.refunded_amount ?? 0),
+    charge_currency: row.charge_currency ?? null,
+    charge_amount: row.charge_amount == null ? null : asNumber(row.charge_amount),
+    fx_rate: row.fx_rate == null ? null : asNumber(row.fx_rate),
     created_at: row.created_at,
   };
 }
@@ -394,7 +402,7 @@ export async function listClients(): Promise<
     supabase.from("clients").select("*").order("company_name"),
     supabase
       .from("payments")
-      .select("client_id, amount, currency, status, paid_on, created_at")
+      .select("*")
       .order("created_at", { ascending: false }),
     supabase.from("reports").select("status, published_at"),
     supabase.from("projects").select("id, status"),
@@ -438,8 +446,12 @@ export async function listClients(): Promise<
     Boolean(value && value.slice(0, 7) === month);
 
   const collected = ((paymentsRes.data ?? []) as PaymentRow[])
-    .filter((row) => row.status === "paid" && inMonth(row.paid_on ?? row.created_at))
-    .reduce((sum, row) => sum + asNumber(row.amount), 0);
+    .filter(
+      (row) =>
+        (row.status === "paid" || row.status === "partially_refunded") &&
+        inMonth(row.paid_on ?? row.created_at),
+    )
+    .reduce((sum, row) => sum + asNumber(row.amount) - asNumber(row.refunded_amount ?? 0), 0);
 
   const reports = ((reportsRes.data ?? []) as { status: string; published_at: string | null }[])
     .filter((row) => row.status === "published" && inMonth(row.published_at)).length;

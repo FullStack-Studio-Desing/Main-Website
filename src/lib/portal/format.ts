@@ -40,3 +40,12 @@ export function asNumber(value: unknown) {
   const number = typeof value === "number" ? value : Number(value);
   return Number.isFinite(number) ? number : 0;
 }
+
+/** Amount in the currency the card was charged in, e.g. "MX$19,010.25". */
+export function formatCharge(amount: number, currency: string) {
+  const symbol = currency === "MXN" ? "MX$" : "";
+  const number = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
+    amount,
+  );
+  return symbol ? `${symbol}${number}` : `${number} ${currency}`;
+}

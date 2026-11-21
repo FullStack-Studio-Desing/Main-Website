@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { markInvoiceFromOrder } from "@/server/billing/invoice-pay";
 import { notifyPaidOrder } from "@/server/billing/notify";
 import { interpretOrder } from "@/server/billing/orders";
 import { formatUsd, getCheckoutPlan } from "@/server/billing/plans";
+import { isRefundPayload, syncRefundsFromOrder } from "@/server/billing/refunds";
 import { verifyMpSignature } from "@/server/billing/webhook";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +28,8 @@ export async function POST(request: NextRequest) {
 
   const body = (await request.json().catch(() => null)) as { type?: string; action?: string } | null;
   const topic = body?.type ?? body?.action ?? "order";
-  const dedupeKey = `${topic}:${dataId}`;
+  // Include the action so a later order.processed is not swallowed after order.action_required.
+  const dedupeKey = `${topic}:${body?.action ?? ""}:${dataId}`;
   if (seen.has(dedupeKey)) return new NextResponse(null, { status: 200 });
   seen.add(dedupeKey);
 
@@ -52,10 +55,23 @@ async function reconcileOrder(orderId: string) {
       return;
     }
 
+    // Refunds (from the CRM or the Mercado Pago dashboard) sync onto the recorded payment.
+    if (isRefundPayload(payload)) {
+      await syncRefundsFromOrder(payload);
+      return;
+    }
+
+    const reference = typeof payload.external_reference === "string" ? payload.external_reference : "";
+
+    // CRM invoices (pay links and card-on-file charges) reconcile every status change.
+    if (reference.startsWith("invoice_")) {
+      await markInvoiceFromOrder(payload);
+      return;
+    }
+
     const outcome = interpretOrder(payload);
     if (!outcome.ok || outcome.status !== "processed" || !outcome.id) return;
 
-    const reference = typeof payload.external_reference === "string" ? payload.external_reference : "";
     const planId = reference.split("_")[1] ?? "";
     const plan = getCheckoutPlan(planId);
     const payer = payload.payer;
