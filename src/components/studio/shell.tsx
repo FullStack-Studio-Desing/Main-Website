@@ -1,139 +1,273 @@
+"use client";
+
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { usePathname } from "next/navigation";
+import { useState, useTransition, type ReactNode } from "react";
+import {
+  ChevronsUpDown,
+  CreditCard,
+  ExternalLink,
+  FileText,
+  FolderKanban,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Users,
+  type LucideIcon,
+} from "lucide-react";
 import { LogoMark } from "@/components/LogoMark";
+import { initials } from "@/components/studio/ui";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { brand } from "@/data/site-copy";
 import { signOut } from "@/lib/portal/actions";
 import { cn } from "@/lib/utils";
 
+// Icons are referenced by key so server layouts can pass plain nav data.
+const navIcons = {
+  dashboard: LayoutDashboard,
+  clients: Users,
+  projects: FolderKanban,
+  invoices: FileText,
+  payments: CreditCard,
+} satisfies Record<string, LucideIcon>;
+
+export type StudioNavIcon = keyof typeof navIcons;
+export type StudioNavItem = { href: string; label: string; icon?: StudioNavIcon };
+
 export function StudioShell({
   homeHref,
   nav,
-  pathname,
+  pathname: initialPathname,
   email,
   preview = false,
   children,
 }: {
   homeHref: string;
-  nav: { href: string; label: string }[];
+  nav: StudioNavItem[];
   pathname: string;
   email?: string;
   preview?: boolean;
   children: ReactNode;
 }) {
+  // The layout's pathname is frozen at first render; usePathname tracks client navigation.
+  const pathname = usePathname() ?? initialPathname;
+
   return (
     <div className="studio-app flex h-dvh overflow-hidden bg-background text-foreground">
-      <aside className="hidden h-full w-64 shrink-0 flex-col border-r border-border bg-muted/40 lg:flex">
-        <div className="flex h-14 items-center border-b border-border px-6">
+      <aside className="hidden h-full w-64 shrink-0 flex-col border-r bg-muted/40 lg:flex">
+        <div className="flex h-14 items-center gap-2 border-b px-4">
           <BrandLockup href={homeHref} />
         </div>
-        <div className="flex flex-1 flex-col justify-between px-3 py-4">
-          <div>
-            {preview ? (
-              <p className="mb-3 px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                Preview
-              </p>
-            ) : null}
-            <nav className="flex flex-col gap-1">
-              {nav.map((item) => {
-                const active =
-                  item.href === "/admin" || item.href === "/portal"
-                    ? pathname === item.href
-                    : pathname === item.href || pathname.startsWith(`${item.href}/`);
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      "rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                      active
-                        ? "bg-accent text-accent-foreground"
-                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                    )}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-          <AccountFooter email={email} preview={preview} />
+        <div className="flex-1 overflow-y-auto px-3 py-4">
+          <NavLinks nav={nav} pathname={pathname} />
+        </div>
+        <div className="border-t p-3">
+          <AccountMenu email={email} preview={preview} variant="sidebar" />
         </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
-        <header className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 lg:hidden">
-          <div className="flex h-14 items-center justify-between gap-3 px-4">
-            <BrandLockup href={homeHref} compact />
-            {preview ? null : (
-              <form action={signOut}>
-                <Button type="submit" variant="ghost" size="sm">
-                  Sign out
-                </Button>
-              </form>
-            )}
+        <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center gap-2 border-b bg-background px-4 lg:hidden">
+          <MobileNav homeHref={homeHref} nav={nav} pathname={pathname} preview={preview} />
+          <BrandLockup href={homeHref} compact />
+          <div className="ml-auto">
+            <AccountMenu email={email} preview={preview} variant="header" />
           </div>
-          <nav className="flex gap-1 overflow-x-auto border-t border-border px-2 py-2">
-            {nav.map((item) => {
-              const active =
-                item.href === "/admin" || item.href === "/portal"
-                  ? pathname === item.href
-                  : pathname === item.href || pathname.startsWith(`${item.href}/`);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "shrink-0 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-                    active
-                      ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                  )}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
         </header>
-        <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-8 sm:py-10">
+        <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
           {children}
-        </div>
+        </main>
       </div>
     </div>
   );
 }
 
-function BrandLockup({ href, compact = false }: { href: string; compact?: boolean }) {
+function isActive(href: string, pathname: string) {
+  if (href === "/admin" || href === "/portal") return pathname === href;
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+function NavLinks({
+  nav,
+  pathname,
+  onNavigate,
+}: {
+  nav: StudioNavItem[];
+  pathname: string;
+  onNavigate?: () => void;
+}) {
   return (
-    <Link href={href} className="flex items-center gap-2.5 text-foreground">
-      <LogoMark className={compact ? "h-6 w-6" : "h-7 w-7"} tone="ink" />
-      <span className={cn("font-semibold tracking-tight", compact ? "text-base" : "text-lg")}>
+    <nav className="flex flex-col gap-1">
+      {nav.map((item) => {
+        const active = isActive(item.href, pathname);
+        const Icon = navIcons[item.icon ?? "dashboard"];
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            onClick={onNavigate}
+            aria-current={active ? "page" : undefined}
+            className={cn(
+              "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+              active
+                ? "bg-accent text-accent-foreground"
+                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            )}
+          >
+            <Icon className="size-4 shrink-0" />
+            {item.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
+function MobileNav({
+  homeHref,
+  nav,
+  pathname,
+  preview,
+}: {
+  homeHref: string;
+  nav: StudioNavItem[];
+  pathname: string;
+  preview: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        <Button variant="ghost" size="icon" className="-ml-2 size-9">
+          <Menu className="size-5" />
+          <span className="sr-only">Open menu</span>
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="left" className="studio-app flex w-72 flex-col gap-0 p-0">
+        <SheetHeader className="h-14 flex-row items-center space-y-0 border-b px-4 text-left">
+          <SheetTitle asChild>
+            <div>
+              <BrandLockup href={homeHref} onNavigate={() => setOpen(false)} />
+            </div>
+          </SheetTitle>
+          <SheetDescription className="sr-only">Studio navigation</SheetDescription>
+        </SheetHeader>
+        <div className="flex-1 overflow-y-auto px-3 py-4">
+          {preview ? (
+            <Badge variant="outline" className="mb-3 ml-3">
+              Preview
+            </Badge>
+          ) : null}
+          <NavLinks nav={nav} pathname={pathname} onNavigate={() => setOpen(false)} />
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+function BrandLockup({
+  href,
+  compact = false,
+  onNavigate,
+}: {
+  href: string;
+  compact?: boolean;
+  onNavigate?: () => void;
+}) {
+  return (
+    <Link href={href} onClick={onNavigate} className="flex min-w-0 items-center gap-2 text-foreground">
+      <LogoMark className="size-6 shrink-0" tone="ink" />
+      <span className="truncate text-base font-semibold tracking-tight">
         {compact ? "Studio" : brand.shortName}
       </span>
     </Link>
   );
 }
 
-function AccountFooter({ email, preview }: { email?: string; preview: boolean }) {
+function AccountMenu({
+  email,
+  preview,
+  variant,
+}: {
+  email?: string;
+  preview: boolean;
+  variant: "sidebar" | "header";
+}) {
+  const [pending, startTransition] = useTransition();
+  const name = email ?? (preview ? "Preview mode" : "Signed in");
+  const avatar = (
+    <Avatar className="size-8 rounded-md">
+      <AvatarFallback className="rounded-md bg-primary text-xs font-medium text-primary-foreground">
+        {email ? initials(email.split("@")[0]) : "FS"}
+      </AvatarFallback>
+    </Avatar>
+  );
+
   return (
-    <div className="px-3">
-      {email ? (
-        <p className="break-all text-xs leading-relaxed text-muted-foreground">{email}</p>
-      ) : null}
-      <Separator className="my-3" />
-      {preview ? (
-        <Button asChild variant="link" className="h-auto px-0 text-muted-foreground">
-          <Link href="/">View site</Link>
-        </Button>
-      ) : (
-        <form action={signOut}>
-          <Button type="submit" variant="ghost" size="sm" className="h-8 w-full justify-start px-2">
-            Sign out
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        {variant === "sidebar" ? (
+          <Button variant="ghost" className="h-auto w-full justify-start gap-3 px-2 py-2 text-left">
+            {avatar}
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-sm font-medium">{name}</span>
+              <span className="block truncate text-xs font-normal text-muted-foreground">
+                {preview ? "Sample data" : "Admin"}
+              </span>
+            </span>
+            <ChevronsUpDown className="size-4 shrink-0 text-muted-foreground" />
           </Button>
-        </form>
-      )}
-    </div>
+        ) : (
+          <Button variant="ghost" size="icon" className="size-9 rounded-md">
+            {avatar}
+            <span className="sr-only">Account menu</span>
+          </Button>
+        )}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align={variant === "sidebar" ? "start" : "end"}
+        side={variant === "sidebar" ? "top" : "bottom"}
+        className="studio-app w-56"
+      >
+        <DropdownMenuLabel className="font-normal">
+          <span className="block truncate text-sm font-medium">{name}</span>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/">
+            <ExternalLink className="size-4" />
+            View site
+          </Link>
+        </DropdownMenuItem>
+        {preview ? null : (
+          <DropdownMenuItem
+            disabled={pending}
+            onSelect={() => startTransition(() => signOut())}
+          >
+            <LogOut className="size-4" />
+            {pending ? "Signing out" : "Sign out"}
+          </DropdownMenuItem>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

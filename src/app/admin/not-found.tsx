@@ -1,16 +1,20 @@
 import Link from "next/link";
+import { SearchX } from "lucide-react";
+import { EmptyState } from "@/components/studio/ui";
 import { Button } from "@/components/ui/button";
 
 export default function AdminNotFound() {
   return (
-    <div className="py-16">
-      <h1 className="text-3xl font-bold tracking-tight text-foreground">Not found</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        That client, project, or report is not here.
-      </p>
-      <Button asChild className="mt-6">
-        <Link href="/admin">Back to CRM</Link>
-      </Button>
-    </div>
+    <EmptyState
+      className="mt-8 py-16"
+      icon={<SearchX />}
+      title="Not found"
+      description="That client, project, or report is not here."
+      action={
+        <Button asChild>
+          <Link href="/admin">Back to dashboard</Link>
+        </Button>
+      }
+    />
   );
 }

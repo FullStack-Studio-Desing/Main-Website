@@ -4,12 +4,15 @@ import { notFound } from "next/navigation";
 import { Blocked, PreviewNote, QueryError } from "@/components/studio/Blocked";
 import { ConfirmForm } from "@/components/studio/ConfirmForm";
 import { ProjectForm } from "@/components/studio/ProjectForm";
+import { ProjectWorkspace } from "@/components/studio/project/ProjectWorkspace";
 import { BackLink, PageIntro } from "@/components/studio/ui";
+import { Button } from "@/components/ui/button";
 import { deleteProjectAndLeave, updateProject } from "@/lib/portal/actions";
-import { getProject } from "@/lib/portal/queries";
-import { sampleProject, showPreview } from "@/lib/portal/sample";
+import { getProjectWorkspace, type ProjectWorkspace as Workspace } from "@/lib/portal/project-queries";
+import { sampleProjectWorkspace } from "@/lib/portal/project-sample";
+import { showPreview } from "@/lib/portal/sample";
 import { requireAdmin } from "@/lib/portal/session";
-import type { ClientRecord, ProjectRecord } from "@/lib/portal/types";
+import { isUuid } from "@/lib/portal/validators";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -23,14 +26,14 @@ export default async function AdminProjectPage({ params }: Props) {
 
   if (session.kind !== "ready") {
     if (session.kind === "unconfigured" && showPreview()) {
-      const sample = sampleProject(id);
+      const sample = sampleProjectWorkspace(id);
       if (!sample) return <Blocked session={session} />;
       return (
         <>
           <Blocked session={session} />
           <PreviewNote />
           <div className="mt-12">
-            <ProjectView {...sample} />
+            <ProjectView workspace={sample} />
           </div>
         </>
       );
@@ -38,19 +41,16 @@ export default async function AdminProjectPage({ params }: Props) {
     return <Blocked session={session} />;
   }
 
-  const result = await getProject(id);
+  if (!isUuid(id)) notFound();
+  const result = await getProjectWorkspace(id);
   if (!result.ok) return <QueryError reason={result.reason} />;
   if (!result.data) notFound();
-  return <ProjectView {...result.data} />;
+  return <ProjectView workspace={result.data} />;
 }
 
-function ProjectView({
-  project,
-  client,
-}: {
-  project: ProjectRecord;
-  client: ClientRecord;
-}) {
+function ProjectView({ workspace }: { workspace: Workspace }) {
+  const { project, client } = workspace;
+
   return (
     <>
       <BackLink href="/admin/projects">← Projects</BackLink>
@@ -60,27 +60,29 @@ function ProjectView({
           title={project.name}
           lede={project.description ?? undefined}
           action={
-            <div className="flex flex-wrap items-center gap-4">
-              <Link
-                href={`/admin/clients/${client.id}`}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground"
-              >
-                View client
-              </Link>
+            <>
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/admin/clients/${client.id}`}>View client</Link>
+              </Button>
               <ConfirmForm
                 action={deleteProjectAndLeave.bind(null, client.id, project.id)}
-                message={`Delete project “${project.name}”?`}
-                label="Delete"
+                message={`Delete project “${project.name}” with its tasks and updates? This cannot be undone.`}
+                label="Delete project"
               />
-            </div>
+            </>
           }
         />
       </div>
-      <ProjectForm
-        action={updateProject.bind(null, project.id, client.id)}
-        project={project}
-        submitLabel="Save project"
-        showSeparator={false}
+      <ProjectWorkspace
+        workspace={workspace}
+        projectForm={
+          <ProjectForm
+            action={updateProject.bind(null, project.id, client.id)}
+            project={project}
+            submitLabel="Save project"
+            showSeparator={false}
+          />
+        }
       />
     </>
   );

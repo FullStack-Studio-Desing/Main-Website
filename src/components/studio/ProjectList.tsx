@@ -1,10 +1,15 @@
+"use client";
+
 import Link from "next/link";
+import { useMemo, useState } from "react";
+import { FolderKanban } from "lucide-react";
 import { deleteProject } from "@/lib/portal/actions";
-import { formatDate, formatUsd } from "@/lib/portal/format";
+import { formatDate, formatUsd, todayISO } from "@/lib/portal/format";
 import { isUuid } from "@/lib/portal/validators";
 import type { ClientRecord, ProjectListItem, ProjectRecord } from "@/lib/portal/types";
 import { ConfirmForm } from "@/components/studio/ConfirmForm";
-import { StatusBadge } from "@/components/studio/ui";
+import { FilterBar, matches } from "@/components/studio/FilterBar";
+import { EmptyState, StatusBadge, isOverdue } from "@/components/studio/ui";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
@@ -14,66 +19,116 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
+
+const statuses = [
+  { value: "planning", label: "Planning" },
+  { value: "active", label: "Active" },
+  { value: "paused", label: "Paused" },
+  { value: "completed", label: "Completed" },
+  { value: "cancelled", label: "Cancelled" },
+];
 
 export function ProjectList({ projects }: { projects: ProjectListItem[] }) {
+  const [query, setQuery] = useState("");
+  const [status, setStatus] = useState("all");
+  const today = todayISO();
+  const rows = useMemo(
+    () =>
+      projects.filter(
+        (project) =>
+          (status === "all" || project.status === status) &&
+          matches(query, project.name, project.company_name, project.description)
+      ),
+    [projects, query, status]
+  );
+
   if (projects.length === 0) {
     return (
-      <p className="mt-8 max-w-md text-sm text-muted-foreground">
-        No projects yet. Add the first one for a client, then track status and budget here.
-      </p>
+      <EmptyState
+        icon={<FolderKanban />}
+        title="No projects yet"
+        description="Add the first one for a client, then track status, due dates, and budget here."
+      />
     );
   }
 
   return (
-    <Card className="mt-6 overflow-hidden">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Project</TableHead>
-            <TableHead className="hidden sm:table-cell">Client</TableHead>
-            <TableHead className="hidden md:table-cell">Due</TableHead>
-            <TableHead className="hidden lg:table-cell">Budget</TableHead>
-            <TableHead className="text-right">Status</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {projects.map((project) => (
-            <TableRow key={project.id}>
-              <TableCell>
-                <Link
-                  href={`/admin/projects/${project.id}`}
-                  className="font-medium text-foreground hover:underline"
-                >
-                  {project.name}
-                </Link>
-                {project.description ? (
-                  <span className="mt-1 block max-w-[40ch] truncate text-sm text-muted-foreground">
-                    {project.description}
-                  </span>
-                ) : null}
-              </TableCell>
-              <TableCell className="hidden sm:table-cell">
-                <Link
-                  href={`/admin/clients/${project.client_id}`}
-                  className="text-sm text-muted-foreground hover:underline"
-                >
-                  {project.company_name}
-                </Link>
-              </TableCell>
-              <TableCell className="hidden text-sm text-muted-foreground md:table-cell">
-                {project.due_on ? formatDate(project.due_on) : "—"}
-              </TableCell>
-              <TableCell className="hidden text-sm text-muted-foreground lg:table-cell">
-                {project.budget !== null ? formatUsd(project.budget) : "—"}
-              </TableCell>
-              <TableCell className="text-right">
-                <StatusBadge status={project.status} />
-              </TableCell>
+    <div className="space-y-3">
+      <FilterBar
+        query={query}
+        onQuery={setQuery}
+        placeholder="Search projects or clients"
+        status={status}
+        onStatus={setStatus}
+        statuses={statuses}
+      />
+      <Card className="overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Project</TableHead>
+              <TableHead className="hidden sm:table-cell">Client</TableHead>
+              <TableHead>Due</TableHead>
+              <TableHead className="hidden text-right md:table-cell">Budget</TableHead>
+              <TableHead className="text-right">Status</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Card>
+          </TableHeader>
+          <TableBody>
+            {rows.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="h-20 text-center text-sm text-muted-foreground">
+                  No projects match these filters.
+                </TableCell>
+              </TableRow>
+            ) : (
+              rows.map((project) => {
+                const overdue = isOverdue(project, today);
+                return (
+                  <TableRow key={project.id}>
+                    <TableCell className="min-w-[180px]">
+                      <Link
+                        href={`/admin/projects/${project.id}`}
+                        className="font-medium text-foreground hover:underline"
+                      >
+                        {project.name}
+                      </Link>
+                      <span className="mt-0.5 block max-w-[40ch] truncate text-xs text-muted-foreground">
+                        <span className="sm:hidden">{project.company_name}</span>
+                        <span className="hidden sm:inline">{project.description}</span>
+                      </span>
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      <Link
+                        href={`/admin/clients/${project.client_id}#projects`}
+                        className="text-muted-foreground hover:text-foreground hover:underline"
+                      >
+                        {project.company_name}
+                      </Link>
+                    </TableCell>
+                    <TableCell
+                      className={cn(
+                        "whitespace-nowrap",
+                        overdue ? "font-medium text-destructive" : "text-muted-foreground"
+                      )}
+                    >
+                      {project.due_on ? formatDate(project.due_on) : "—"}
+                      {overdue ? <span className="block text-xs font-normal">Overdue</span> : null}
+                    </TableCell>
+                    <TableCell className="hidden text-right tabular-nums text-muted-foreground md:table-cell">
+                      {project.budget !== null ? formatUsd(project.budget) : "—"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <StatusBadge status={project.status} />
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            )}
+          </TableBody>
+        </Table>
+      </Card>
+    </div>
   );
 }
 
@@ -136,47 +191,78 @@ export function ClientProjects({
   projects: ProjectRecord[];
 }) {
   const real = isUuid(clientId);
+  const today = todayISO();
 
   if (projects.length === 0) {
-    return <p className="text-sm text-muted-foreground">No projects yet.</p>;
+    return (
+      <EmptyState
+        icon={<FolderKanban />}
+        title="No projects yet"
+        description="Track deliverables and retainers for this client."
+      />
+    );
   }
 
   return (
-    <Card>
-      <CardContent className="divide-y divide-border p-0">
-        {projects.map((project) => (
-          <div
-            key={project.id}
-            className="grid gap-3 px-5 py-4 sm:grid-cols-[1fr_auto] sm:items-center"
-          >
-            <div>
-              <Link
-                href={`/admin/projects/${project.id}`}
-                className="text-base font-medium text-foreground hover:underline"
-              >
-                {project.name}
-              </Link>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {project.due_on ? `Due ${formatDate(project.due_on)}` : "No due date"}
-                {project.budget !== null ? ` · ${formatUsd(project.budget)}` : ""}
-              </p>
-              {project.description ? (
-                <p className="mt-2 text-sm text-muted-foreground">{project.description}</p>
-              ) : null}
-            </div>
-            <div className="flex items-center gap-4">
-              <StatusBadge status={project.status} />
-              {real ? (
-                <ConfirmForm
-                  action={deleteProject.bind(null, clientId, project.id)}
-                  message={`Delete project “${project.name}”?`}
-                  label="Delete"
-                />
-              ) : null}
-            </div>
-          </div>
-        ))}
-      </CardContent>
+    <Card className="overflow-hidden">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Project</TableHead>
+            <TableHead>Due</TableHead>
+            <TableHead className="hidden text-right sm:table-cell">Budget</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="w-0">
+              <span className="sr-only">Actions</span>
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {projects.map((project) => {
+            const overdue = isOverdue(project, today);
+            return (
+              <TableRow key={project.id}>
+                <TableCell className="min-w-[160px]">
+                  <Link
+                    href={`/admin/projects/${project.id}`}
+                    className="font-medium text-foreground hover:underline"
+                  >
+                    {project.name}
+                  </Link>
+                  {project.description ? (
+                    <span className="mt-0.5 block max-w-[48ch] truncate text-xs text-muted-foreground">
+                      {project.description}
+                    </span>
+                  ) : null}
+                </TableCell>
+                <TableCell
+                  className={cn(
+                    "whitespace-nowrap",
+                    overdue ? "font-medium text-destructive" : "text-muted-foreground"
+                  )}
+                >
+                  {project.due_on ? formatDate(project.due_on) : "—"}
+                </TableCell>
+                <TableCell className="hidden text-right tabular-nums text-muted-foreground sm:table-cell">
+                  {project.budget !== null ? formatUsd(project.budget) : "—"}
+                </TableCell>
+                <TableCell>
+                  <StatusBadge status={project.status} />
+                </TableCell>
+                <TableCell className="text-right">
+                  {real ? (
+                    <ConfirmForm
+                      action={deleteProject.bind(null, clientId, project.id)}
+                      message={`Delete project “${project.name}”?`}
+                      label="Delete"
+                    />
+                  ) : null}
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
     </Card>
   );
 }

@@ -1,7 +1,7 @@
 export type Role = "admin" | "client";
 export type ClientStatus = "active" | "paused" | "archived";
 export type PlanId = "starter" | "growth" | "scale" | "custom";
-export type PaymentStatus = "paid" | "pending" | "failed" | "refunded";
+export type PaymentStatus = "paid" | "pending" | "failed" | "refunded" | "partially_refunded";
 export type ReportStatus = "draft" | "published";
 export type ProjectStatus =
   | "planning"
@@ -9,11 +9,21 @@ export type ProjectStatus =
   | "paused"
   | "completed"
   | "cancelled";
-export type InvoiceStatus = "draft" | "sent" | "paid" | "failed" | "void";
+export type InvoiceStatus =
+  | "draft"
+  | "sent"
+  | "paid"
+  | "failed"
+  | "void"
+  | "refunded"
+  | "partially_refunded";
 export type InvoiceBillingType = "one_time" | "recurring";
 export type PaymentMethodStatus = "active" | "removed";
 export type TaxIdType = "RFC" | "CURP";
 export type ClientContactKind = "email" | "phone";
+export type TaskStatus = "todo" | "in_progress" | "blocked" | "done";
+export type TaskPriority = "low" | "normal" | "high" | "urgent";
+export type ProjectUpdateKind = "note" | "milestone" | "blocker" | "delivery";
 
 export type ActionState = {
   error?: string;
@@ -80,7 +90,13 @@ export type PaymentRecord = {
   reference: string | null;
   notes: string | null;
   invoice_id: string | null;
+  project_id?: string | null;
   mp_order_id: string | null;
+  refunded_amount?: number;
+  /** What the card was actually charged (MXN for the Mexico MP account) and the USD rate used. */
+  charge_currency?: string | null;
+  charge_amount?: number | null;
+  fx_rate?: number | null;
   created_at: string;
 };
 
@@ -116,6 +132,8 @@ export type InvoiceRecord = {
   due_on: string | null;
   next_charge_on: string | null;
   mp_order_id: string | null;
+  project_id?: string | null;
+  public_token?: string;
   sent_at: string | null;
   paid_at: string | null;
   created_at: string;
@@ -184,4 +202,41 @@ export type DirectoryStats = {
   reports: number;
   projects: number;
   monthLabel: string;
+};
+
+export type ProjectTaskRecord = {
+  id: string;
+  project_id: string;
+  client_id: string;
+  title: string;
+  details: string | null;
+  status: TaskStatus;
+  priority: TaskPriority;
+  due_on: string | null;
+  completed_at: string | null;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ProjectUpdateRecord = {
+  id: string;
+  project_id: string;
+  client_id: string;
+  kind: ProjectUpdateKind;
+  body: string;
+  visible_to_client: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type PaymentRefundRecord = {
+  id: string;
+  payment_id: string;
+  amount: number;
+  currency: string;
+  reason: string | null;
+  source: "crm" | "mercadopago" | "manual";
+  mp_refund_id: string | null;
+  created_at: string;
 };

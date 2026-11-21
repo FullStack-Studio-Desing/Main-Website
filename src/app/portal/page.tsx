@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Blocked, PreviewNote, QueryError } from "@/components/studio/Blocked";
 import { PortalHome } from "@/components/studio/PortalHome";
+import { PortalProjectActivity } from "@/components/studio/project/PortalProjectActivity";
 import { PageIntro } from "@/components/studio/ui";
+import { getClientProjectActivity } from "@/lib/portal/project-queries";
+import { sampleClientProjectActivity } from "@/lib/portal/project-sample";
 import { getPortalHome } from "@/lib/portal/queries";
 import { samplePortal, showPreview } from "@/lib/portal/sample";
 import { requireClient } from "@/lib/portal/session";
@@ -21,6 +24,7 @@ export default async function PortalPage() {
           <PreviewNote />
           <div className="mt-12">
             <PortalHome {...samplePortal()} />
+            <PortalProjectActivity activity={sampleClientProjectActivity()} />
           </div>
         </>
       );
@@ -40,7 +44,10 @@ export default async function PortalPage() {
     );
   }
 
-  const result = await getPortalHome(session.profile.client_id);
+  const [result, activity] = await Promise.all([
+    getPortalHome(session.profile.client_id),
+    getClientProjectActivity(session.profile.client_id),
+  ]);
   if (!result.ok) return <QueryError reason={result.reason} />;
   if (!result.data) {
     return (
@@ -52,5 +59,10 @@ export default async function PortalPage() {
     );
   }
 
-  return <PortalHome {...result.data} />;
+  return (
+    <>
+      <PortalHome {...result.data} />
+      {activity.ok ? <PortalProjectActivity activity={activity.data} /> : null}
+    </>
+  );
 }

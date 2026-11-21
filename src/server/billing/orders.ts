@@ -1,8 +1,12 @@
 import { randomUUID } from "crypto";
 import { amountToMp, type CheckoutPlan } from "@/server/billing/plans";
+import { getUsdQuote, toChargeAmount } from "@/server/billing/fx";
 import { mpAccessToken } from "@/server/billing/mp";
 
 const MP_ORDERS = "https://api.mercadopago.com/v1/orders";
+
+/** What the card was actually charged, in the Mercado Pago account currency. */
+export type ChargeInfo = { currency: string; amount: number; rate: number };
 
 export type OrderOutcome =
   | {
@@ -11,12 +15,14 @@ export type OrderOutcome =
       id: string;
       message: string;
       challengeUrl?: string;
+      charge?: ChargeInfo;
     }
   | {
       ok: false;
       status: "rejected" | "error";
       message: string;
       id?: string;
+      charge?: ChargeInfo;
     };
 
 type CreateOrderInput = {
@@ -84,7 +90,21 @@ export async function createCardCharge(input: CreateChargeInput): Promise<OrderO
     return { ok: false, status: "error", message: "Enter a valid charge amount." };
   }
 
-  const amount = amountToMp(input.amount);
+  // Prices are USD; the MX seller account charges MXN, so convert at the current rate.
+  const quote = await getUsdQuote();
+  if (!quote) {
+    return {
+      ok: false,
+      status: "error",
+      message: "The exchange rate is unavailable right now. Try again in a few minutes.",
+    };
+  }
+  const charge: ChargeInfo = {
+    currency: quote.currency,
+    amount: toChargeAmount(input.amount, quote),
+    rate: quote.rate,
+  };
+  const amount = amountToMp(charge.amount);
   const payer: Record<string, unknown> = { email: input.email };
   if (input.customerId) payer.id = input.customerId;
   if (input.identificationType && input.identificationNumber) {
@@ -106,8 +126,8 @@ export async function createCardCharge(input: CreateChargeInput): Promise<OrderO
       body: JSON.stringify({
         type: "online",
         processing_mode: "automatic",
-        // No currency field exists on POST /v1/orders. Amount is passed as-is
-        // for the seller account currency (MXN for Mexico accounts).
+        // No currency field exists on POST /v1/orders; total_amount is in the
+        // seller account currency (MXN), already converted from USD above.
         total_amount: amount,
         external_reference: input.externalReference,
         description: input.description,
@@ -158,7 +178,7 @@ export async function createCardCharge(input: CreateChargeInput): Promise<OrderO
     };
   }
 
-  return interpretOrder(payload);
+  return { ...interpretOrder(payload), charge };
 }
 
 export function interpretOrder(payload: Record<string, unknown>): OrderOutcome {

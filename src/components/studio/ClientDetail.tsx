@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FileText, Mail, Pencil, Phone, UserRound, Wallet } from "lucide-react";
 import {
   createPayment,
   createProject,
@@ -20,6 +21,8 @@ import type {
 } from "@/lib/portal/types";
 import { AccessForm } from "@/components/studio/AccessForm";
 import { ConfirmForm } from "@/components/studio/ConfirmForm";
+import { FormDialog } from "@/components/studio/FormDialog";
+import { HashTabs } from "@/components/studio/HashTabs";
 import { InvoiceForm } from "@/components/studio/InvoiceForm";
 import { InvoiceList } from "@/components/studio/InvoiceList";
 import { PaymentForm } from "@/components/studio/PaymentForm";
@@ -28,10 +31,27 @@ import { PaymentStatusSelect } from "@/components/studio/PaymentStatusSelect";
 import { ClientProjects } from "@/components/studio/ProjectList";
 import { ProjectForm } from "@/components/studio/ProjectForm";
 import { ReportForm } from "@/components/studio/ReportForm";
-import { BackLink, PageIntro, Section, StatusBadge } from "@/components/studio/ui";
+import {
+  BackLink,
+  EmptyState,
+  SectionCard,
+  StatCard,
+  StatusBadge,
+  initials,
+} from "@/components/studio/ui";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { Card } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { TabsContent } from "@/components/ui/tabs";
+import type { ReactNode } from "react";
 
 export function ClientDetail({
   client,
@@ -51,243 +71,385 @@ export function ClientDetail({
   login: PortalLogin | null;
 }) {
   const real = isUuid(client.id);
+  const collected = payments
+    .filter((payment) => payment.status === "paid")
+    .reduce((sum, payment) => sum + payment.amount, 0);
+  const openInvoices = invoices.filter(
+    (invoice) => invoice.status === "sent" || invoice.status === "failed"
+  );
+  const contacts = client.contacts ?? [];
+  const people = client.people ?? [];
+
+  const tabs = [
+    { value: "overview", label: "Overview" },
+    { value: "projects", label: "Projects", count: projects.length },
+    { value: "invoices", label: "Invoices", count: invoices.length },
+    { value: "payments", label: "Payments", count: payments.length },
+    { value: "billing", label: "Cards", count: paymentMethods.length },
+    { value: "reports", label: "Reports", count: reports.length },
+    { value: "access", label: "Portal access" },
+  ];
 
   return (
-    <>
+    <div className="space-y-6">
       <BackLink href="/admin/clients">← Clients</BackLink>
-      <div className="mt-6">
-        <PageIntro
-          eyebrow={client.contact_name}
-          title={client.company_name}
-          lede={[client.email, client.phone].filter(Boolean).join(" · ")}
-          action={
-            <Button asChild>
-              <Link href={`/admin/clients/${client.id}/edit`}>Edit client</Link>
-            </Button>
-          }
-        />
+
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex min-w-0 items-center gap-4">
+          <Avatar className="size-12">
+            <AvatarFallback className="font-medium">{initials(client.company_name)}</AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+                {client.company_name}
+              </h1>
+              <StatusBadge status={client.status} />
+            </div>
+            <p className="mt-1 break-words text-sm text-muted-foreground">
+              {[client.contact_name, client.email, client.phone].filter(Boolean).join(" · ")}
+            </p>
+          </div>
+        </div>
+        <Button asChild variant="outline">
+          <Link href={`/admin/clients/${client.id}/edit`}>
+            <Pencil />
+            Edit client
+          </Link>
+        </Button>
       </div>
 
-      <div className="mt-8 grid items-start gap-4 lg:grid-cols-[1.35fr_0.85fr]">
-        <Card>
-          <CardHeader className="flex-row items-start justify-between space-y-0">
-            <div className="space-y-1.5">
-              <CardDescription>Current plan</CardDescription>
-              <CardTitle className="text-2xl">{client.plan_name}</CardTitle>
-            </div>
-            <StatusBadge status={client.status} />
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-semibold tracking-tight">
-              {formatUsd(client.monthly_amount)}
-              <span className="ml-1 text-sm font-normal text-muted-foreground">/ month</span>
-            </p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {client.started_on ? `Started ${formatDate(client.started_on)}` : "Start date not set"}
-            </p>
-          </CardContent>
-        </Card>
+      <HashTabs tabs={tabs} defaultValue="overview">
+        <TabsContent value="overview" className="mt-4 space-y-4">
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <StatCard
+              label="Plan"
+              value={client.plan_name}
+              hint={
+                client.started_on ? `Started ${formatDate(client.started_on)}` : "Start date not set"
+              }
+            />
+            <StatCard label="Monthly" value={formatUsd(client.monthly_amount)} hint="Per month" />
+            <StatCard
+              label="Collected"
+              value={formatUsd(collected)}
+              hint="All paid payments"
+              icon={<Wallet />}
+            />
+            <StatCard
+              label="Open invoices"
+              value={openInvoices.length}
+              hint={formatUsd(openInvoices.reduce((sum, invoice) => sum + invoice.amount, 0))}
+              icon={<FileText />}
+            />
+          </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Portal login</CardTitle>
-            <CardDescription>
-              {login
+          <div className="grid items-start gap-4 lg:grid-cols-2">
+            <SectionCard title="Contact methods" description="Company emails and phones.">
+              {contacts.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No contact methods yet.</p>
+              ) : (
+                <ul className="space-y-3">
+                  {contacts.map((contact) => (
+                    <li key={contact.id} className="flex items-start gap-3 text-sm">
+                      {contact.kind === "email" ? (
+                        <Mail className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                      ) : (
+                        <Phone className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                      )}
+                      <div className="min-w-0">
+                        <p className="break-all font-medium">{contact.value}</p>
+                        <p className="text-muted-foreground">
+                          {[contact.kind === "email" ? "Email" : "Phone", contact.label]
+                            .filter(Boolean)
+                            .join(" · ")}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </SectionCard>
+
+            <SectionCard title="People" description="Named contacts at this company.">
+              {people.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No people yet.</p>
+              ) : (
+                <ul className="space-y-3">
+                  {people.map((person) => (
+                    <li key={person.id} className="flex items-start gap-3 text-sm">
+                      <UserRound className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                      <div className="min-w-0">
+                        <p className="font-medium">
+                          {person.name}
+                          <span className="ml-2 font-normal text-muted-foreground">
+                            {person.role}
+                          </span>
+                        </p>
+                        <p className="break-all text-muted-foreground">
+                          {[person.email, person.phone].filter(Boolean).join(" · ") ||
+                            "No email or phone"}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </SectionCard>
+          </div>
+
+          {client.billing_notes ? (
+            <SectionCard title="Notes" description="Only the studio sees this.">
+              <p className="max-w-[68ch] whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
+                {client.billing_notes}
+              </p>
+            </SectionCard>
+          ) : null}
+        </TabsContent>
+
+        <TabsContent value="projects" className="mt-4">
+          <TabSection
+            id="projects"
+            title="Projects"
+            description="Track deliverables and retainers for this client."
+            action={
+              real ? (
+                <FormDialog
+                  key={projects.length}
+                  trigger="Add project"
+                  title="Add project"
+                  description={`New project for ${client.company_name}.`}
+                  size="sm"
+                >
+                  <ProjectForm action={createProject.bind(null, client.id)} showSeparator={false} />
+                </FormDialog>
+              ) : null
+            }
+          >
+            <ClientProjects clientId={client.id} projects={projects} />
+          </TabSection>
+        </TabsContent>
+
+        <TabsContent value="invoices" className="mt-4">
+          <TabSection
+            id="invoices"
+            title="Invoices"
+            description="Send one-time or recurring invoices and charge the card on file with Mercado Pago."
+          >
+            <InvoiceList invoices={invoices} />
+            {real ? (
+              <InvoiceForm
+                action={createInvoice.bind(null, client.id)}
+                paymentMethods={paymentMethods}
+                projects={projects}
+                defaultAmount={client.monthly_amount}
+                defaultTitle={`${client.plan_name} retainer`}
+              />
+            ) : null}
+          </TabSection>
+        </TabsContent>
+
+        <TabsContent value="payments" className="mt-4">
+          <TabSection
+            id="payments"
+            title="Payments"
+            description="Manual payment records plus Mercado Pago charges from invoices."
+            action={
+              <FormDialog
+                key={payments.length}
+                trigger="Record payment"
+                title="Record payment"
+                description={`Manual payment for ${client.company_name}.`}
+                size="sm"
+              >
+                <PaymentForm action={createPayment.bind(null, client.id)} />
+              </FormDialog>
+            }
+          >
+            <ClientPayments clientId={client.id} payments={payments} real={real} />
+          </TabSection>
+        </TabsContent>
+
+        <TabsContent value="billing" className="mt-4">
+          <TabSection
+            id="billing"
+            title="Cards on file"
+            description="Clients add Mercado Pago cards in their portal. Charge them from invoices."
+          >
+            <PaymentMethodList clientId={client.id} methods={paymentMethods} />
+          </TabSection>
+        </TabsContent>
+
+        <TabsContent value="reports" className="mt-4 space-y-4">
+          <TabSection
+            id="reports"
+            title="Reports"
+            description="Published reports show up in the client portal. Drafts stay here."
+          >
+            {reports.length === 0 ? (
+              <EmptyState icon={<FileText />} title="No reports yet" />
+            ) : (
+              <Card className="overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Report</TableHead>
+                      <TableHead className="hidden sm:table-cell">Period</TableHead>
+                      <TableHead className="text-right">Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {reports.map((report) => (
+                      <TableRow key={report.id}>
+                        <TableCell>
+                          <Link
+                            href={`/admin/reports/${report.id}`}
+                            className="font-medium hover:underline"
+                          >
+                            {report.title}
+                          </Link>
+                          <span className="block text-xs text-muted-foreground sm:hidden">
+                            {report.period_label}
+                          </span>
+                        </TableCell>
+                        <TableCell className="hidden text-muted-foreground sm:table-cell">
+                          {report.period_label}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <StatusBadge status={report.status} />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Card>
+            )}
+          </TabSection>
+          <SectionCard title="New report" description="File a report for this client.">
+            <ReportForm action={createReport.bind(null, client.id)} submitLabel="File report" />
+          </SectionCard>
+        </TabsContent>
+
+        <TabsContent value="access" className="mt-4">
+          <SectionCard
+            title="Portal login"
+            description={
+              login
                 ? `${login.email} can sign in and see this plan, its payments, and published reports.`
-                : "Create a login so this client can open their own portal."}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+                : "Create a login so this client can open their own portal."
+            }
+            className="max-w-xl"
+          >
             <AccessForm
               action={savePortalLogin.bind(null, client.id)}
               login={login}
               defaultEmail={client.email}
             />
-          </CardContent>
-        </Card>
-      </div>
+          </SectionCard>
+        </TabsContent>
+      </HashTabs>
+    </div>
+  );
+}
 
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Contact methods</CardTitle>
-            <CardDescription>Company emails and phones.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {(client.contacts ?? []).length === 0 ? (
-              <p className="text-sm text-muted-foreground">No contact methods yet.</p>
-            ) : (
-              (client.contacts ?? []).map((contact) => (
-                <div key={contact.id} className="flex items-baseline justify-between gap-3 text-sm">
-                  <div>
-                    <p className="font-medium">{contact.value}</p>
-                    <p className="text-muted-foreground">
-                      {[contact.kind === "email" ? "Email" : "Phone", contact.label]
-                        .filter(Boolean)
-                        .join(" · ")}
-                    </p>
-                  </div>
-                </div>
-              ))
-            )}
-          </CardContent>
-        </Card>
+function ClientPayments({
+  clientId,
+  payments,
+  real,
+}: {
+  clientId: string;
+  payments: PaymentRecord[];
+  real: boolean;
+}) {
+  if (payments.length === 0) {
+    return <EmptyState icon={<Wallet />} title="No payments yet" />;
+  }
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">People</CardTitle>
-            <CardDescription>Named contacts at this company.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {(client.people ?? []).length === 0 ? (
-              <p className="text-sm text-muted-foreground">No people yet.</p>
-            ) : (
-              (client.people ?? []).map((person) => (
-                <div key={person.id} className="text-sm">
-                  <p className="font-medium">
-                    {person.name}
-                    <span className="ml-2 font-normal text-muted-foreground">{person.role}</span>
-                  </p>
-                  <p className="text-muted-foreground">
-                    {[person.email, person.phone].filter(Boolean).join(" · ") || "No email or phone"}
-                  </p>
-                </div>
-              ))
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {client.billing_notes ? (
-        <p className="mt-6 max-w-[68ch] text-sm leading-relaxed text-muted-foreground">
-          {client.billing_notes}
-        </p>
-      ) : null}
-
-      <Section
-        id="projects"
-        title="Projects"
-        lede="Track deliverables and retainers for this client."
-      >
-        <ClientProjects clientId={client.id} projects={projects} />
-        {real ? <ProjectForm action={createProject.bind(null, client.id)} /> : null}
-      </Section>
-
-      <Section
-        id="billing"
-        title="Cards on file"
-        lede="Clients add Mercado Pago cards in their portal. Charge them from invoices below."
-      >
-        <PaymentMethodList clientId={client.id} methods={paymentMethods} />
-      </Section>
-
-      <Section
-        id="invoices"
-        title="Invoices"
-        lede="Send one-time or recurring invoices and charge the card on file with Mercado Pago."
-      >
-        <InvoiceList invoices={invoices} />
-        {real ? (
-          <InvoiceForm
-            action={createInvoice.bind(null, client.id)}
-            paymentMethods={paymentMethods}
-            defaultAmount={client.monthly_amount}
-            defaultTitle={`${client.plan_name} retainer`}
-          />
-        ) : null}
-      </Section>
-
-      <Section
-        id="payments"
-        title="Payments"
-        lede="Manual payment records plus Mercado Pago charges from invoices."
-      >
-        {payments.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No payments yet.</p>
-        ) : (
-          <Card>
-            <CardContent className="divide-y divide-border p-0">
-              {payments.map((payment) => (
-                <div
-                  key={payment.id}
-                  className="grid gap-3 px-5 py-4 sm:grid-cols-[1fr_auto] sm:items-center"
-                >
-                  <div>
-                    <p className="text-base font-medium text-foreground">
-                      {formatUsd(payment.amount)}
-                      {payment.period_label ? ` · ${payment.period_label}` : ""}
-                    </p>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {payment.paid_on ? formatDate(payment.paid_on) : "No date"}
-                      {payment.method ? ` · ${payment.method}` : ""}
-                      {payment.reference ? ` · ${payment.reference}` : ""}
-                    </p>
-                    {payment.notes ? (
-                      <p className="mt-2 text-sm text-muted-foreground">{payment.notes}</p>
-                    ) : null}
-                  </div>
-                  <div className="flex items-center gap-4">
-                    {real ? (
-                      <PaymentStatusSelect
-                        clientId={client.id}
-                        paymentId={payment.id}
-                        status={payment.status}
-                      />
-                    ) : (
-                      <StatusBadge status={payment.status} />
-                    )}
-                    {real ? (
-                      <ConfirmForm
-                        action={deletePayment.bind(null, client.id, payment.id)}
-                        message={`Delete this ${formatUsd(payment.amount)} payment?`}
-                        label="Delete"
-                      />
-                    ) : null}
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        )}
-        <PaymentForm action={createPayment.bind(null, client.id)} />
-      </Section>
-
-      <Section
-        id="reports"
-        title="Reports"
-        lede="Published reports show up in the client portal. Drafts stay here."
-      >
-        {reports.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No reports yet.</p>
-        ) : (
-          <Card>
-            <CardContent className="divide-y divide-border p-0">
-              {reports.map((report) => (
-                <Link
-                  key={report.id}
-                  href={`/admin/reports/${report.id}`}
-                  className="flex items-start justify-between gap-4 px-5 py-4 transition-colors hover:bg-muted/50"
-                >
-                  <span>
-                    <span className="block text-base font-medium text-foreground">{report.title}</span>
-                    <span className="mt-1 block text-sm text-muted-foreground">
-                      {report.period_label}
-                    </span>
+  return (
+    <Card className="overflow-hidden">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Payment</TableHead>
+            <TableHead className="text-right">Amount</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="w-0">
+              <span className="sr-only">Actions</span>
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {payments.map((payment) => (
+            <TableRow key={payment.id}>
+              <TableCell className="min-w-[160px]">
+                <span className="block font-medium">
+                  {payment.paid_on ? formatDate(payment.paid_on) : "No date"}
+                  {payment.period_label ? ` · ${payment.period_label}` : ""}
+                </span>
+                <span className="block text-xs text-muted-foreground">
+                  {[payment.method, payment.reference].filter(Boolean).join(" · ") || "—"}
+                </span>
+                {payment.notes ? (
+                  <span className="mt-1 block max-w-[48ch] text-xs text-muted-foreground">
+                    {payment.notes}
                   </span>
-                  <StatusBadge status={report.status} />
-                </Link>
-              ))}
-            </CardContent>
-          </Card>
-        )}
-        <div className="mt-8">
-          <Separator />
-          <h3 className="mt-8 text-lg font-medium text-foreground">New report</h3>
-          <div className="mt-5">
-            <ReportForm action={createReport.bind(null, client.id)} submitLabel="File report" />
-          </div>
+                ) : null}
+              </TableCell>
+              <TableCell className="text-right font-medium tabular-nums">
+                {formatUsd(payment.amount)}
+              </TableCell>
+              <TableCell>
+                {real ? (
+                  <PaymentStatusSelect
+                    clientId={clientId}
+                    paymentId={payment.id}
+                    status={payment.status}
+                  />
+                ) : (
+                  <StatusBadge status={payment.status} />
+                )}
+              </TableCell>
+              <TableCell className="text-right">
+                {real ? (
+                  <ConfirmForm
+                    action={deletePayment.bind(null, clientId, payment.id)}
+                    message={`Delete this ${formatUsd(payment.amount)} payment?`}
+                    label="Delete"
+                  />
+                ) : null}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Card>
+  );
+}
+
+/** Heading row for a tab whose body is already a card or table. */
+function TabSection({
+  id,
+  title,
+  description,
+  action,
+  children,
+}: {
+  id: string;
+  title: string;
+  description: string;
+  action?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <section id={id} className="scroll-mt-8 space-y-4">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="min-w-0 space-y-1">
+          <h2 className="text-lg font-semibold tracking-tight">{title}</h2>
+          <p className="text-sm text-muted-foreground">{description}</p>
         </div>
-      </Section>
-    </>
+        {action}
+      </div>
+      {children}
+    </section>
   );
 }

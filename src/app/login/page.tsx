@@ -24,16 +24,15 @@ export default async function LoginPage() {
   }
 
   return (
-    <main className="studio-app flex min-h-dvh flex-col bg-background px-6 py-8 text-foreground">
-      <Link href="/" className="flex items-center gap-2.5 text-foreground">
-        <LogoMark className="h-7 w-7" tone="ink" />
-        <span className="text-lg font-semibold tracking-tight">{brand.shortName}</span>
+    <main className="studio-app flex min-h-dvh flex-col bg-muted/40 px-4 py-6 text-foreground sm:px-6">
+      <Link href="/" className="flex items-center gap-2 self-start text-foreground">
+        <LogoMark className="size-6" tone="ink" />
+        <span className="text-base font-semibold tracking-tight">{brand.shortName}</span>
       </Link>
-      <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center py-16">
+      <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center gap-6 py-12">
         {!isSupabaseConfigured() ? <Blocked session={{ kind: "unconfigured" }} /> : null}
-        <Card className={!isSupabaseConfigured() ? "mt-8" : undefined}>
-          <CardHeader>
-            <CardDescription>Client portal</CardDescription>
+        <Card>
+          <CardHeader className="space-y-1 text-center">
             <CardTitle className="text-2xl">Sign in</CardTitle>
             <CardDescription>
               Payments, your current plan, and every report we file.

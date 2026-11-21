@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { StudioShell } from "@/components/studio/shell";
+import { StudioShell, type StudioNavItem } from "@/components/studio/shell";
+import { Toaster } from "@/components/ui/sonner";
 import { requireAdmin } from "@/lib/portal/session";
 
 export const metadata: Metadata = {
@@ -10,12 +11,12 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-const nav = [
-  { href: "/admin", label: "Overview" },
-  { href: "/admin/clients", label: "Clients" },
-  { href: "/admin/invoices", label: "Invoices" },
-  { href: "/admin/payments", label: "Payments" },
-  { href: "/admin/projects", label: "Projects" },
+const nav: StudioNavItem[] = [
+  { href: "/admin", label: "Dashboard", icon: "dashboard" },
+  { href: "/admin/clients", label: "Clients", icon: "clients" },
+  { href: "/admin/projects", label: "Projects", icon: "projects" },
+  { href: "/admin/invoices", label: "Invoices", icon: "invoices" },
+  { href: "/admin/payments", label: "Payments", icon: "payments" },
 ];
 
 export default async function AdminLayout({
@@ -35,6 +36,7 @@ export default async function AdminLayout({
       nav={nav}
     >
       {children}
+      <Toaster theme="light" position="top-right" />
     </StudioShell>
   );
 }

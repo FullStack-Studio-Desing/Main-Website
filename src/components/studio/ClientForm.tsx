@@ -14,7 +14,15 @@ import { portalPlans } from "@/lib/portal/plans";
 import { clientPersonRoles } from "@/lib/portal/validators";
 import { SubmitButton } from "@/components/studio/SubmitButton";
 import { Alert, Field } from "@/components/studio/ui";
+import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
@@ -131,95 +139,101 @@ export function ClientForm({
   }
 
   return (
-    <form action={formAction} className="mt-10 space-y-10">
+    <form action={formAction} className="mt-6 space-y-6">
       {state?.error ? <Alert tone="error">{state.error}</Alert> : null}
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Company">
-          <Input
-            name="company_name"
-            required
-            maxLength={120}
-            defaultValue={client?.company_name ?? ""}
-          />
-        </Field>
-        <Field label="Status">
-          <NativeSelect name="status" defaultValue={client?.status ?? "active"}>
-            {statuses.map((status) => (
-              <option key={status.value} value={status.value}>
-                {status.label}
-              </option>
-            ))}
-          </NativeSelect>
-        </Field>
-        <Field label="Plan">
-          <NativeSelect
-            name="plan_id"
-            value={planId}
-            onChange={(event) => onPlan(event.target.value as PlanId)}
-          >
-            {portalPlans.map((plan) => (
-              <option key={plan.id} value={plan.id}>
-                {plan.name}
-                {plan.amount > 0 ? ` · $${plan.amount.toLocaleString("en-US")}` : ""}
-              </option>
-            ))}
-          </NativeSelect>
-        </Field>
-        <Field label="Plan name" hint="This is the name the client sees on their plan.">
-          <Input
-            name="plan_name"
-            required
-            maxLength={80}
-            value={planName}
-            onChange={(event) => setPlanName(event.target.value)}
-          />
-        </Field>
-        <Field label="Monthly amount">
-          <Input
-            name="monthly_amount"
-            type="number"
-            min={0}
-            step="0.01"
-            required
-            value={amount}
-            onChange={(event) => setAmount(event.target.value)}
-          />
-        </Field>
-        <Field label="Started">
-          <Input name="started_on" type="date" defaultValue={client?.started_on ?? ""} />
-        </Field>
-        <Field label="Tax ID type" hint="Used for Mercado Pago card-on-file charges.">
-          <NativeSelect name="tax_id_type" defaultValue={client?.tax_id_type ?? ""}>
-            <option value="">Not set</option>
-            <option value="RFC">RFC</option>
-            <option value="CURP">CURP</option>
-          </NativeSelect>
-        </Field>
-        <Field label="RFC / CURP">
-          <Input
-            name="tax_id_number"
-            maxLength={40}
-            defaultValue={client?.tax_id_number ?? ""}
-            autoComplete="off"
-          />
-        </Field>
-        <Field label="Notes" hint="Only the studio sees this." className="sm:col-span-2">
-          <Textarea
-            name="billing_notes"
-            maxLength={4000}
-            defaultValue={client?.billing_notes ?? ""}
-          />
-        </Field>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Company and plan</CardTitle>
+          <CardDescription>What the client pays and how they are billed.</CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-5 sm:grid-cols-2">
+          <Field label="Company">
+            <Input
+              name="company_name"
+              required
+              maxLength={120}
+              defaultValue={client?.company_name ?? ""}
+            />
+          </Field>
+          <Field label="Status">
+            <NativeSelect name="status" defaultValue={client?.status ?? "active"}>
+              {statuses.map((status) => (
+                <option key={status.value} value={status.value}>
+                  {status.label}
+                </option>
+              ))}
+            </NativeSelect>
+          </Field>
+          <Field label="Plan">
+            <NativeSelect
+              name="plan_id"
+              value={planId}
+              onChange={(event) => onPlan(event.target.value as PlanId)}
+            >
+              {portalPlans.map((plan) => (
+                <option key={plan.id} value={plan.id}>
+                  {plan.name}
+                  {plan.amount > 0 ? ` · $${plan.amount.toLocaleString("en-US")}` : ""}
+                </option>
+              ))}
+            </NativeSelect>
+          </Field>
+          <Field label="Plan name" hint="This is the name the client sees on their plan.">
+            <Input
+              name="plan_name"
+              required
+              maxLength={80}
+              value={planName}
+              onChange={(event) => setPlanName(event.target.value)}
+            />
+          </Field>
+          <Field label="Monthly amount">
+            <Input
+              name="monthly_amount"
+              type="number"
+              min={0}
+              step="0.01"
+              required
+              value={amount}
+              onChange={(event) => setAmount(event.target.value)}
+            />
+          </Field>
+          <Field label="Started">
+            <Input name="started_on" type="date" defaultValue={client?.started_on ?? ""} />
+          </Field>
+          <Field label="Tax ID type" hint="Used for Mercado Pago card-on-file charges.">
+            <NativeSelect name="tax_id_type" defaultValue={client?.tax_id_type ?? ""}>
+              <option value="">Not set</option>
+              <option value="RFC">RFC</option>
+              <option value="CURP">CURP</option>
+            </NativeSelect>
+          </Field>
+          <Field label="RFC / CURP">
+            <Input
+              name="tax_id_number"
+              maxLength={40}
+              defaultValue={client?.tax_id_number ?? ""}
+              autoComplete="off"
+            />
+          </Field>
+          <Field label="Notes" hint="Only the studio sees this." className="sm:col-span-2">
+            <Textarea
+              name="billing_notes"
+              maxLength={4000}
+              defaultValue={client?.billing_notes ?? ""}
+            />
+          </Field>
+        </CardContent>
+      </Card>
 
-      <section className="space-y-4">
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <h2 className="text-base font-semibold tracking-tight">Contact methods</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
+      <Card>
+        <CardHeader className="flex-row flex-wrap items-start justify-between gap-3 space-y-0">
+          <div className="space-y-1.5">
+            <CardTitle className="text-base">Contact methods</CardTitle>
+            <CardDescription>
               Company emails and phones — general inbox, office line, etc.
-            </p>
+            </CardDescription>
           </div>
           <Button
             type="button"
@@ -232,10 +246,11 @@ export function ClientForm({
               ])
             }
           >
+            <Plus />
             Add contact
           </Button>
-        </div>
-        <div className="space-y-3">
+        </CardHeader>
+        <CardContent className="space-y-3">
           {contacts.map((contact, index) => (
             <div
               key={contact.key}
@@ -296,21 +311,22 @@ export function ClientForm({
                     setContacts((rows) => rows.filter((_, i) => i !== index))
                   }
                 >
+                  <Trash2 />
                   Remove
                 </Button>
               </div>
             </div>
           ))}
-        </div>
-      </section>
+        </CardContent>
+      </Card>
 
-      <section className="space-y-4">
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <h2 className="text-base font-semibold tracking-tight">People</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
+      <Card>
+        <CardHeader className="flex-row flex-wrap items-start justify-between gap-3 space-y-0">
+          <div className="space-y-1.5">
+            <CardTitle className="text-base">People</CardTitle>
+            <CardDescription>
               Named contacts at the company. The first person is used as the primary contact.
-            </p>
+            </CardDescription>
           </div>
           <Button
             type="button"
@@ -323,10 +339,11 @@ export function ClientForm({
               ])
             }
           >
+            <Plus />
             Add person
           </Button>
-        </div>
-        <div className="space-y-3">
+        </CardHeader>
+        <CardContent className="space-y-3">
           {people.map((person, index) => (
             <div
               key={person.key}
@@ -406,15 +423,18 @@ export function ClientForm({
                   disabled={people.length <= 1}
                   onClick={() => setPeople((rows) => rows.filter((_, i) => i !== index))}
                 >
+                  <Trash2 />
                   Remove
                 </Button>
               </div>
             </div>
           ))}
-        </div>
-      </section>
+        </CardContent>
+      </Card>
 
-      <SubmitButton pendingLabel="Saving">{submitLabel}</SubmitButton>
+      <div className="flex justify-end">
+        <SubmitButton pendingLabel="Saving">{submitLabel}</SubmitButton>
+      </div>
     </form>
   );
 }

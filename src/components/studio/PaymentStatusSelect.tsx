@@ -1,9 +1,17 @@
 "use client";
 
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
 import { updatePaymentStatus } from "@/lib/portal/actions";
 import type { PaymentStatus } from "@/lib/portal/types";
-import { NativeSelect } from "@/components/ui/native-select";
-import { Label } from "@/components/ui/label";
+import { statusLabel } from "@/components/studio/ui";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const statuses: PaymentStatus[] = ["paid", "pending", "failed", "refunded"];
 
@@ -16,27 +24,33 @@ export function PaymentStatusSelect({
   paymentId: string;
   status: PaymentStatus;
 }) {
-  const action = updatePaymentStatus.bind(null, clientId);
+  const [value, setValue] = useState(status);
+  const [pending, startTransition] = useTransition();
+
+  function onChange(next: string) {
+    const nextStatus = next as PaymentStatus;
+    setValue(nextStatus);
+    const formData = new FormData();
+    formData.set("id", paymentId);
+    formData.set("status", nextStatus);
+    startTransition(async () => {
+      await updatePaymentStatus(clientId, formData);
+      toast.success(`Payment marked ${statusLabel(nextStatus).toLowerCase()}`);
+    });
+  }
 
   return (
-    <form action={action}>
-      <input type="hidden" name="id" value={paymentId} />
-      <Label className="sr-only" htmlFor={`payment-status-${paymentId}`}>
-        Payment status
-      </Label>
-      <NativeSelect
-        id={`payment-status-${paymentId}`}
-        name="status"
-        defaultValue={status}
-        onChange={(event) => event.currentTarget.form?.requestSubmit()}
-        className="h-10 w-[132px] capitalize"
-      >
+    <Select value={value} onValueChange={onChange} disabled={pending}>
+      <SelectTrigger className="h-8 w-[120px] px-3 text-sm" aria-label="Payment status">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent className="studio-app">
         {statuses.map((item) => (
-          <option key={item} value={item}>
-            {item.charAt(0).toUpperCase() + item.slice(1)}
-          </option>
+          <SelectItem key={item} value={item}>
+            {statusLabel(item)}
+          </SelectItem>
         ))}
-      </NativeSelect>
-    </form>
+      </SelectContent>
+    </Select>
   );
 }

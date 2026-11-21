@@ -5,7 +5,7 @@ import { Blocked, PreviewNote, QueryError } from "@/components/studio/Blocked";
 import { ConfirmForm } from "@/components/studio/ConfirmForm";
 import { ReportForm } from "@/components/studio/ReportForm";
 import { ReportView } from "@/components/studio/ReportView";
-import { BackLink } from "@/components/studio/ui";
+import { BackLink, PageIntro, SectionCard } from "@/components/studio/ui";
 import { getReport } from "@/lib/portal/queries";
 import { sampleReport, showPreview } from "@/lib/portal/sample";
 import { requireAdmin } from "@/lib/portal/session";
@@ -49,34 +49,39 @@ export default async function EditReportPage({ params }: Props) {
         </>
       ) : null}
       <div className={session.kind === "unconfigured" ? "mt-12" : undefined}>
-        <BackLink href={`/admin/clients/${client.id}`}>← {client.company_name}</BackLink>
-        <p className="mt-6 text-sm font-medium text-muted-foreground">Edit report</p>
-        <div className="mt-6">
-          <ReportForm
-            key={report.updated_at}
-            action={updateReport.bind(null, report.id, client.id)}
-            report={report}
-            submitLabel="Save report"
+        <div className="space-y-6">
+          <BackLink href={`/admin/clients/${client.id}#reports`}>← {client.company_name}</BackLink>
+          <PageIntro
+            eyebrow={client.company_name}
+            title="Edit report"
+            action={
+              isUuid(report.id) ? (
+                <ConfirmForm
+                  action={deleteReport.bind(null, report.id, client.id)}
+                  message="Delete this report? The client will no longer see it."
+                  label="Delete report"
+                />
+              ) : null
+            }
           />
-        </div>
-        {isUuid(report.id) ? (
-          <div className="mt-8">
-            <ConfirmForm
-              action={deleteReport.bind(null, report.id, client.id)}
-              message="Delete this report? The client will no longer see it."
-              label="Delete report"
+          <SectionCard title="Report" description="Changes go live for the client when published.">
+            <ReportForm
+              key={report.updated_at}
+              action={updateReport.bind(null, report.id, client.id)}
+              report={report}
+              submitLabel="Save report"
             />
-          </div>
-        ) : null}
-        <div className="mt-16 border-t border-rule pt-12">
-          <p className="text-sm font-medium text-muted-foreground">
-            {report.status === "published"
-              ? "Saved version. This is what the client sees."
-              : "Saved version. Clients cannot see this draft."}
-          </p>
-          <div className="mt-8">
+          </SectionCard>
+          <SectionCard
+            title="Saved version"
+            description={
+              report.status === "published"
+                ? "This is what the client sees."
+                : "Clients cannot see this draft."
+            }
+          >
             <ReportView report={report} />
-          </div>
+          </SectionCard>
         </div>
       </div>
     </>

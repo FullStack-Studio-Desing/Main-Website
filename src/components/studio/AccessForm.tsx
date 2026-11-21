@@ -18,7 +18,7 @@ export function AccessForm({
   const [state, formAction] = useActionState(action, null);
 
   return (
-    <form action={formAction} className="mt-5 space-y-4">
+    <form action={formAction} className="space-y-4">
       {state?.error ? <Alert tone="error">{state.error}</Alert> : null}
       {state?.notice ? <Alert tone="notice">{state.notice}</Alert> : null}
       {state?.password ? (

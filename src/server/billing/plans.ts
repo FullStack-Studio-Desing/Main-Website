@@ -1,9 +1,9 @@
 /**
- * One-time Checkout API prices in US dollars. Do not convert these amounts.
+ * One-time Checkout API prices in US dollars.
  *
- * POST /v1/orders has no currency field. A Mexico (MLM) seller account settles
- * in MXN, so Mercado Pago reads total_amount in the account currency. These
- * values stay 999.00, 1500.00, and 2500.00 until that constraint changes.
+ * POST /v1/orders has no currency field and a Mexico (MLM) seller account charges
+ * in MXN, so createCardCharge converts these USD prices at the current rate
+ * (src/server/billing/fx.ts). Keep the values here in USD.
  */
 export const checkoutPlans = {
   starter: {
