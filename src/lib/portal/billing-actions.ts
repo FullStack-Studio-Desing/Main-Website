@@ -3,7 +3,7 @@
 import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createAdminClient, hasServiceRole } from "@/lib/supabase/admin";
+import { hasServiceRole } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { isSchemaError } from "@/lib/portal/errors";
 import { todayISO } from "@/lib/portal/format";
@@ -13,10 +13,9 @@ import { isUuid, parseInvoice } from "@/lib/portal/validators";
 import {
   createTokenFromSavedCard,
   deleteCustomerCard,
-  findOrCreateMpCustomer,
-  saveCardToCustomer,
 } from "@/server/billing/customers";
 import { sendInvoiceEmail } from "@/server/billing/invoice-mail";
+import { saveCardForClient } from "@/server/billing/saved-cards";
 import { mpConfigured } from "@/server/billing/mp";
 import { createCardCharge } from "@/server/billing/orders";
 
@@ -694,74 +693,15 @@ export async function savePortalPaymentMethod(input: {
   }
 
   const clientId = session.profile.client_id;
-  const admin = createAdminClient();
-  const clientRes = await admin
-    .from("clients")
-    .select("id, email, contact_name, mp_customer_id, tax_id_type, tax_id_number")
-    .eq("id", clientId)
-    .maybeSingle();
-  if (clientRes.error || !clientRes.data) {
-    return { error: "Your company record could not be loaded." };
-  }
-
-  const [firstName, ...rest] = String(clientRes.data.contact_name ?? "").trim().split(/\s+/);
-  const identificationType =
-    input.identificationType ??
-    ((clientRes.data.tax_id_type as "RFC" | "CURP" | null) || undefined);
-  const identificationNumber =
-    input.identificationNumber?.toUpperCase() ??
-    (clientRes.data.tax_id_number as string | null) ??
-    undefined;
-
-  let customerId = clientRes.data.mp_customer_id as string | null;
-  if (!customerId) {
-    const created = await findOrCreateMpCustomer({
-      email: clientRes.data.email,
-      firstName: firstName || undefined,
-      lastName: rest.join(" ") || undefined,
-      identificationType,
-      identificationNumber,
-    });
-    if (!created.ok) return { error: created.message };
-    customerId = created.id;
-    await admin.from("clients").update({ mp_customer_id: customerId }).eq("id", clientId);
-  }
-
-  if (identificationType && identificationNumber) {
-    await admin
-      .from("clients")
-      .update({
-        tax_id_type: identificationType,
-        tax_id_number: identificationNumber,
-      })
-      .eq("id", clientId);
-  }
-
-  const saved = await saveCardToCustomer({ customerId, token });
-  if (!saved.ok) return { error: saved.message };
-
-  await admin
-    .from("payment_methods")
-    .update({ is_default: false })
-    .eq("client_id", clientId)
-    .eq("status", "active");
-
-  const inserted = await admin.from("payment_methods").insert({
-    client_id: clientId,
-    mp_customer_id: customerId,
-    mp_card_id: saved.card.id,
-    brand: saved.card.brand ?? paymentMethodId,
-    last_four: saved.card.lastFour,
-    exp_month: saved.card.expMonth,
-    exp_year: saved.card.expYear,
-    holder_name: input.holderName?.trim() || saved.card.holderName,
-    is_default: true,
-    status: "active",
+  const saved = await saveCardForClient({
+    clientId,
+    token,
+    paymentMethodId,
+    holderName: input.holderName,
+    identificationType: input.identificationType,
+    identificationNumber: input.identificationNumber,
   });
-
-  if (inserted.error) {
-    return safeDbError(inserted.error, "The card was saved in Mercado Pago, but not in the CRM.");
-  }
+  if (!saved.ok) return { error: saved.message };
 
   revalidatePath("/portal");
   revalidatePath(`/admin/clients/${clientId}`);
