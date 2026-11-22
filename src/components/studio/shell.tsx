@@ -4,15 +4,19 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useTransition, type ReactNode } from "react";
 import {
+  BarChart3,
+  Building2,
   ChevronsUpDown,
   CreditCard,
   ExternalLink,
   FileText,
   FolderKanban,
   LayoutDashboard,
+  LifeBuoy,
   LogOut,
   Menu,
   Users,
+  Wallet,
   type LucideIcon,
 } from "lucide-react";
 import { LogoMark } from "@/components/LogoMark";
@@ -47,10 +51,14 @@ const navIcons = {
   projects: FolderKanban,
   invoices: FileText,
   payments: CreditCard,
+  support: LifeBuoy,
+  reports: BarChart3,
+  company: Building2,
+  wallet: Wallet,
 } satisfies Record<string, LucideIcon>;
 
 export type StudioNavIcon = keyof typeof navIcons;
-export type StudioNavItem = { href: string; label: string; icon?: StudioNavIcon };
+export type StudioNavItem = { href: string; label: string; icon?: StudioNavIcon; badge?: number };
 
 export function StudioShell({
   homeHref,
@@ -133,7 +141,12 @@ function NavLinks({
             )}
           >
             <Icon className="size-4 shrink-0" />
-            {item.label}
+            <span className="min-w-0 flex-1 truncate">{item.label}</span>
+            {item.badge && item.badge > 0 ? (
+              <Badge variant="secondary" className="ml-auto shrink-0 tabular-nums">
+                {item.badge > 99 ? "99+" : item.badge}
+              </Badge>
+            ) : null}
           </Link>
         );
       })}

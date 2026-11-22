@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FileText, FolderKanban, Plus, Users, Wallet } from "lucide-react";
+import { FileText, FolderKanban, LifeBuoy, Plus, Users, Wallet } from "lucide-react";
 import { Blocked, PreviewNote, QueryError } from "@/components/studio/Blocked";
 import {
   EmptyState,
@@ -28,6 +28,8 @@ import {
   sampleProjects,
   showPreview,
 } from "@/lib/portal/sample";
+import { listAdminTickets, ticketCounts } from "@/lib/portal/ticket-queries";
+import { sampleAdminTickets, sampleTicketCounts } from "@/lib/portal/ticket-sample";
 import { requireAdmin } from "@/lib/portal/session";
 import type {
   ClientListItem,
@@ -35,7 +37,11 @@ import type {
   InvoiceListItem,
   PaymentListItem,
   ProjectListItem,
+  TicketListItem,
 } from "@/lib/portal/types";
+import {
+  ticketWaitingLabel,
+} from "@/components/studio/ticket/AdminTicketList";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -50,6 +56,11 @@ export default async function AdminOverviewPage() {
   if (session.kind !== "ready") {
     if (session.kind === "unconfigured" && showPreview()) {
       const sample = sampleDirectory();
+      const previewCounts = sampleTicketCounts();
+      const needsReply = sampleAdminTickets()
+        .filter((ticket: TicketListItem) => ticket.status === "awaiting_studio")
+        .sort((a: TicketListItem, b: TicketListItem) => a.last_message_at.localeCompare(b.last_message_at))
+        .slice(0, 5);
       return (
         <>
           <Blocked session={session} />
@@ -61,6 +72,9 @@ export default async function AdminOverviewPage() {
               payments={samplePayments()}
               projects={sampleProjects()}
               invoices={sampleInvoices()}
+              ticketInbox={previewCounts.open + previewCounts.awaitingStudio}
+              ticketAwaitingStudio={previewCounts.awaitingStudio}
+              needsReply={needsReply}
             />
           </div>
         </>
@@ -69,14 +83,29 @@ export default async function AdminOverviewPage() {
     return <Blocked session={session} />;
   }
 
-  const [clientsResult, paymentsResult, projectsResult, invoicesResult] = await Promise.all([
-    listClients(),
-    listPayments(),
-    listProjects(),
-    listInvoices(),
-  ]);
+  const [clientsResult, paymentsResult, projectsResult, invoicesResult, countsResult, queueResult] =
+    await Promise.all([
+      listClients(),
+      listPayments(),
+      listProjects(),
+      listInvoices(),
+      ticketCounts({}),
+      listAdminTickets({ status: "awaiting_studio", limit: 50 }),
+    ]);
   if (!clientsResult.ok) return <QueryError reason={clientsResult.reason} />;
   if (!paymentsResult.ok) return <QueryError reason={paymentsResult.reason} />;
+
+  const ticketsReady = countsResult.ok && queueResult.ok;
+  const ticketInbox = countsResult.ok
+    ? countsResult.data.open + countsResult.data.awaitingStudio
+    : 0;
+  const ticketAwaitingStudio = countsResult.ok ? countsResult.data.awaitingStudio : 0;
+  const needsReply =
+    queueResult.ok
+      ? [...queueResult.data]
+          .sort((a, b) => a.last_message_at.localeCompare(b.last_message_at))
+          .slice(0, 5)
+      : [];
 
   return (
     <Overview
@@ -87,6 +116,10 @@ export default async function AdminOverviewPage() {
       projectsPending={!projectsResult.ok}
       invoices={invoicesResult.ok ? invoicesResult.data : []}
       invoicesPending={!invoicesResult.ok}
+      ticketInbox={ticketInbox}
+      ticketAwaitingStudio={ticketAwaitingStudio}
+      needsReply={needsReply}
+      ticketsPending={!ticketsReady}
     />
   );
 }
@@ -110,6 +143,10 @@ function Overview({
   invoices,
   projectsPending = false,
   invoicesPending = false,
+  ticketInbox = 0,
+  ticketAwaitingStudio = 0,
+  needsReply = [],
+  ticketsPending = false,
 }: {
   stats: DirectoryStats;
   clients: ClientListItem[];
@@ -118,6 +155,10 @@ function Overview({
   invoices: InvoiceListItem[];
   projectsPending?: boolean;
   invoicesPending?: boolean;
+  ticketInbox?: number;
+  ticketAwaitingStudio?: number;
+  needsReply?: TicketListItem[];
+  ticketsPending?: boolean;
 }) {
   const today = todayISO();
   const recentPayments = payments.slice(0, 6);
@@ -156,7 +197,7 @@ function Overview({
         }
       />
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
         <StatCard
           label="Active clients"
           value={stats.active}
@@ -184,6 +225,16 @@ function Overview({
           value={projectsPending ? "—" : activeProjects.length}
           hint={projectsPending ? "Projects table not installed" : `${planningCount} in planning`}
           icon={<FolderKanban />}
+        />
+        <StatCard
+          label="Open tickets"
+          value={ticketsPending ? "—" : ticketInbox}
+          hint={
+            ticketsPending
+              ? "Support tickets not installed"
+              : `${ticketAwaitingStudio} need a repl${ticketAwaitingStudio === 1 ? "y" : "ies"}`
+          }
+          icon={<LifeBuoy />}
         />
       </div>
 
@@ -274,6 +325,57 @@ function Overview({
                     </TableRow>
                   );
                 })}
+              </TableBody>
+            </Table>
+          )}
+        </SectionCard>
+
+        <SectionCard
+          title="Needs a reply"
+          description="Oldest tickets waiting on the studio."
+          action={<ViewAll href="/admin/tickets" />}
+          contentClassName="px-0 pb-2"
+        >
+          {ticketsPending ? (
+            <p className="px-6 pb-4 text-sm text-muted-foreground">
+              Run the support tickets migration in Supabase to enable the inbox.
+            </p>
+          ) : needsReply.length === 0 ? (
+            <div className="px-6 pb-4">
+              <EmptyState icon={<LifeBuoy />} title="Inbox is clear" />
+            </div>
+          ) : (
+            <Table>
+              <TableBody>
+                {needsReply.map((ticket) => (
+                  <TableRow key={ticket.id}>
+                    <TableCell className="pl-6">
+                      <Link
+                        href={`/admin/tickets/${ticket.number}`}
+                        className="font-medium hover:underline"
+                      >
+                        {ticket.title}
+                      </Link>
+                      <span className="block font-mono text-xs text-muted-foreground">
+                        {ticket.number}
+                        {ticket.company_name ? ` · ${ticket.company_name}` : ""}
+                      </span>
+                    </TableCell>
+                    <TableCell
+                      className={cn(
+                        "whitespace-nowrap text-xs",
+                        ticketWaitingLabel(ticket.last_message_at).includes("day")
+                          ? "font-medium text-destructive"
+                          : "text-muted-foreground"
+                      )}
+                    >
+                      {ticketWaitingLabel(ticket.last_message_at)}
+                    </TableCell>
+                    <TableCell className="pr-6 text-right">
+                      <StatusBadge status={ticket.status} />
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           )}

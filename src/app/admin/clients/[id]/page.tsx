@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Blocked, PreviewNote, QueryError } from "@/components/studio/Blocked";
 import { ClientDetail } from "@/components/studio/ClientDetail";
 import { getClientBundle } from "@/lib/portal/queries";
+import { listAdminTickets } from "@/lib/portal/ticket-queries";
 import { sampleBundle, showPreview } from "@/lib/portal/sample";
 import { requireAdmin } from "@/lib/portal/session";
 
@@ -33,8 +34,13 @@ export default async function ClientPage({ params }: Props) {
     return <Blocked session={session} />;
   }
 
-  const result = await getClientBundle(id);
+  const [result, ticketsResult] = await Promise.all([
+    getClientBundle(id),
+    listAdminTickets({ clientId: id, limit: 50 }),
+  ]);
   if (!result.ok) return <QueryError reason={result.reason} />;
   if (!result.data) notFound();
-  return <ClientDetail {...result.data} />;
+  const tickets = ticketsResult.ok ? ticketsResult.data : [];
+  const ticketsPending = !ticketsResult.ok && ticketsResult.reason === "schema";
+  return <ClientDetail {...result.data} tickets={tickets} ticketsPending={ticketsPending} />;
 }
