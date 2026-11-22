@@ -6,6 +6,7 @@ import type { InvoiceBillingType, InvoiceStatus } from "@/lib/portal/types";
 import { notifyPaidOrder } from "@/server/billing/notify";
 import { createCardCharge, interpretOrder, type OrderOutcome } from "@/server/billing/orders";
 import { accountCurrency } from "@/server/billing/fx";
+import { listSavedCards, loadSavedCard, saveCardForClient, type SavedCard } from "@/server/billing/saved-cards";
 import { formatUsd } from "@/server/billing/plans";
 
 /** Tokens are 18 random bytes as hex (36 chars); accept 32–64 to be safe. */
@@ -33,6 +34,10 @@ export type PublicInvoice = {
   contactName: string | null;
   email: string;
   payable: boolean;
+  /** What the card was actually charged for a settled invoice, e.g. { currency: "MXN", amount: 1902.93 }. */
+  charged: { currency: string; amount: number } | null;
+  /** The client's cards on file (masked), offered only while the invoice is payable. */
+  savedCards: SavedCard[];
 };
 
 type InvoiceRow = {
@@ -103,6 +108,17 @@ export async function loadInvoiceByToken(token: string): Promise<PublicInvoice |
   const loaded = await loadRow("public_token", token);
   if (!loaded) return null;
   const { invoice, client } = loaded;
+  let charged: PublicInvoice["charged"] = null;
+  if (invoice.payment_id) {
+    const payment = await createAdminClient()
+      .from("payments")
+      .select("charge_currency, charge_amount")
+      .eq("id", invoice.payment_id)
+      .maybeSingle();
+    if (payment.data?.charge_currency && payment.data.charge_amount) {
+      charged = { currency: payment.data.charge_currency, amount: Number(payment.data.charge_amount) };
+    }
+  }
   return {
     number: invoice.number,
     title: invoice.title,
@@ -119,6 +135,8 @@ export async function loadInvoiceByToken(token: string): Promise<PublicInvoice |
     contactName: client.contact_name,
     email: client.email,
     payable: isPayableStatus(invoice.status),
+    charged,
+    savedCards: isPayableStatus(invoice.status) ? await listSavedCards(invoice.client_id) : [],
   };
 }
 
@@ -131,7 +149,12 @@ export async function payInvoiceByToken(input: {
   cardToken: string;
   paymentMethodId: string;
   idempotencyKey: string;
-}): Promise<PayResult> {
+  /** Pay with this card on file; the token was minted from it plus the CVC. */
+  savedMethodId?: string | null;
+  /** A second token of a new card, saved to the client's profile after a successful payment. */
+  saveToken?: string | null;
+  holderName?: string | null;
+}): Promise<PayResult & { cardSaved?: boolean }> {
   if (!isPayToken(input.token)) {
     return { ok: false, status: "unavailable", message: "This invoice link is not valid." };
   }
@@ -166,6 +189,16 @@ export async function payInvoiceByToken(input: {
     };
   }
 
+  // A saved card must belong to this invoice's client; its brand and customer come from the CRM.
+  let paymentMethodId = input.paymentMethodId;
+  let customerId: string | undefined;
+  if (input.savedMethodId) {
+    const saved = await loadSavedCard(invoice.client_id, input.savedMethodId);
+    if (!saved) return { ok: false, status: "unavailable", message: "That saved card is no longer available." };
+    paymentMethodId = (saved.brand as string | null) || paymentMethodId;
+    customerId = saved.mp_customer_id as string;
+  }
+
   // Amount always comes from the database, never from the browser.
   const amount = Number(invoice.amount);
   const taxType = client.tax_id_type === "RFC" || client.tax_id_type === "CURP" ? client.tax_id_type : null;
@@ -174,9 +207,10 @@ export async function payInvoiceByToken(input: {
     description: `${invoice.number} · ${invoice.title}`.slice(0, 200),
     externalReference: `invoice_${invoice.id}`,
     token: input.cardToken,
-    paymentMethodId: input.paymentMethodId,
+    paymentMethodId,
     // Receipts always go to the address the invoice was sent to.
     email: client.email,
+    customerId,
     identificationType: taxType,
     identificationNumber: taxType ? client.tax_id_number : null,
     idempotencyKey: input.idempotencyKey,
@@ -184,9 +218,23 @@ export async function payInvoiceByToken(input: {
 
   await applyOrderToInvoice(invoice, outcome, client.email);
 
+  // Save the new card only once the payment went through, so a declined card is never stored.
+  let cardSaved: boolean | undefined;
+  if (outcome.ok && input.saveToken && !input.savedMethodId) {
+    const saved = await saveCardForClient({
+      clientId: invoice.client_id,
+      token: input.saveToken,
+      paymentMethodId,
+      holderName: input.holderName ?? undefined,
+    });
+    cardSaved = saved.ok;
+    if (!saved.ok) console.error("[invoice-pay] card save failed", saved.message);
+  }
+
   if (outcome.ok) {
     return {
       ok: true,
+      cardSaved,
       status: outcome.status,
       message:
         outcome.status === "processed"

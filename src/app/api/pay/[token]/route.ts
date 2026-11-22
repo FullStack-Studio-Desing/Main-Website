@@ -65,6 +65,16 @@ export async function POST(
     return fail("That card brand is not supported.", 400);
   }
 
+  const savedMethodId = typeof record.saved_method_id === "string" ? record.saved_method_id.trim() : "";
+  if (savedMethodId && !UUID.test(savedMethodId) && !/^[0-9a-f-]{36}$/i.test(savedMethodId)) {
+    return fail("That saved card could not be found.", 400);
+  }
+  const saveToken = typeof record.save_token === "string" ? record.save_token.trim() : "";
+  if (saveToken && (!/^[a-zA-Z0-9]{16,64}$/.test(saveToken) || /^\d{13,19}$/.test(saveToken))) {
+    return fail("The card could not be saved. Try again without saving it.", 400);
+  }
+  const holderName = typeof record.holder_name === "string" ? record.holder_name.trim().slice(0, 120) : "";
+
   const headerKey = request.headers.get("x-idempotency-key") ?? "";
   const bodyKey = typeof record.idempotency_key === "string" ? record.idempotency_key : "";
   const idempotencyKey = UUID.test(headerKey) ? headerKey : UUID.test(bodyKey) ? bodyKey : randomUUID();
@@ -74,6 +84,9 @@ export async function POST(
     cardToken,
     paymentMethodId,
     idempotencyKey,
+    savedMethodId: savedMethodId || null,
+    saveToken: saveToken || null,
+    holderName: holderName || null,
   });
 
   const httpStatus = result.ok

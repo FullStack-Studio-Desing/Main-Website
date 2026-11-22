@@ -58,6 +58,15 @@ const DETAIL_MESSAGES: Record<string, string> = {
   cc_rejected_call_for_authorize: "The bank declined the payment. Call the bank or use another card.",
 };
 
+/**
+ * Merchant name printed on the payer's card statement. Mercado Pago may add its own
+ * prefix, and card networks truncate long names, so keep it short: A–Z, digits, spaces.
+ */
+export function statementDescriptor() {
+  const raw = process.env.MP_STATEMENT_DESCRIPTOR?.trim() || "FULLSTACKSTUDIO";
+  return raw.toUpperCase().replace(/[^A-Z0-9 ]/g, "").replace(/\s+/g, " ").trim().slice(0, 16) || "FULLSTACKSTUDIO";
+}
+
 export function paymentTypeFor(methodId: string): "credit_card" | "debit_card" {
   return methodId.startsWith("deb") ? "debit_card" : "credit_card";
 }
@@ -105,9 +114,12 @@ export async function createCardCharge(input: CreateChargeInput): Promise<OrderO
     rate: quote.rate,
   };
   const amount = amountToMp(charge.amount);
-  const payer: Record<string, unknown> = { email: input.email };
-  if (input.customerId) payer.id = input.customerId;
-  if (input.identificationType && input.identificationNumber) {
+  // Saved cards: the Orders API identifies the payer by customer_id alone and rejects it
+  // combined with email (or the old payer.id). The customer already carries email and ID.
+  const payer: Record<string, unknown> = input.customerId
+    ? { customer_id: input.customerId }
+    : { email: input.email };
+  if (!input.customerId && input.identificationType && input.identificationNumber) {
     payer.identification = {
       type: input.identificationType,
       number: input.identificationNumber,
@@ -141,6 +153,7 @@ export async function createCardCharge(input: CreateChargeInput): Promise<OrderO
                 type: paymentTypeFor(input.paymentMethodId),
                 token: input.token,
                 installments: 1,
+                statement_descriptor: statementDescriptor(),
               },
             },
           ],
