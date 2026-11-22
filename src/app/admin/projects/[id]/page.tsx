@@ -9,9 +9,13 @@ import { BackLink, PageIntro } from "@/components/studio/ui";
 import { Button } from "@/components/ui/button";
 import { deleteProjectAndLeave, updateProject } from "@/lib/portal/actions";
 import { getProjectWorkspace, type ProjectWorkspace as Workspace } from "@/lib/portal/project-queries";
+import { listAdminTickets } from "@/lib/portal/ticket-queries";
+import { sampleAdminTickets } from "@/lib/portal/ticket-sample";
 import { sampleProjectWorkspace } from "@/lib/portal/project-sample";
 import { showPreview } from "@/lib/portal/sample";
 import { requireAdmin } from "@/lib/portal/session";
+import type { TicketListItem } from "@/lib/portal/types";
+import { sampleTickets } from "@/lib/portal/ticket-sample";
 import { isUuid } from "@/lib/portal/validators";
 
 type Props = { params: Promise<{ id: string }> };
@@ -33,7 +37,11 @@ export default async function AdminProjectPage({ params }: Props) {
           <Blocked session={session} />
           <PreviewNote />
           <div className="mt-12">
-            <ProjectView workspace={sample} />
+            <ProjectView
+              workspace={sample}
+              tickets={sampleTickets().filter((ticket) => ticket.project_id === id)}
+              ticketsPending={false}
+            />
           </div>
         </>
       );
@@ -42,13 +50,26 @@ export default async function AdminProjectPage({ params }: Props) {
   }
 
   if (!isUuid(id)) notFound();
-  const result = await getProjectWorkspace(id);
+  const [result, ticketsResult] = await Promise.all([
+    getProjectWorkspace(id),
+    listAdminTickets({ projectId: id, limit: 50 }),
+  ]);
   if (!result.ok) return <QueryError reason={result.reason} />;
   if (!result.data) notFound();
-  return <ProjectView workspace={result.data} />;
+  const tickets = ticketsResult.ok ? ticketsResult.data : [];
+  const ticketsPending = !ticketsResult.ok && ticketsResult.reason === "schema";
+  return <ProjectView workspace={result.data} tickets={tickets} ticketsPending={ticketsPending} />;
 }
 
-function ProjectView({ workspace }: { workspace: Workspace }) {
+function ProjectView({
+  workspace,
+  tickets = [],
+  ticketsPending = false,
+}: {
+  workspace: Workspace;
+  tickets?: TicketListItem[];
+  ticketsPending?: boolean;
+}) {
   const { project, client } = workspace;
 
   return (
@@ -75,6 +96,8 @@ function ProjectView({ workspace }: { workspace: Workspace }) {
       </div>
       <ProjectWorkspace
         workspace={workspace}
+        tickets={tickets}
+        ticketsPending={ticketsPending}
         projectForm={
           <ProjectForm
             action={updateProject.bind(null, project.id, client.id)}

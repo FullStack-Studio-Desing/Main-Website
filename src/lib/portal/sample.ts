@@ -7,6 +7,7 @@ import type {
   ProjectRecord,
   ReportRecord,
 } from "@/lib/portal/types";
+import { sampleTickets } from "@/lib/portal/ticket-sample";
 
 export function showPreview() {
   return process.env.NODE_ENV === "development";
@@ -309,6 +310,8 @@ export function sampleBundle(id: string) {
     invoices: invoices.filter((invoice) => invoice.client_id === client.id),
     paymentMethods,
     login: client.id === northwind.id ? login : null,
+    tickets: sampleTickets().filter((ticket) => ticket.client_id === client.id),
+    ticketsPending: false,
   };
 }
 
@@ -341,3 +344,5 @@ export function sampleReport(id: string) {
   if (!report) return null;
   return { report, client: northwind };
 }
+
+export { sampleClientTickets, sampleAdminTickets, sampleTicketCounts, sampleTicketDetail } from "@/lib/portal/ticket-sample";

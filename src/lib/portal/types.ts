@@ -25,6 +25,91 @@ export type TaskStatus = "todo" | "in_progress" | "blocked" | "done";
 export type TaskPriority = "low" | "normal" | "high" | "urgent";
 export type ProjectUpdateKind = "note" | "milestone" | "blocker" | "delivery";
 
+export type TicketStatus =
+  | "open"
+  | "awaiting_studio"
+  | "awaiting_client"
+  | "in_progress"
+  | "resolved"
+  | "closed";
+export type TicketPriority = "low" | "normal" | "high" | "urgent";
+export type TicketCategory =
+  | "bug"
+  | "change_request"
+  | "question"
+  | "content_update"
+  | "billing"
+  | "account"
+  | "other";
+export type TicketMessageKind = "reply" | "internal_note" | "event";
+export type TicketAuthorRole = "client" | "admin" | "system";
+export type TicketAttachmentStatus = "pending" | "ready" | "rejected";
+
+export type TicketRecord = {
+  id: string;
+  number: string;
+  client_id: string;
+  project_id: string | null;
+  category: TicketCategory;
+  title: string;
+  description: string;
+  priority: TicketPriority;
+  status: TicketStatus;
+  assigned_to: string | null;
+  task_id: string | null;
+  created_by: string | null;
+  last_message_at: string;
+  client_last_read_at: string | null;
+  studio_last_read_at: string | null;
+  resolved_at: string | null;
+  closed_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type TicketMessageRecord = {
+  id: string;
+  ticket_id: string;
+  client_id: string;
+  author_id: string | null;
+  author_role: TicketAuthorRole;
+  kind: TicketMessageKind;
+  body: string | null;
+  event: Record<string, unknown> | null;
+  created_at: string;
+  edited_at: string | null;
+  author_name?: string | null;
+};
+
+export type TicketAttachmentRecord = {
+  id: string;
+  ticket_id: string;
+  message_id: string | null;
+  client_id: string;
+  uploaded_by: string | null;
+  file_name: string;
+  content_type: string;
+  size_bytes: number;
+  width: number | null;
+  height: number | null;
+  status: TicketAttachmentStatus;
+  created_at: string;
+  /** Never expose R2 keys to the browser — use download_url instead. */
+  download_url?: string;
+};
+
+export type TicketListItem = TicketRecord & {
+  project_name: string | null;
+  company_name?: string;
+  /** True when the studio sent the latest message after the client last read. */
+  unread?: boolean;
+};
+
+export type TicketDetail = {
+  ticket: TicketListItem;
+  messages: (TicketMessageRecord & { attachments: TicketAttachmentRecord[] })[];
+};
+
 export type ActionState = {
   error?: string;
   notice?: string;

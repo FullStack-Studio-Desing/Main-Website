@@ -18,7 +18,9 @@ import type {
   PortalLogin,
   ProjectRecord,
   ReportRecord,
+  TicketListItem,
 } from "@/lib/portal/types";
+import { AdminTicketList } from "@/components/studio/ticket/AdminTicketList";
 import { AccessForm } from "@/components/studio/AccessForm";
 import { ConfirmForm } from "@/components/studio/ConfirmForm";
 import { FormDialog } from "@/components/studio/FormDialog";
@@ -61,6 +63,8 @@ export function ClientDetail({
   invoices,
   paymentMethods,
   login,
+  tickets = [],
+  ticketsPending = false,
 }: {
   client: ClientRecord;
   payments: PaymentRecord[];
@@ -69,6 +73,8 @@ export function ClientDetail({
   invoices: InvoiceRecord[];
   paymentMethods: PaymentMethodRecord[];
   login: PortalLogin | null;
+  tickets?: TicketListItem[];
+  ticketsPending?: boolean;
 }) {
   const real = isUuid(client.id);
   const collected = payments
@@ -87,6 +93,7 @@ export function ClientDetail({
     { value: "payments", label: "Payments", count: payments.length },
     { value: "billing", label: "Cards", count: paymentMethods.length },
     { value: "reports", label: "Reports", count: reports.length },
+    { value: "support", label: "Support", count: ticketsPending ? undefined : tickets.length },
     { value: "access", label: "Portal access" },
   ];
 
@@ -328,6 +335,27 @@ export function ClientDetail({
           <SectionCard title="New report" description="File a report for this client.">
             <ReportForm action={createReport.bind(null, client.id)} submitLabel="File report" />
           </SectionCard>
+        </TabsContent>
+
+        <TabsContent value="support" className="mt-4">
+          <TabSection
+            id="support"
+            title="Support tickets"
+            description="Conversations this client opened with the studio."
+            action={
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/admin/tickets?client=${client.id}`}>View inbox</Link>
+              </Button>
+            }
+          >
+            {ticketsPending ? (
+              <p className="text-sm text-muted-foreground">
+                Run the support tickets migration in Supabase to enable tickets.
+              </p>
+            ) : (
+              <AdminTicketList tickets={tickets} showClient={false} />
+            )}
+          </TabSection>
         </TabsContent>
 
         <TabsContent value="access" className="mt-4">
