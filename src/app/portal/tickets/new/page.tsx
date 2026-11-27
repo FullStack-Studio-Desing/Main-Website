@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Blocked, PreviewNote } from "@/components/studio/Blocked";
-import { TicketFormPlaceholder } from "@/components/studio/tickets/TicketFormPlaceholder";
+import { TicketForm } from "@/components/studio/tickets/TicketForm";
 import { BackLink, PageIntro } from "@/components/studio/ui";
 import { samplePortal, showPreview } from "@/lib/portal/sample";
 import { requireClient } from "@/lib/portal/session";
@@ -23,7 +23,7 @@ export default async function PortalNewTicketPage() {
           <div className="mt-12 space-y-6">
             <BackLink href="/portal/tickets">Back to Support</BackLink>
             <PageIntro title="Open a ticket" lede="Describe what you need. The studio gets an email right away." />
-            <TicketFormPlaceholder projects={projects} />
+            <TicketForm projects={projects} />
           </div>
         </>
       );
@@ -54,7 +54,7 @@ export default async function PortalNewTicketPage() {
     <div className="space-y-6">
       <BackLink href="/portal/tickets">Back to Support</BackLink>
       <PageIntro title="Open a ticket" lede="Describe what you need. The studio gets an email right away." />
-      <TicketFormPlaceholder projects={projects} />
+      <TicketForm projects={projects} />
     </div>
   );
 }

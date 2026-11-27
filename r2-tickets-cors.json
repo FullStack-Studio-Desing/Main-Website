@@ -2,7 +2,11 @@
   "rules": [
     {
       "allowed": {
-        "origins": ["https://fullstackstudiodesign.com", "http://localhost:3000"],
+        "origins": [
+          "https://fullstackstudiodesign.com",
+          "https://www.fullstackstudiodesign.com",
+          "http://localhost:3000"
+        ],
         "methods": ["PUT", "GET", "HEAD"],
         "headers": ["content-type"]
       },
