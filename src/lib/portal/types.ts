@@ -116,6 +116,15 @@ export type ActionState = {
   password?: string;
 } | null;
 
+/** Ticket actions also return ids so the browser can attach uploads to the new message. */
+export type TicketActionState = {
+  error?: string;
+  notice?: string;
+  ticketId?: string;
+  messageId?: string;
+  number?: string;
+} | null;
+
 export type Profile = {
   id: string;
   email: string;

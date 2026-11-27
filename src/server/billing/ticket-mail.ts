@@ -112,12 +112,15 @@ export async function notifyClientStudioReply(input: {
   to: string[];
   projectName: string | null;
   body: string;
+  /** Set when the same reply also resolved or closed the ticket. */
+  status?: "resolved" | "closed" | null;
 }) {
   const url = `${siteOrigin()}/portal/tickets/${encodeURIComponent(input.number)}`;
+  const suffix = input.status ? ` · ${statusLabel[input.status]}` : "";
   await sendMail({
     to: input.to,
     cooldownKey: `client:reply:${input.number}`,
-    subject: `The studio replied on ${input.number}`,
+    subject: `The studio replied on ${input.number}${suffix}`,
     html: `
       <p>There is a new reply on ${escapeHtml(input.number)}${input.projectName ? ` (${escapeHtml(input.projectName)})` : ""}.</p>
       <p style="white-space:pre-line">${escapeHtml(excerpt(input.body))}</p>
@@ -126,18 +129,80 @@ export async function notifyClientStudioReply(input: {
   });
 }
 
-export async function notifyClientTicketResolved(input: {
+const statusLabel = {
+  awaiting_client: "Waiting on you",
+  resolved: "Resolved",
+  closed: "Closed",
+} as const;
+
+export async function notifyClientTicketReceived(input: {
   number: string;
   to: string[];
+  title: string;
 }) {
   const url = `${siteOrigin()}/portal/tickets/${encodeURIComponent(input.number)}`;
   await sendMail({
     to: input.to,
-    cooldownKey: `client:resolved:${input.number}`,
-    subject: `${input.number} is resolved`,
+    cooldownKey: `client:received:${input.number}`,
+    subject: `We received ${input.number}: ${input.title}`,
     html: `
-      <p>${escapeHtml(input.number)} is marked resolved. Reopen from the portal within 14 days if you need more help.</p>
+      <p>Thanks. We received ${escapeHtml(input.number)} and will reply in the portal.</p>
+      <p>${escapeHtml(input.title)}</p>
       <p><a href="${escapeHtml(url)}">View ticket</a></p>`,
-    text: `${input.number} resolved\n${url}`,
+    text: `We received ${input.number}: ${input.title}\n${url}`,
+  });
+}
+
+export async function notifyClientStatusChange(input: {
+  number: string;
+  to: string[];
+  status: keyof typeof statusLabel;
+}) {
+  const url = `${siteOrigin()}/portal/tickets/${encodeURIComponent(input.number)}`;
+  const lines = {
+    awaiting_client: "The studio needs something from you to keep going.",
+    resolved: "This ticket is marked resolved. Reopen it from the portal within 14 days if you need more help.",
+    closed: "This ticket is closed. Open a new ticket from the portal if you need anything else.",
+  } as const;
+  await sendMail({
+    to: input.to,
+    cooldownKey: `client:status:${input.number}:${input.status}`,
+    subject: `${input.number} · ${statusLabel[input.status]}`,
+    html: `
+      <p>${escapeHtml(input.number)}: ${escapeHtml(lines[input.status])}</p>
+      <p><a href="${escapeHtml(url)}">View ticket</a></p>`,
+    text: `${input.number}: ${lines[input.status]}\n${url}`,
+  });
+}
+
+export async function notifyStudioClientResolved(input: {
+  number: string;
+  companyName: string;
+}) {
+  const url = `${siteOrigin()}/admin/tickets/${encodeURIComponent(input.number)}`;
+  await sendMail({
+    to: supportInbox(),
+    cooldownKey: `studio:resolved:${input.number}`,
+    subject: `${input.companyName} resolved ${input.number}`,
+    html: `
+      <p>${escapeHtml(input.companyName)} marked ${escapeHtml(input.number)} resolved.</p>
+      <p><a href="${escapeHtml(url)}">Open in CRM</a></p>`,
+    text: `${input.companyName} resolved ${input.number}\n${url}`,
+  });
+}
+
+export async function notifyStudioClientReopened(input: {
+  number: string;
+  companyName: string;
+}) {
+  const url = `${siteOrigin()}/admin/tickets/${encodeURIComponent(input.number)}`;
+  await sendMail({
+    to: supportInbox(),
+    cooldownKey: `studio:reopened:${input.number}`,
+    subject: `${input.companyName} reopened ${input.number}`,
+    html: `
+      <p>${escapeHtml(input.companyName)} reopened ${escapeHtml(input.number)}.</p>
+      <p><a href="${escapeHtml(url)}">Open in CRM</a></p>`,
+    text: `${input.companyName} reopened ${input.number}\n${url}`,
   });
 }

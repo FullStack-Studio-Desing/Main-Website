@@ -9,6 +9,10 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 /** Deletes pending ticket_attachments older than 24h and their R2 objects. */
 export async function GET(request: NextRequest) {
   const secret = process.env.CRON_SECRET?.trim();
+  // Without a secret the route is open, which is only acceptable outside production.
+  if (!secret && process.env.VERCEL_ENV === "production") {
+    return NextResponse.json({ error: "CRON_SECRET is not set." }, { status: 401 });
+  }
   if (secret && request.headers.get("authorization") !== `Bearer ${secret}`) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }

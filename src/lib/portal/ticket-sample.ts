@@ -1,4 +1,9 @@
-import type { TicketDetail, TicketListItem, TicketMessageRecord } from "@/lib/portal/types";
+import type {
+  TicketAttachmentRecord,
+  TicketDetail,
+  TicketListItem,
+  TicketMessageRecord,
+} from "@/lib/portal/types";
 import type { TicketCounts } from "@/lib/portal/ticket-queries";
 
 const CLIENT_ID = "sample-northwind";
@@ -104,6 +109,31 @@ export function sampleTickets(): TicketListItem[] {
   return sampleAdminTickets();
 }
 
+function sampleFile(
+  ticketId: string,
+  messageId: string,
+  fileName: string,
+  contentType: string,
+  size: number,
+  url: string,
+): TicketAttachmentRecord {
+  return {
+    id: `sample-file-${messageId}`,
+    ticket_id: ticketId,
+    message_id: messageId,
+    client_id: CLIENT_ID,
+    uploaded_by: null,
+    file_name: fileName,
+    content_type: contentType,
+    size_bytes: size,
+    width: null,
+    height: null,
+    status: "ready",
+    created_at: "2026-11-20T16:00:00.000Z",
+    download_url: url,
+  };
+}
+
 export function sampleTicketDetail(number: string): TicketDetail | null {
   const ticket = tickets.find((item) => item.number === number);
   if (!ticket) return null;
@@ -118,7 +148,7 @@ export function sampleTicketDetail(number: string): TicketDetail | null {
               body: ticket.description,
               created_at: ticket.created_at,
             }),
-            attachments: [],
+            attachments: [sampleFile(ticket.id, "sample-msg-1", "mobile-menu.png", "image/png", 46_000, "/images/services/widgets/1.png")],
           },
           {
             ...message({
@@ -127,7 +157,7 @@ export function sampleTicketDetail(number: string): TicketDetail | null {
               body: "We pushed a CSS fix to staging. Can you confirm on your phone?",
               created_at: "2026-11-20T16:00:00.000Z",
             }),
-            attachments: [],
+            attachments: [sampleFile(ticket.id, "sample-msg-2", "staging-checklist.pdf", "application/pdf", 182_000, "#")],
           },
         ]
       : [

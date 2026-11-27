@@ -2,12 +2,14 @@
 
 import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { createAdminClient, hasServiceRole } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { isSchemaError } from "@/lib/portal/errors";
 import { requireAdmin, requireClient } from "@/lib/portal/session";
 import type {
   ActionState,
+  TicketActionState,
   TicketCategory,
   TicketPriority,
   TicketStatus,
@@ -16,9 +18,19 @@ import { isUuid } from "@/lib/portal/validators";
 import { ticketRateLimit } from "@/lib/portal/ticket-rate-limit";
 import { deleteObject, headObject, presignPut } from "@/server/storage/r2";
 import {
+  BLOCKED_EXT,
+  sanitizeFileName,
+  uploadContentType,
+  validateUploadMeta,
+  type UploadFileMeta,
+} from "@/lib/portal/ticket-limits";
+import {
+  notifyClientStatusChange,
   notifyClientStudioReply,
-  notifyClientTicketResolved,
+  notifyClientTicketReceived,
+  notifyStudioClientReopened,
   notifyStudioClientReply,
+  notifyStudioClientResolved,
   notifyStudioNewTicket,
 } from "@/server/billing/ticket-mail";
 
@@ -28,8 +40,9 @@ const TITLE_MAX = 140;
 const DESC_MIN = 10;
 const DESC_MAX = 8000;
 const BODY_MAX = 8000;
-const MAX_FILES = 10;
-const MAX_FILE_BYTES = 26_214_400;
+
+/** Status changes the client is emailed about. Others stay in the portal only. */
+const clientEmailStatuses: TicketStatus[] = ["awaiting_client", "resolved", "closed"];
 
 const ticketStatuses: TicketStatus[] = [
   "open",
@@ -239,7 +252,10 @@ async function clientEmail(clientId: string) {
   return res.data as { company_name: string; email: string };
 }
 
-export async function createTicket(_prev: ActionState, formData: FormData): Promise<ActionState> {
+export async function createTicket(
+  _prev: TicketActionState,
+  formData: FormData,
+): Promise<TicketActionState> {
   const gate = await clientGate();
   if ("error" in gate) return gate;
   if (!ticketRateLimit(`create:${gate.userId}`, 10, 60 * 60 * 1000)) {
@@ -272,34 +288,52 @@ export async function createTicket(_prev: ActionState, formData: FormData): Prom
   const number = String(insert.data.number);
   const ticketId = String(insert.data.id);
 
-  await supabase.from("ticket_messages").insert({
-    ticket_id: ticketId,
-    client_id: gate.clientId,
-    author_id: gate.userId,
-    author_role: "client",
-    kind: "reply",
-    body: parsed.value.description,
-  });
+  const firstMessage = await supabase
+    .from("ticket_messages")
+    .insert({
+      ticket_id: ticketId,
+      client_id: gate.clientId,
+      author_id: gate.userId,
+      author_role: "client",
+      kind: "reply",
+      body: parsed.value.description,
+    })
+    .select("id")
+    .single();
 
   const company = await clientEmail(gate.clientId);
   if (company) {
-    void notifyStudioNewTicket({
-      number,
-      companyName: company.company_name,
-      title: parsed.value.title,
-      description: parsed.value.description,
-    });
+    after(() =>
+      Promise.all([
+        notifyStudioNewTicket({
+          number,
+          companyName: company.company_name,
+          title: parsed.value.title,
+          description: parsed.value.description,
+        }),
+        notifyClientTicketReceived({
+          number,
+          to: [company.email],
+          title: parsed.value.title,
+        }),
+      ]),
+    );
   }
 
   revalidateTicketPaths(number, gate.clientId);
-  return { notice: `Ticket ${number} opened.` };
+  return {
+    notice: `Ticket ${number} opened.`,
+    number,
+    ticketId,
+    messageId: firstMessage.data ? String(firstMessage.data.id) : undefined,
+  };
 }
 
 export async function replyToTicket(
   ticketNumber: string,
-  _prev: ActionState,
+  _prev: TicketActionState,
   formData: FormData,
-): Promise<ActionState> {
+): Promise<TicketActionState> {
   const gate = await clientGate();
   if ("error" in gate) return gate;
   if (!ticketRateLimit(`reply:client:${gate.userId}`, 30, 60 * 60 * 1000)) {
@@ -307,7 +341,8 @@ export async function replyToTicket(
   }
 
   const body = String(formData.get("body") ?? "").trim();
-  if (!body) return { error: "Write a reply first." };
+  const hasFiles = raw(formData, "has_attachments") === "1";
+  if (!body && !hasFiles) return { error: "Write a reply or attach a file first." };
   if (body.length > BODY_MAX) return { error: `Keep replies under ${BODY_MAX} characters.` };
 
   const loaded = await loadTicketByNumber(ticketNumber);
@@ -326,7 +361,7 @@ export async function replyToTicket(
       author_id: gate.userId,
       author_role: "client",
       kind: "reply",
-      body,
+      body: body || null,
     })
     .select("id")
     .single();
@@ -352,15 +387,22 @@ export async function replyToTicket(
 
   const company = await clientEmail(gate.clientId);
   if (company) {
-    void notifyStudioClientReply({
-      number: loaded.ticket.number,
-      companyName: company.company_name,
-      body,
-    });
+    after(() =>
+      notifyStudioClientReply({
+        number: loaded.ticket.number,
+        companyName: company.company_name,
+        body: body || "Sent files.",
+      }),
+    );
   }
 
   revalidateTicketPaths(loaded.ticket.number, gate.clientId);
-  return { notice: "Reply sent." };
+  return {
+    notice: "Reply sent.",
+    number: loaded.ticket.number,
+    ticketId: loaded.ticket.id,
+    messageId: String(message.data.id),
+  };
 }
 
 export async function resolveTicket(ticketNumber: string): Promise<ActionState> {
@@ -387,7 +429,12 @@ export async function resolveTicket(ticketNumber: string): Promise<ActionState> 
 
   const company = await clientEmail(gate.clientId);
   if (company) {
-    void notifyClientTicketResolved({ number: loaded.ticket.number, to: [company.email] });
+    after(() =>
+      notifyStudioClientResolved({
+        number: loaded.ticket.number,
+        companyName: company.company_name,
+      }),
+    );
   }
 
   revalidateTicketPaths(loaded.ticket.number, gate.clientId);
@@ -418,6 +465,16 @@ export async function reopenTicket(ticketNumber: string): Promise<ActionState> {
     to: "awaiting_studio",
   });
 
+  const company = await clientEmail(gate.clientId);
+  if (company) {
+    after(() =>
+      notifyStudioClientReopened({
+        number: loaded.ticket.number,
+        companyName: company.company_name,
+      }),
+    );
+  }
+
   revalidateTicketPaths(loaded.ticket.number, gate.clientId);
   return { notice: `${loaded.ticket.number} was reopened.` };
 }
@@ -446,8 +503,6 @@ export async function markTicketRead(
   return { notice: "Marked read." };
 }
 
-type UploadFileMeta = { name: string; type: string; size: number };
-
 function ticketsR2Ready() {
   return Boolean(
     process.env.R2_ACCOUNT_ID &&
@@ -455,39 +510,6 @@ function ticketsR2Ready() {
       process.env.R2_SECRET_ACCESS_KEY &&
       process.env.R2_TICKETS_BUCKET,
   );
-}
-
-const BLOCKED_EXT =
-  /\.(exe|js|sh|bat|msi|dmg|apk|html|htm|svg|scr|com|cmd|vbs|ps1|jar)$/i;
-
-const ALLOWED_EXT =
-  /\.(png|jpe?g|webp|gif|heic|pdf|txt|csv|docx?|xlsx?|pptx?|zip|mp4|mov)$/i;
-
-function sanitizeFileName(name: string) {
-  const base = name.split(/[/\\]/).pop() ?? "file";
-  const cleaned = base.replace(/[^A-Za-z0-9._-]/g, "_").slice(0, 120);
-  return cleaned || "file";
-}
-
-function validateUploadMeta(files: UploadFileMeta[]): string | null {
-  if (!files.length) return "Pick at least one file.";
-  if (files.length > MAX_FILES) return `Attach up to ${MAX_FILES} files per message.`;
-  for (const file of files) {
-    if (file.size <= 0 || file.size > MAX_FILE_BYTES) {
-      return `${file.name} is too large. The limit is 25 MB per file.`;
-    }
-    const lower = file.name.toLowerCase();
-    if (BLOCKED_EXT.test(lower)) {
-      return `${file.name} is not an allowed file type.`;
-    }
-    if (!ALLOWED_EXT.test(lower)) {
-      return `${file.name} is not an allowed file type.`;
-    }
-    if (file.type && file.type.includes("javascript")) {
-      return `${file.name} is not an allowed file type.`;
-    }
-  }
-  return null;
 }
 
 async function resolveTicketForUpload(
@@ -533,6 +555,10 @@ export async function requestTicketUploads(
     userId = admin.userId;
   }
 
+  if (!ticketRateLimit(`upload:${userId}`, 60, 60 * 60 * 1000)) {
+    return { error: "Too many uploads recently. Try again in a little while." };
+  }
+
   const validation = validateUploadMeta(files);
   if (validation) return { error: validation };
 
@@ -556,7 +582,7 @@ export async function requestTicketUploads(
     const safeName = sanitizeFileName(file.name);
     const fileId = randomUUID();
     const r2Key = `tickets/${scope.clientId}/${scope.ticketId}/${fileId}/${safeName}`;
-    const contentType = file.type?.trim() || "application/octet-stream";
+    const contentType = uploadContentType(file.type);
 
     const row = await db
       .from("ticket_attachments")
@@ -591,14 +617,22 @@ export async function requestTicketUploads(
   return { notice: "Upload URLs ready.", uploads };
 }
 
-export async function confirmTicketUploads(attachmentIds: string[]): Promise<ActionState> {
+export async function confirmTicketUploads(
+  attachmentIds: string[],
+  messageId: string,
+): Promise<ActionState & { confirmed?: number }> {
   const client = await clientGate();
-  if ("error" in client) {
+  let userId: string;
+  if (!("error" in client)) {
+    userId = client.userId;
+  } else {
     const admin = await adminGate();
     if ("error" in admin) return { error: client.error };
+    userId = admin.userId;
   }
 
   if (!attachmentIds.length) return { error: "No attachments to confirm." };
+  if (!isUuid(messageId)) return { error: "That message could not be found." };
   if (!ticketsR2Ready()) {
     return { error: "File uploads are not configured yet." };
   }
@@ -609,15 +643,31 @@ export async function confirmTicketUploads(attachmentIds: string[]): Promise<Act
   const db = createAdminClient();
   const clientId = "error" in client ? undefined : client.clientId;
 
+  // Files may only hang off a real message on the same ticket; clients only on their own messages.
+  const messageRes = await db
+    .from("ticket_messages")
+    .select("id, ticket_id, client_id, author_id, kind")
+    .eq("id", messageId)
+    .maybeSingle();
+  const message = messageRes.data;
+  if (messageRes.error || !message || message.kind === "event") {
+    return { error: "That message could not be found." };
+  }
+  if (clientId && (message.client_id !== clientId || message.author_id !== userId)) {
+    return { error: "That message could not be found." };
+  }
+
+  let confirmed = 0;
   for (const rawId of attachmentIds) {
     if (!isUuid(rawId)) continue;
     let query = db
       .from("ticket_attachments")
-      .select("id, r2_key, size_bytes, content_type, client_id, status")
+      .select("id, ticket_id, r2_key, size_bytes, content_type, client_id, status")
       .eq("id", rawId);
     if (clientId) query = query.eq("client_id", clientId);
     const row = await query.maybeSingle();
     if (row.error || !row.data || row.data.status !== "pending") continue;
+    if (row.data.ticket_id !== message.ticket_id) continue;
 
     try {
       const head = await headObject(String(row.data.r2_key));
@@ -638,24 +688,26 @@ export async function confirmTicketUploads(attachmentIds: string[]): Promise<Act
         .from("ticket_attachments")
         .update({
           status: "ready",
+          message_id: message.id,
           content_type: remoteType || String(row.data.content_type),
           size_bytes: remoteSize,
         })
         .eq("id", rawId);
+      confirmed += 1;
     } catch (error) {
       console.error("[tickets] confirm upload failed", rawId, error);
       await db.from("ticket_attachments").update({ status: "rejected" }).eq("id", rawId);
     }
   }
 
-  return { notice: "Uploads confirmed." };
+  return { notice: "Uploads confirmed.", confirmed };
 }
 
 export async function adminReply(
   ticketNumber: string,
-  _prev: ActionState,
+  _prev: TicketActionState,
   formData: FormData,
-): Promise<ActionState> {
+): Promise<TicketActionState> {
   const gate = await adminGate();
   if ("error" in gate) return gate;
 
@@ -663,7 +715,8 @@ export async function adminReply(
   const kind = raw(formData, "kind") === "internal_note" ? "internal_note" : "reply";
   const statusRaw = raw(formData, "status");
 
-  if (!body) return { error: "Write a message first." };
+  const hasFiles = raw(formData, "has_attachments") === "1";
+  if (!body && !hasFiles) return { error: "Write a message or attach a file first." };
   if (body.length > BODY_MAX) return { error: `Keep messages under ${BODY_MAX} characters.` };
 
   const loaded = await loadTicketByNumber(ticketNumber);
@@ -678,7 +731,7 @@ export async function adminReply(
       author_id: gate.userId,
       author_role: "admin",
       kind,
-      body,
+      body: body || null,
     })
     .select("id")
     .single();
@@ -695,19 +748,49 @@ export async function adminReply(
     });
     if (updateError) return updateError;
 
+    if (next !== loaded.ticket.status) {
+      await insertSystemEvent(loaded.ticket.id, loaded.ticket.client_id, {
+        type: "status",
+        from: loaded.ticket.status,
+        to: next,
+      });
+    }
+
+    // One email per action: the reply email carries the status, so no separate status email.
     const company = await clientEmail(loaded.ticket.client_id);
     if (company) {
-      void notifyClientStudioReply({
-        number: loaded.ticket.number,
-        to: [company.email],
-        projectName: null,
-        body,
-      });
+      after(() =>
+        notifyClientStudioReply({
+          number: loaded.ticket.number,
+          to: [company.email],
+          projectName: null,
+          body: body || "The studio sent you files.",
+          status: next === "resolved" || next === "closed" ? next : null,
+        }),
+      );
     }
   }
 
   revalidateTicketPaths(loaded.ticket.number, loaded.ticket.client_id);
-  return { notice: kind === "internal_note" ? "Internal note saved." : "Reply sent." };
+  return {
+    notice: kind === "internal_note" ? "Internal note saved." : "Reply sent.",
+    number: loaded.ticket.number,
+    ticketId: loaded.ticket.id,
+    messageId: String(message.data.id),
+  };
+}
+
+async function emailClientStatus(ticket: LoadedTicket, next: TicketStatus) {
+  if (!clientEmailStatuses.includes(next)) return;
+  const company = await clientEmail(ticket.client_id);
+  if (!company) return;
+  after(() =>
+    notifyClientStatusChange({
+      number: ticket.number,
+      to: [company.email],
+      status: next as "awaiting_client" | "resolved" | "closed",
+    }),
+  );
 }
 
 export async function setTicketStatus(ticketNumber: string, status: string): Promise<ActionState> {
@@ -735,6 +818,8 @@ export async function setTicketStatus(ticketNumber: string, status: string): Pro
     from: loaded.ticket.status,
     to: next,
   });
+
+  await emailClientStatus(loaded.ticket, next);
 
   revalidateTicketPaths(loaded.ticket.number, loaded.ticket.client_id);
   return { notice: `Status set to ${next.replace(/_/g, " ")}.` };
@@ -815,10 +900,20 @@ export async function bulkUpdateTickets(
     const loaded = await loadTicketByNumber(number);
     if ("error" in loaded) continue;
     const rowPatch: Record<string, unknown> = {};
-    if (status) rowPatch.status = status;
+    const statusChanged = Boolean(status && status !== loaded.ticket.status);
+    if (statusChanged) rowPatch.status = status;
     if (assignee !== undefined) rowPatch.assigned_to = assignee;
     if (!Object.keys(rowPatch).length) continue;
-    await clientUpdateTicket(loaded.ticket.id, rowPatch);
+    const updateError = await clientUpdateTicket(loaded.ticket.id, rowPatch);
+    if (updateError) continue;
+    if (statusChanged && status) {
+      await insertSystemEvent(loaded.ticket.id, loaded.ticket.client_id, {
+        type: "status",
+        from: loaded.ticket.status,
+        to: status,
+      });
+      await emailClientStatus(loaded.ticket, status);
+    }
     revalidateTicketPaths(number, loaded.ticket.client_id);
   }
 

@@ -53,3 +53,25 @@ Browsers upload directly to R2 with presigned `PUT` URLs, so origins must be lis
 ## Verifying configuration
 
 After setting env vars locally, restart `next dev`. Upload and download flows will fail with a clear server error until credentials and the bucket exist.
+## Production checklist (Vercel)
+
+Set these in Vercel → Settings → Environment Variables for **Production** and **Preview**, then redeploy:
+
+| Var | Value |
+|---|---|
+| `R2_ACCOUNT_ID` | Cloudflare account ID |
+| `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` | Token scoped to Object Read & Write on `fssd-ticket-files` only |
+| `R2_TICKETS_BUCKET` | `fssd-ticket-files` |
+| `RESEND_FROM` | `FullStack Studio <support@your-verified-domain>`. `onboarding@resend.dev` only delivers to the Resend account owner, so clients receive nothing until a domain is verified. |
+| `SUPPORT_NOTIFY_EMAIL` | Studio inbox for ticket alerts |
+| `CRON_SECRET` | 32+ random characters. Vercel sends it as `Authorization: Bearer …` to cron routes. The cleanup route refuses to run in production without it. |
+
+The daily cleanup cron (`0 4 * * *` UTC) is declared in `vercel.json` and removes `pending` uploads older than 24 hours. After deploying, confirm it under Settings → Cron Jobs.
+
+Re-apply CORS after editing `r2-tickets-cors.json`:
+
+```bash
+npx wrangler r2 bucket cors set fssd-ticket-files --file r2-tickets-cors.json
+```
+
+Smoke test once the keys are set: `npx tsx .verify/test-ticket-attachments.ts`.

@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useMemo } from "react";
+import { FileText } from "lucide-react";
+import { useActionState, useEffect, useMemo, useRef } from "react";
 import { toast } from "sonner";
 import {
   adminReply,
@@ -12,12 +13,23 @@ import {
   resolveTicket,
 } from "@/lib/portal/ticket-actions";
 import { formatDate } from "@/lib/portal/format";
-import type { TicketDetail, TicketMessageRecord } from "@/lib/portal/types";
+import { formatBytes, PREVIEWABLE_IMAGE } from "@/lib/portal/ticket-limits";
+import type {
+  TicketActionState,
+  TicketAttachmentRecord,
+  TicketDetail,
+  TicketMessageRecord,
+} from "@/lib/portal/types";
 import { Alert, BackLink, StatusBadge } from "@/components/studio/ui";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import {
+  TicketAttachmentPicker,
+  useTicketAttachments,
+  type TicketAttachments,
+} from "./TicketAttachmentPicker";
 
 function linkify(text: string) {
   const urlRe = /(https?:\/\/[^\s]+)/g;
@@ -33,9 +45,87 @@ function linkify(text: string) {
   );
 }
 
-type MessageWithFiles = TicketMessageRecord & {
-  attachments?: { id: string; file_name: string; download_url?: string }[];
-};
+type FileLink = Pick<TicketAttachmentRecord, "id" | "file_name" | "download_url"> &
+  Partial<Pick<TicketAttachmentRecord, "content_type" | "size_bytes">>;
+
+type MessageWithFiles = TicketMessageRecord & { attachments?: FileLink[] };
+
+function AttachmentList({ files }: { files: FileLink[] }) {
+  const images = files.filter((file) => file.content_type && PREVIEWABLE_IMAGE.test(file.content_type));
+  const others = files.filter((file) => !images.includes(file));
+  return (
+    <div className="mt-3 space-y-2">
+      {images.length ? (
+        <div className="flex flex-wrap gap-2">
+          {images.map((file) => (
+            <a
+              key={file.id}
+              href={file.download_url}
+              target="_blank"
+              rel="noreferrer"
+              className="block overflow-hidden rounded-md border"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element -- auth-gated redirect to a signed R2 URL */}
+              <img
+                src={file.download_url}
+                alt={file.file_name}
+                loading="lazy"
+                className="size-[72px] object-cover sm:size-24"
+              />
+            </a>
+          ))}
+        </div>
+      ) : null}
+      {others.length ? (
+        <ul className="flex flex-wrap gap-2 text-xs">
+          {others.map((file) => (
+            <li key={file.id}>
+              <a
+                href={file.download_url}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex max-w-[16rem] items-center gap-1.5 rounded-md border bg-background px-2 py-1 hover:bg-muted"
+              >
+                <FileText className="size-3.5 shrink-0 text-muted-foreground" aria-hidden />
+                <span className="truncate">{file.file_name}</span>
+                {file.size_bytes ? (
+                  <span className="shrink-0 text-muted-foreground">{formatBytes(file.size_bytes)}</span>
+                ) : null}
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
+  );
+}
+
+/** Uploads picked files after a reply is saved, then refreshes the thread. */
+function useReplyUploads(state: TicketActionState, files: TicketAttachments) {
+  const router = useRouter();
+  const handled = useRef<TicketActionState>(null);
+
+  useEffect(() => {
+    if (!state || handled.current === state) return;
+    handled.current = state;
+    if (state.error) {
+      toast.error(state.error);
+      return;
+    }
+    if (!state.notice) return;
+    if (!files.count || !state.ticketId || !state.messageId) {
+      toast.success(state.notice);
+      router.refresh();
+      return;
+    }
+    void files.upload(state.ticketId, state.messageId).then((result) => {
+      if (result.failed) toast.warning(`${result.failed} file(s) failed to upload. Try attaching them again.`);
+      else toast.success(state.notice);
+      files.clear();
+      router.refresh();
+    });
+  }, [state, files, router]);
+}
 
 function MessageLine({ message }: { message: MessageWithFiles }) {
   if (message.kind === "event") {
@@ -69,17 +159,7 @@ function MessageLine({ message }: { message: MessageWithFiles }) {
         · {formatDate(message.created_at)}
       </p>
       {message.body ? <p className="mt-2 whitespace-pre-line break-words">{linkify(message.body)}</p> : null}
-      {message.attachments?.length ? (
-        <ul className="mt-3 space-y-1 text-xs">
-          {message.attachments.map((file) => (
-            <li key={file.id}>
-              <a href={file.download_url} className="underline underline-offset-2">
-                {file.file_name}
-              </a>
-            </li>
-          ))}
-        </ul>
-      ) : null}
+      {message.attachments?.length ? <AttachmentList files={message.attachments} /> : null}
     </div>
   );
 }
@@ -99,20 +179,25 @@ export function TicketConversation({
   const boundAdmin = useMemo(() => adminReply.bind(null, ticket.number), [ticket.number]);
   const [replyState, replyAction, replyPending] = useActionState(boundReply, null);
   const [adminState, adminAction, adminPending] = useActionState(boundAdmin, null);
+  const clientFiles = useTicketAttachments();
+  const adminFiles = useTicketAttachments();
+  useReplyUploads(replyState, clientFiles);
+  useReplyUploads(adminState, adminFiles);
 
   useEffect(() => {
     void markTicketRead(ticket.number, mode === "client" ? "client" : "studio");
   }, [ticket.number, mode]);
 
-  useEffect(() => {
-    const state = replyState ?? adminState;
-    if (state?.notice) toast.success(state.notice);
-    if (state?.error) toast.error(state.error);
-    if (state?.notice) router.refresh();
-  }, [replyState, adminState, router]);
-
   const closed = ticket.status === "closed";
   const canClientReply = mode === "client" && !closed;
+  const clientBusy = replyPending || clientFiles.uploading;
+  const adminBusy = adminPending || adminFiles.uploading;
+
+  // The first client message repeats the description; show its files under "Original request" instead.
+  const opening = messages.find(
+    (message) =>
+      message.author_role === "client" && message.kind === "reply" && message.body === ticket.description,
+  );
 
   return (
     <div className="space-y-6">
@@ -141,9 +226,11 @@ export function TicketConversation({
             <div className="rounded-lg border bg-muted/30 p-4">
               <p className="text-xs font-medium text-muted-foreground">Original request</p>
               <p className="mt-2 whitespace-pre-line break-words text-sm">{ticket.description}</p>
+              {opening?.attachments?.length ? <AttachmentList files={opening.attachments} /> : null}
             </div>
             {messages.map((message) =>
-              mode === "client" && message.kind === "internal_note" ? null : (
+              message.id === opening?.id ||
+              (mode === "client" && message.kind === "internal_note") ? null : (
                 <MessageLine key={message.id} message={message} />
               ),
             )}
@@ -153,11 +240,11 @@ export function TicketConversation({
         <aside className="space-y-4">
           <Card>
             <CardContent className="space-y-3 p-4 text-sm">
-              <p>
+              <div>
                 <span className="text-muted-foreground">Status</span>
                 <br />
                 <StatusBadge status={ticket.status} className="mt-1" />
-              </p>
+              </div>
               {mode === "client" && ticket.status === "awaiting_client" ? (
                 <Button
                   type="button"
@@ -209,19 +296,30 @@ export function TicketConversation({
         ) : (
           <form action={replyAction} className="sticky bottom-0 space-y-3 border-t bg-background py-4">
             {replyState?.error ? <Alert tone="error">{replyState.error}</Alert> : null}
-            <Textarea name="body" rows={4} placeholder="Write a reply" className="min-h-[5rem]" required />
-            <Button type="submit" disabled={replyPending || !canClientReply}>
-              {replyPending ? "Sending…" : "Send reply"}
+            <Textarea
+              name="body"
+              rows={4}
+              placeholder="Write a reply"
+              className="min-h-[5rem]"
+              required={!clientFiles.count}
+            />
+            <TicketAttachmentPicker attachments={clientFiles} disabled={clientBusy} />
+            <Button type="submit" disabled={clientBusy || !canClientReply}>
+              {clientFiles.uploading ? "Uploading files…" : replyPending ? "Sending…" : "Send reply"}
             </Button>
-            <p className="text-xs text-muted-foreground">
-              Attachments will be available once Cloudflare R2 keys are configured.
-            </p>
           </form>
         )
       ) : (
         <form action={adminAction} className="space-y-3 border-t pt-4">
           {adminState?.error ? <Alert tone="error">{adminState.error}</Alert> : null}
-          <Textarea name="body" rows={4} className="min-h-[5rem]" placeholder="Reply to the client" required />
+          <Textarea
+            name="body"
+            rows={4}
+            className="min-h-[5rem]"
+            placeholder="Reply to the client"
+            required={!adminFiles.count}
+          />
+          <TicketAttachmentPicker attachments={adminFiles} disabled={adminBusy} />
           <div className="flex flex-wrap gap-2">
             <select name="kind" defaultValue="reply" className="h-10 rounded-md border bg-background px-3 text-sm">
               <option value="reply">Public reply</option>
@@ -233,8 +331,8 @@ export function TicketConversation({
               <option value="resolved">Resolved</option>
               <option value="closed">Closed</option>
             </select>
-            <Button type="submit" disabled={adminPending}>
-              {adminPending ? "Sending…" : "Send"}
+            <Button type="submit" disabled={adminBusy}>
+              {adminFiles.uploading ? "Uploading files…" : adminPending ? "Sending…" : "Send"}
             </Button>
           </div>
         </form>
