@@ -1,35 +1,91 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { CheckCircle } from "@phosphor-icons/react";
 import { hero } from "@/data/site-copy";
 import { btnPrimary, btnGlass } from "@/components/buttons";
 import { HeroTypewriter } from "@/components/HeroTypewriter";
 import { TechMarquee } from "@/components/graphics/TechMarquee";
-import { mediaUrl } from "@/lib/media";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
-/** Desktop/widgets 2–8 (skip #1) — same set as service heroes. */
-const HERO_WIDGETS = [2, 3, 4, 5, 6, 7, 8].map((n) =>
-  mediaUrl(`/images/services/widgets/${n}.png`),
-);
+/** All-intra encode (every frame a keyframe) so scrubbing seeks instantly. */
+const HERO_VIDEO = "/videos/hero.mp4";
 
-const ROTATE_MS = 3200;
+/**
+ * The clip is a 24fps head turn. These timestamps are the frames where the
+ * character looks left (frame 64), straight ahead (88), and right (112).
+ * The cursor's horizontal position maps linearly across that range.
+ */
+const LOOK_LEFT_TIME = 64 / 24;
+const LOOK_FRONT_TIME = 88 / 24;
+const LOOK_RIGHT_TIME = 112 / 24;
+
+/** Per-frame easing toward the cursor so the head turn glides, not snaps. */
+const FOLLOW_EASE = 0.18;
 
 export function Hero() {
   const reduce = useReducedMotion();
-  const [widgetIndex, setWidgetIndex] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
+  // Make the character look toward the cursor: left edge looks left, right
+  // edge looks right. Touch devices have no hover, so they get a muted
+  // autoplay loop instead.
   useEffect(() => {
-    if (reduce) return;
-    const id = window.setInterval(() => {
-      setWidgetIndex((i) => (i + 1) % HERO_WIDGETS.length);
-    }, ROTATE_MS);
-    return () => window.clearInterval(id);
+    const video = videoRef.current;
+    if (!video || reduce) return;
+
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      video.loop = true;
+      video.play().catch(() => {});
+      return () => video.pause();
+    }
+
+    let targetTime = LOOK_FRONT_TIME;
+    let currentTime = LOOK_FRONT_TIME;
+    let seeking = false;
+    let frame = 0;
+
+    const showFront = () => {
+      video.currentTime = LOOK_FRONT_TIME;
+    };
+    if (video.readyState >= 1) showFront();
+    else video.addEventListener("loadedmetadata", showFront, { once: true });
+
+    // Only issue the next seek once the previous one lands, so fast mouse
+    // movement doesn't flood the decoder with seeks.
+    const onSeeked = () => {
+      seeking = false;
+    };
+
+    const tick = () => {
+      frame = 0;
+      currentTime += (targetTime - currentTime) * FOLLOW_EASE;
+      const settled = Math.abs(targetTime - currentTime) < 0.005;
+      if (settled) currentTime = targetTime;
+      if (!seeking && Math.abs(video.currentTime - currentTime) >= 0.005) {
+        seeking = true;
+        video.currentTime = currentTime;
+      }
+      if (!settled || seeking) frame = requestAnimationFrame(tick);
+    };
+
+    const onMouseMove = (e: MouseEvent) => {
+      const ratio = Math.min(1, Math.max(0, e.clientX / window.innerWidth));
+      targetTime = LOOK_LEFT_TIME + ratio * (LOOK_RIGHT_TIME - LOOK_LEFT_TIME);
+      if (!frame) frame = requestAnimationFrame(tick);
+    };
+
+    video.addEventListener("seeked", onSeeked);
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      video.removeEventListener("loadedmetadata", showFront);
+      video.removeEventListener("seeked", onSeeked);
+      window.removeEventListener("mousemove", onMouseMove);
+    };
   }, [reduce]);
 
   const enter = (delay: number) =>
@@ -63,7 +119,7 @@ export function Hero() {
       <div className="relative mx-auto flex min-h-[100dvh] max-w-[1536px] flex-col justify-center px-6 pb-20 pt-32 sm:px-10 lg:pb-24 lg:pt-36">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
           {/* Left — offer */}
-          <div className="relative z-10 max-w-[720px]">
+          <div className="relative z-20 max-w-[720px]">
             <motion.h1
               {...enter(0)}
               className="font-display text-[48px] uppercase leading-[0.9] tracking-[-0.02em] sm:text-[68px] lg:text-[80px] xl:text-[92px] lg:leading-[0.88]"
@@ -118,7 +174,7 @@ export function Hero() {
             </motion.div>
           </div>
 
-          {/* Right — rotating service widgets */}
+          {/* Right — video scrubbed by horizontal cursor movement */}
           <motion.div
             {...(reduce
               ? {}
@@ -130,36 +186,16 @@ export function Hero() {
             className="relative z-10 w-full max-w-[720px] justify-self-center lg:justify-self-end"
             aria-hidden
           >
-            <div className="relative aspect-square w-full">
-              <AnimatePresence initial={false}>
-                <motion.div
-                  key={widgetIndex}
-                  initial={
-                    reduce ? false : { opacity: 0, scale: 0.94 }
-                  }
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={
-                    reduce
-                      ? undefined
-                      : { opacity: 0, scale: 1.02 }
-                  }
-                  transition={
-                    reduce
-                      ? { duration: 0 }
-                      : { duration: 0.7, ease }
-                  }
-                  className="absolute inset-0"
-                >
-                  <Image
-                    src={HERO_WIDGETS[widgetIndex]}
-                    alt=""
-                    fill
-                    priority={widgetIndex === 0}
-                    sizes="(max-width: 1024px) 90vw, 720px"
-                    className="object-contain object-center drop-shadow-[0_24px_48px_rgba(0,0,0,0.35)] select-none"
-                  />
-                </motion.div>
-              </AnimatePresence>
+            <div className="pointer-events-none relative aspect-square w-full scale-150">
+              <video
+                ref={videoRef}
+                src={HERO_VIDEO}
+                muted
+                playsInline
+                preload="auto"
+                disablePictureInPicture
+                className="absolute inset-0 h-full w-full select-none object-contain object-center [mask-image:radial-gradient(closest-side,#000_80%,transparent_100%)]"
+              />
             </div>
           </motion.div>
         </div>
