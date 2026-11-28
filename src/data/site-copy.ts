@@ -17,26 +17,18 @@ export const navLinks = [
 ] as const;
 
 export const hero = {
-  headlineStart: "Growth systems that",
-  headlineEmphasis: "actually sell",
-  /** Green typewriter phrases — cycles after the static headline start */
-  headlineRotations: [
-    "actually sell",
-    "book calls",
-    "drive revenue",
-    "close deals",
-  ] as const,
+  headlineStart: "Built",
+  /** Second headline line, rendered in neon; the last word rotates */
+  headlineEmphasis: "to",
+  headlineRotations: ["sell.", "win.", "lead.", "last."] as const,
   subheadline:
-    "Websites, apps, marketing, sales, AI, and CRMs. One team, one monthly plan.",
+    "We design, build, and run the websites, ads, and automations that bring you customers.",
+  /** Brighter closing line of the subheadline */
+  subheadlineEmphasis: "One team, one monthly plan.",
   primaryCta: "See services",
   primaryHref: "/services",
   secondaryCta: "Client results",
   secondaryHref: "/#testimonials",
-  highlights: [
-    "One partner across web, apps, marketing, sales, AI, and CRM",
-    "Monthly plans from $999. Start on Starter, upgrade as you grow",
-    "Weekly performance reporting on every plan",
-  ],
   lead: {
     eyebrow: "Live chat",
     title: "Want an agent to reach out?",
