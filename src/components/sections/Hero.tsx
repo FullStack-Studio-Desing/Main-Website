@@ -13,16 +13,16 @@ import { mediaUrl } from "@/lib/media";
 const ease = [0.16, 1, 0.3, 1] as const;
 
 /** All-intra encode (every frame a keyframe) so scrubbing seeks instantly. */
-const HERO_VIDEO = mediaUrl("/videos/hero.mp4");
+const HERO_VIDEO = mediaUrl("/videos/hero-v2.mp4");
 
 /**
  * The clip is a 24fps head turn. These timestamps are the frames where the
- * character looks left (frame 64), straight ahead (88), and right (112).
+ * character looks left (frame 72), straight ahead (84), and right (96).
  * The cursor's horizontal position maps linearly across that range.
  */
-const LOOK_LEFT_TIME = 64 / 24;
-const LOOK_FRONT_TIME = 88 / 24;
-const LOOK_RIGHT_TIME = 112 / 24;
+const LOOK_LEFT_TIME = 72 / 24;
+const LOOK_FRONT_TIME = 84 / 24;
+const LOOK_RIGHT_TIME = 96 / 24;
 
 /**
  * Fade the video's left, right and top edges into the page. The bottom stays
